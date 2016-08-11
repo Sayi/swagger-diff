@@ -35,6 +35,9 @@ public class PropertyDiff {
 	}
 
 	public PropertyDiff diff(Property left, Property right) {
+		return this.diff(left, right, null);
+	}
+	public PropertyDiff diff(Property left, Property right, String parentEl) {
 		if (left instanceof RefProperty && right instanceof RefProperty) {
 			String leftRef = ((RefProperty) left).getSimpleRef();
 			String rightRef = ((RefProperty) right).getSimpleRef();
@@ -52,18 +55,18 @@ public class PropertyDiff {
 				Map<String, Property> missingProp = propertyDiff.getMissing();
 
 				increased.addAll(
-						convert2ResponsePropertys(increasedProp, null, false));
+						convert2ResponsePropertys(increasedProp, parentEl, false));
 				missing.addAll(
-						convert2ResponsePropertys(missingProp, null, true));
+						convert2ResponsePropertys(missingProp, parentEl, true));
 
 				List<String> sharedKey = propertyDiff.getSharedKey();
 				for (String key : sharedKey) {
-					diff(leftProperties.get(key), rightProperties.get(key));
+					diff(leftProperties.get(key), rightProperties.get(key), null == parentEl ? key : (parentEl + "." + key));
 				}
 			}
 
 		}
-		return null;
+		return this;
 	}
 
 	private Collection<? extends ResponseProperty> convert2ResponsePropertys(

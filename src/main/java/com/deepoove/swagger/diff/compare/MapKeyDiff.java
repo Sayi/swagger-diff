@@ -1,7 +1,7 @@
 package com.deepoove.swagger.diff.compare;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,8 +28,8 @@ public class MapKeyDiff<K, V> {
 			instance.missing = mapLeft;
 			return instance;
 		}
-		instance.increased = new HashMap<K, V>(mapRight);
-		instance.missing = new HashMap<K, V>();
+		instance.increased = new LinkedHashMap<K, V>(mapRight);
+		instance.missing = new LinkedHashMap<K, V>();
 		instance.sharedKey = new ArrayList<K>();
 		for (Entry<K, V> entry : mapLeft.entrySet()) {
 			K leftKey = entry.getKey();

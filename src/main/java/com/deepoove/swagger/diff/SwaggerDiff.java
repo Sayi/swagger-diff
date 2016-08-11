@@ -23,14 +23,17 @@ import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.Response;
 import io.swagger.models.Swagger;
+import io.swagger.models.auth.AuthorizationValue;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
 import io.swagger.parser.SwaggerCompatConverter;
 import io.swagger.parser.SwaggerParser;
 
 public class SwaggerDiff {
+	
+	public static final String SWAGGER_VERSION_V2 = "2.0";
+	
 	private static Logger logger = LoggerFactory.getLogger(SwaggerDiff.class);
-	private static final String SWAGGER_VERSION_V2 = "2.0";
 
 	private Swagger oldSpecSwagger;
 	private Swagger newSpecSwagger;
@@ -56,15 +59,25 @@ public class SwaggerDiff {
 	 *            SWAGGER_VERSION_V2
 	 */
 	public SwaggerDiff(String oldSpec, String newSpec, String version) {
+		this(oldSpec, newSpec, null, version);
+	}
+	
+	/**
+	 * @param oldSpec
+	 * @param newSpec
+	 * @param auths
+	 * @param version
+	 */
+	public SwaggerDiff(String oldSpec, String newSpec, List<AuthorizationValue> auths, String version) {
 		if (SWAGGER_VERSION_V2.equals(version)) {
 			SwaggerParser swaggerParser = new SwaggerParser();
-			oldSpecSwagger = swaggerParser.read(oldSpec);
-			newSpecSwagger = swaggerParser.read(newSpec);
+			oldSpecSwagger = swaggerParser.read(oldSpec, auths, true);
+			newSpecSwagger = swaggerParser.read(newSpec, auths, true);
 		} else {
 			SwaggerCompatConverter swaggerCompatConverter = new SwaggerCompatConverter();
 			try {
-				oldSpecSwagger = swaggerCompatConverter.read(oldSpec);
-				newSpecSwagger = swaggerCompatConverter.read(newSpec);
+				oldSpecSwagger = swaggerCompatConverter.read(oldSpec, auths);
+				newSpecSwagger = swaggerCompatConverter.read(newSpec, auths);
 			} catch (IOException e) {
 				logger.error("cannot read api-doc from spec[version_v1.x]", e);
 				return;
@@ -87,6 +100,9 @@ public class SwaggerDiff {
 		List<String> sharedKey = pathDiff.getSharedKey();
 		ChangedEndpoint changedEndpoint = null;
 		for (String pathUrl : sharedKey){
+			if ("/v1/customers".equals(pathUrl)){
+				System.out.println(pathUrl);
+			}
 			changedEndpoint = new ChangedEndpoint();
 			changedEndpoint.setPathUrl(pathUrl);
 			Path oldPath = oldPaths.get(pathUrl);
