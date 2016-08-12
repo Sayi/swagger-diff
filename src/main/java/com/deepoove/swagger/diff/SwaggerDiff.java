@@ -100,9 +100,6 @@ public class SwaggerDiff {
 		List<String> sharedKey = pathDiff.getSharedKey();
 		ChangedEndpoint changedEndpoint = null;
 		for (String pathUrl : sharedKey){
-			if ("/v1/customers".equals(pathUrl)){
-				System.out.println(pathUrl);
-			}
 			changedEndpoint = new ChangedEndpoint();
 			changedEndpoint.setPathUrl(pathUrl);
 			Path oldPath = oldPaths.get(pathUrl);
