@@ -1,4 +1,6 @@
 # swagger-diff
+![Build Status](https://travis-ci.org/Sayi/swagger-diff.svg?branch=master)
+
 自动生成API ChangeLog组件  
 用来比较两个由Swagger生成的API文档，对参数、返回类型、路径进行深度比较，并输出差异，适用于自动生成接口变更文档。 
 

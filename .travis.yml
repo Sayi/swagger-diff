@@ -1,2 +1,2 @@
 language: java
-script: mvn -Dmaven.test.skip=true clean install
+script: mvn clean install
