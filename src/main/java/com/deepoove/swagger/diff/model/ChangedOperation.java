@@ -14,8 +14,8 @@ public class ChangedOperation implements Changed {
 
 	private List<ChangedParameter> changedParameter = new ArrayList<ChangedParameter>();
 
-	private List<ResponseProperty> addProps = new ArrayList<ResponseProperty>();
-	private List<ResponseProperty> missingProps = new ArrayList<ResponseProperty>();
+	private List<ElProperty> addProps = new ArrayList<ElProperty>();
+	private List<ElProperty> missingProps = new ArrayList<ElProperty>();
 
 	public List<Parameter> getAddParameters() {
 		return addParameters;
@@ -41,19 +41,19 @@ public class ChangedOperation implements Changed {
 		this.changedParameter = changedParameter;
 	}
 
-	public List<ResponseProperty> getAddProps() {
+	public List<ElProperty> getAddProps() {
 		return addProps;
 	}
 
-	public void setAddProps(List<ResponseProperty> addProps) {
+	public void setAddProps(List<ElProperty> addProps) {
 		this.addProps = addProps;
 	}
 
-	public List<ResponseProperty> getMissingProps() {
+	public List<ElProperty> getMissingProps() {
 		return missingProps;
 	}
 
-	public void setMissingProps(List<ResponseProperty> missingProps) {
+	public void setMissingProps(List<ElProperty> missingProps) {
 		this.missingProps = missingProps;
 	}
 

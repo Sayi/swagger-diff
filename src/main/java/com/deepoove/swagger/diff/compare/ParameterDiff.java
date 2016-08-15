@@ -2,11 +2,15 @@ package com.deepoove.swagger.diff.compare;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.deepoove.swagger.diff.model.ChangedParameter;
 
+import io.swagger.models.Model;
+import io.swagger.models.RefModel;
+import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
 
 public class ParameterDiff {
@@ -15,9 +19,20 @@ public class ParameterDiff {
 	private List<Parameter> missing;
 	private List<ChangedParameter> changed;
 	
+	Map<String, Model> oldDedinitions;
+	Map<String, Model> newDedinitions;
+	
 	private ParameterDiff(){}
+	
+	public static ParameterDiff buildWithDefinition(Map<String, Model> left,
+			Map<String, Model> right) {
+		ParameterDiff diff = new ParameterDiff();
+		diff.oldDedinitions = left;
+		diff.newDedinitions = right;
+		return diff;
+	}
 
-	public static ParameterDiff diff(List<Parameter> left,
+	public ParameterDiff diff(List<Parameter> left,
 			List<Parameter> right) {
 		ParameterDiff instance = new ParameterDiff();
 		if (null == left) left = new ArrayList<Parameter>();
@@ -38,6 +53,24 @@ public class ParameterDiff {
 				ChangedParameter changedParameter = new ChangedParameter();
 				changedParameter.setLeftParameter(leftPara);
 				changedParameter.setRightParameter(rightPara);
+				
+				if (leftPara instanceof BodyParameter && rightPara instanceof BodyParameter){
+					BodyParameter leftBodyPara = (BodyParameter)leftPara;
+					Model leftSchema = leftBodyPara.getSchema();
+					BodyParameter rightBodyPara = (BodyParameter)rightPara;
+					Model rightSchema = rightBodyPara.getSchema();
+					if (leftSchema instanceof RefModel && rightSchema instanceof RefModel){
+						String leftRef = ((RefModel) leftSchema).getSimpleRef();
+						String rightRef = ((RefModel) rightSchema).getSimpleRef();
+						Model leftModel = oldDedinitions.get(leftRef);
+						Model rightModel = newDedinitions.get(rightRef);
+						ModelDiff diff = ModelDiff.buildWithDefinition(oldDedinitions, newDedinitions).diff(leftModel, rightModel, name);
+						changedParameter.setIncreased(diff.getIncreased());
+						changedParameter.setMissing(diff.getMissing());
+					}
+				}
+				
+				
 				//is requried
 				boolean rightRequired = rightPara.getRequired();
 				boolean leftRequired = leftPara.getRequired();

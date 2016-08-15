@@ -28,7 +28,7 @@ import com.deepoove.swagger.diff.model.ChangedEndpoint;
 import com.deepoove.swagger.diff.model.ChangedOperation;
 import com.deepoove.swagger.diff.model.ChangedParameter;
 import com.deepoove.swagger.diff.model.Endpoint;
-import com.deepoove.swagger.diff.model.ResponseProperty;
+import com.deepoove.swagger.diff.model.ElProperty;
 
 import io.swagger.models.HttpMethod;
 import io.swagger.models.parameters.Parameter;
@@ -118,7 +118,7 @@ public class HtmlRender implements OutputRender {
 	private ContainerTag li_missingEndpoint(String method, String path,
 			String desc) {
 		return li().with(span(method).withClass(method),
-				del().withText(path + " ")).with(span(desc));
+				del().withText(path)).with(span(" " + desc));
 	}
 	
 	private Tag ol_changed(List<ChangedEndpoint> changedEndpoints){
@@ -147,24 +147,24 @@ public class HtmlRender implements OutputRender {
 	}
 
 	private Tag ul_response(ChangedOperation changedOperation) {
-		List<ResponseProperty> addProps = changedOperation.getAddProps();
-		List<ResponseProperty> delProps = changedOperation.getMissingProps();
+		List<ElProperty> addProps = changedOperation.getAddProps();
+		List<ElProperty> delProps = changedOperation.getMissingProps();
 		ContainerTag ul = ul().withClass("change response");
-		for (ResponseProperty prop : addProps){
+		for (ElProperty prop : addProps){
 			ul.with(li_addProp(prop));
 		}
-		for (ResponseProperty prop : delProps){
+		for (ElProperty prop : delProps){
 			ul.with(li_missingProp(prop));
 		}
 		return ul;
 	}
 
-	private Tag li_missingProp(ResponseProperty prop) {
+	private Tag li_missingProp(ElProperty prop) {
 		Property property = prop.getProperty();
 		return li().withClass("missing").withText("Delete").with(del(prop.getEl())).with(span(null == property.getDescription() ? "" : ("//" + property.getDescription())).withClass("comment"));
 	}
 
-	private Tag li_addProp(ResponseProperty prop) {
+	private Tag li_addProp(ElProperty prop) {
 		Property property = prop.getProperty();
 		return li().withText("Add " + prop.getEl()).with(span(null == property.getDescription() ? "" : ("//" + property.getDescription())).withClass("comment"));
 	}
@@ -178,7 +178,22 @@ public class HtmlRender implements OutputRender {
 				ul.with(li_addParam(param));
 			}
 			for (ChangedParameter param : changedParameters){
-				ul.with(li_changedParam(param));
+				List<ElProperty> increased = param.getIncreased();
+				for (ElProperty prop : increased){
+					ul.with(li_addProp(prop));
+				}
+			}
+			for (ChangedParameter param : changedParameters){
+				boolean changeRequired = param.isChangeRequired();
+				boolean changeDescription = param.isChangeDescription();
+				if (changeRequired || changeDescription)
+					ul.with(li_changedParam(param));
+			}
+			for (ChangedParameter param : changedParameters){
+				List<ElProperty> missing = param.getMissing();
+				for (ElProperty prop : missing){
+					ul.with(li_missingProp(prop));
+				}
 			}
 			for (Parameter param : delParameters){
 				ul.with(li_missingParam(param));

@@ -2,7 +2,7 @@ package com.deepoove.swagger.diff.model;
 
 import io.swagger.models.properties.Property;
 
-public class ResponseProperty {
+public class ElProperty {
 
 	private String el;
 

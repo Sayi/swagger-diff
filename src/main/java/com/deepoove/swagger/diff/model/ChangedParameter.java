@@ -1,8 +1,14 @@
 package com.deepoove.swagger.diff.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.swagger.models.parameters.Parameter;
 
 public class ChangedParameter implements Changed {
+	
+	private List<ElProperty> increased = new ArrayList<ElProperty>();
+	private List<ElProperty> missing = new ArrayList<ElProperty>();;
 
 	private Parameter leftParameter;
 	private Parameter rightParameter;
@@ -44,7 +50,24 @@ public class ChangedParameter implements Changed {
 	}
 
 	public boolean isDiff() {
-		return isChangeRequired || isChangeDescription;
+		return isChangeRequired || isChangeDescription || !increased.isEmpty() || !missing.isEmpty();
 	}
+
+	public List<ElProperty> getIncreased() {
+		return increased;
+	}
+
+	public void setIncreased(List<ElProperty> increased) {
+		this.increased = increased;
+	}
+
+	public List<ElProperty> getMissing() {
+		return missing;
+	}
+
+	public void setMissing(List<ElProperty> missing) {
+		this.missing = missing;
+	}
+	
 
 }

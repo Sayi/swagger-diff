@@ -124,7 +124,7 @@ public class SwaggerDiff {
 				
 				List<Parameter> oldParameters = oldOperation.getParameters();
 				List<Parameter> newParameters = newOperation.getParameters();
-				ParameterDiff parameterDiff = ParameterDiff.diff(oldParameters, newParameters);
+				ParameterDiff parameterDiff = ParameterDiff.buildWithDefinition(oldSpecSwagger.getDefinitions(), newSpecSwagger.getDefinitions()).diff(oldParameters, newParameters);
 				changedOperation.setAddParameters(parameterDiff.getIncreased());
 				changedOperation.setMissingParameters(parameterDiff.getMissing());
 				changedOperation.setChangedParameter(parameterDiff.getChanged());
@@ -158,7 +158,7 @@ public class SwaggerDiff {
 	private Property getResponseProperty(Operation operation) {
 		Map<String, Response> responses = operation.getResponses();
 		Response response = responses.get("200");
-		return response.getSchema();
+		return null == response ? null : response.getSchema();
 	}
 
 	private List<Endpoint> convert2EndpointList(Map<String, Path> map) {
