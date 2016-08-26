@@ -11,6 +11,7 @@ import com.deepoove.swagger.diff.SwaggerDiff;
 import com.deepoove.swagger.diff.model.ChangedEndpoint;
 import com.deepoove.swagger.diff.model.Endpoint;
 import com.deepoove.swagger.diff.output.HtmlRender;
+import com.deepoove.swagger.diff.output.MarkdownRender;
 
 public class SwaggerDiffTest {
 
@@ -104,6 +105,23 @@ public class SwaggerDiffTest {
 			e.printStackTrace();
 		}
 		Assert.assertFalse(changedEndPoints.isEmpty());
+		
+	}
+	
+	@Test
+	public void testDiffAndMarkdown() {
+		SwaggerDiff diff = new SwaggerDiff(SWAGGER_V1_DOC, SWAGGER_V2_DOC,
+				SwaggerDiff.SWAGGER_VERSION_V2).compare();
+		String render = new MarkdownRender().render(diff);
+		try {
+			FileWriter fw = new FileWriter(
+					"src/test/resources/testDiff.md");
+			fw.write(render);
+			fw.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
