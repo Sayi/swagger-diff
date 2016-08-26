@@ -13,13 +13,14 @@
 * Support API文档的鉴权Auth读取
 * EL(Expression Language)表达式展现
 * HTML 渲染输出
+* markdown 渲染
  
 
 # 使用
     <dependency>
         <groupId>com.deepoove</groupId>
         <artifactId>swagger-diff</artifactId>
-	    <version>1.0.0</version>
+	    <version>1.0.1</version>
     </dependency>
 
 # Usage示例(SwaggerDiffTest)
