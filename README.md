@@ -17,13 +17,17 @@
  
 
 # 使用
+```xml
     <dependency>
         <groupId>com.deepoove</groupId>
         <artifactId>swagger-diff</artifactId>
 	    <version>1.0.1</version>
     </dependency>
+```
 
 # Usage示例(SwaggerDiffTest)
+
+```java
     SwaggerDiff diff = new SwaggerDiff(SWAGGER_V1_DOC, SWAGGER_V2_DOC,
 				SwaggerDiff.SWAGGER_VERSION_V2).compare();
 	List<Endpoint> newEndpoints = diff.getNewEndpoints(); //新增api
@@ -40,6 +44,7 @@
 	} catch (IOException e) {
 		e.printStackTrace();
 	} 
+```
 
 # HTML 渲染
 ![image](./changelog.png)
