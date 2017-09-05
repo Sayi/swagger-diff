@@ -30,9 +30,9 @@ import io.swagger.parser.SwaggerCompatConverter;
 import io.swagger.parser.SwaggerParser;
 
 public class SwaggerDiff {
-	
+
 	public static final String SWAGGER_VERSION_V2 = "2.0";
-	
+
 	private static Logger logger = LoggerFactory.getLogger(SwaggerDiff.class);
 
 	private Swagger oldSpecSwagger;
@@ -43,32 +43,47 @@ public class SwaggerDiff {
 	private List<ChangedEndpoint> changedEndpoints;
 
 	/**
-	 * defaut version is 1.x
+	 * version is 1.x
 	 * 
 	 * @param oldSpec
 	 * @param newSpec
 	 */
-	public SwaggerDiff(String oldSpec, String newSpec) {
-		this(oldSpec, newSpec, null);
+	public static SwaggerDiff compareV1(String oldSpec, String newSpec) {
+		return compare(oldSpec, newSpec, null, null);
 	}
 
 	/**
+	 * version is 2.x
+	 * 
 	 * @param oldSpec
 	 * @param newSpec
-	 * @param version
-	 *            SWAGGER_VERSION_V2
+	 * @return
 	 */
-	public SwaggerDiff(String oldSpec, String newSpec, String version) {
+	public static SwaggerDiff compareV2(String oldSpec, String newSpec) {
+		return compare(oldSpec, newSpec, null, SWAGGER_VERSION_V2);
+	}
+
+	public static SwaggerDiff compare(String oldSpec, String newSpec,
+			List<AuthorizationValue> auths, String version) {
+		return new SwaggerDiff(oldSpec, newSpec, auths, version).compare();
+	}
+
+	private SwaggerDiff(String oldSpec, String newSpec) {
+		this(oldSpec, newSpec, null);
+	}
+
+	private SwaggerDiff(String oldSpec, String newSpec, String version) {
 		this(oldSpec, newSpec, null, version);
 	}
-	
+
 	/**
 	 * @param oldSpec
 	 * @param newSpec
 	 * @param auths
 	 * @param version
 	 */
-	public SwaggerDiff(String oldSpec, String newSpec, List<AuthorizationValue> auths, String version) {
+	private SwaggerDiff(String oldSpec, String newSpec, List<AuthorizationValue> auths,
+			String version) {
 		if (SWAGGER_VERSION_V2.equals(version)) {
 			SwaggerParser swaggerParser = new SwaggerParser();
 			oldSpecSwagger = swaggerParser.read(oldSpec, auths, true);
@@ -83,77 +98,81 @@ public class SwaggerDiff {
 				return;
 			}
 		}
-		if (null == oldSpecSwagger
-				|| null == newSpecSwagger) { throw new RuntimeException(
-						"cannot read api-doc from spec."); }
+		if (null == oldSpecSwagger || null == newSpecSwagger) { throw new RuntimeException(
+				"cannot read api-doc from spec."); }
 	}
 
-	public SwaggerDiff compare() {
+	private SwaggerDiff compare() {
 		Map<String, Path> oldPaths = oldSpecSwagger.getPaths();
 		Map<String, Path> newPaths = newSpecSwagger.getPaths();
 		MapKeyDiff<String, Path> pathDiff = MapKeyDiff.diff(oldPaths, newPaths);
 		this.newEndpoints = convert2EndpointList(pathDiff.getIncreased());
 		this.missingEndpoints = convert2EndpointList(pathDiff.getMissing());
-		
+
 		this.changedEndpoints = new ArrayList<ChangedEndpoint>();
-		
+
 		List<String> sharedKey = pathDiff.getSharedKey();
 		ChangedEndpoint changedEndpoint = null;
-		for (String pathUrl : sharedKey){
+		for (String pathUrl : sharedKey) {
 			changedEndpoint = new ChangedEndpoint();
 			changedEndpoint.setPathUrl(pathUrl);
 			Path oldPath = oldPaths.get(pathUrl);
 			Path newPath = newPaths.get(pathUrl);
-			
+
 			Map<HttpMethod, Operation> oldOperationMap = oldPath.getOperationMap();
 			Map<HttpMethod, Operation> newOperationMap = newPath.getOperationMap();
-			MapKeyDiff<HttpMethod, Operation> operationDiff = MapKeyDiff.diff(oldOperationMap, newOperationMap);
+			MapKeyDiff<HttpMethod, Operation> operationDiff = MapKeyDiff.diff(oldOperationMap,
+					newOperationMap);
 			Map<HttpMethod, Operation> increasedOperation = operationDiff.getIncreased();
 			Map<HttpMethod, Operation> missingOperation = operationDiff.getMissing();
 			changedEndpoint.setNewOperations(increasedOperation);
 			changedEndpoint.setMissingOperations(missingOperation);
-			
+
 			List<HttpMethod> sharedMethods = operationDiff.getSharedKey();
-			Map<HttpMethod, ChangedOperation> operas = new HashMap<HttpMethod, ChangedOperation>(); 
+			Map<HttpMethod, ChangedOperation> operas = new HashMap<HttpMethod, ChangedOperation>();
 			ChangedOperation changedOperation = null;
-			for (HttpMethod method : sharedMethods){
+			for (HttpMethod method : sharedMethods) {
 				changedOperation = new ChangedOperation();
 				Operation oldOperation = oldOperationMap.get(method);
 				Operation newOperation = newOperationMap.get(method);
 				changedOperation.setSummary(newOperation.getSummary());
-				
+
 				List<Parameter> oldParameters = oldOperation.getParameters();
 				List<Parameter> newParameters = newOperation.getParameters();
-				ParameterDiff parameterDiff = ParameterDiff.buildWithDefinition(oldSpecSwagger.getDefinitions(), newSpecSwagger.getDefinitions()).diff(oldParameters, newParameters);
+				ParameterDiff parameterDiff = ParameterDiff
+						.buildWithDefinition(oldSpecSwagger.getDefinitions(),
+								newSpecSwagger.getDefinitions())
+						.diff(oldParameters, newParameters);
 				changedOperation.setAddParameters(parameterDiff.getIncreased());
 				changedOperation.setMissingParameters(parameterDiff.getMissing());
 				changedOperation.setChangedParameter(parameterDiff.getChanged());
-				
+
 				Property oldResponseProperty = getResponseProperty(oldOperation);
 				Property newResponseProperty = getResponseProperty(newOperation);
-				PropertyDiff propertyDiff = PropertyDiff.buildWithDefinition(oldSpecSwagger.getDefinitions(), newSpecSwagger.getDefinitions());
+				PropertyDiff propertyDiff = PropertyDiff.buildWithDefinition(
+						oldSpecSwagger.getDefinitions(), newSpecSwagger.getDefinitions());
 				propertyDiff.diff(oldResponseProperty, newResponseProperty);
 				changedOperation.setAddProps(propertyDiff.getIncreased());
 				changedOperation.setMissingProps(propertyDiff.getMissing());
-				
-				if (changedOperation.isDiff()){
+
+				if (changedOperation.isDiff()) {
 					operas.put(method, changedOperation);
 				}
 			}
 			changedEndpoint.setChangedOperations(operas);
-			
-			this.newEndpoints.addAll(convert2EndpointList(changedEndpoint.getPathUrl(), changedEndpoint.getNewOperations()));
-			this.missingEndpoints.addAll(convert2EndpointList(changedEndpoint.getPathUrl(), changedEndpoint.getMissingOperations()));
-			
-			if (changedEndpoint.isDiff()){
+
+			this.newEndpoints.addAll(convert2EndpointList(changedEndpoint.getPathUrl(),
+					changedEndpoint.getNewOperations()));
+			this.missingEndpoints.addAll(convert2EndpointList(changedEndpoint.getPathUrl(),
+					changedEndpoint.getMissingOperations()));
+
+			if (changedEndpoint.isDiff()) {
 				changedEndpoints.add(changedEndpoint);
 			}
 		}
-		
+
 		return this;
 	}
-
-	
 
 	private Property getResponseProperty(Operation operation) {
 		Map<String, Response> responses = operation.getResponses();
@@ -167,12 +186,12 @@ public class SwaggerDiff {
 		for (Entry<String, Path> entry : map.entrySet()) {
 			String url = entry.getKey();
 			Path path = entry.getValue();
-			
+
 			Map<HttpMethod, Operation> operationMap = path.getOperationMap();
-			for (Entry<HttpMethod, Operation> entryOper : operationMap.entrySet()){
+			for (Entry<HttpMethod, Operation> entryOper : operationMap.entrySet()) {
 				HttpMethod httpMethod = entryOper.getKey();
 				Operation operation = entryOper.getValue();
-				
+
 				Endpoint endpoint = new Endpoint();
 				endpoint.setPathUrl(url);
 				endpoint.setMethod(httpMethod);
@@ -184,6 +203,7 @@ public class SwaggerDiff {
 		}
 		return endpoints;
 	}
+
 	private Collection<? extends Endpoint> convert2EndpointList(String pathUrl,
 			Map<HttpMethod, Operation> map) {
 		List<Endpoint> endpoints = new ArrayList<Endpoint>();
@@ -191,12 +211,12 @@ public class SwaggerDiff {
 		for (Entry<HttpMethod, Operation> entry : map.entrySet()) {
 			HttpMethod httpMethod = entry.getKey();
 			Operation operation = entry.getValue();
-				Endpoint endpoint = new Endpoint();
-				endpoint.setPathUrl(pathUrl);
-				endpoint.setMethod(httpMethod);
-				endpoint.setSummary(operation.getSummary());
-				endpoint.setOperation(operation);
-				endpoints.add(endpoint);
+			Endpoint endpoint = new Endpoint();
+			endpoint.setPathUrl(pathUrl);
+			endpoint.setMethod(httpMethod);
+			endpoint.setSummary(operation.getSummary());
+			endpoint.setOperation(operation);
+			endpoints.add(endpoint);
 		}
 		return endpoints;
 	}
