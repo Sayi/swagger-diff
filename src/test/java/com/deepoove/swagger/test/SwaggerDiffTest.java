@@ -15,14 +15,14 @@ import com.deepoove.swagger.diff.output.MarkdownRender;
 
 public class SwaggerDiffTest {
 
-	final String SWAGGER_V1_DOC = "petstore_v1.json";
-	final String SWAGGER_V2_DOC = "petstore_v2.json";
-
-	final String SWAGGER_EMPTY_DOC = "petstore_empty.json";
+	final String SWAGGER_V2_DOC1 = "petstore_v2_1.json";
+	final String SWAGGER_V2_DOC2 = "petstore_v2_2.json";
+	final String SWAGGER_V2_EMPTY_DOC = "petstore_v2_empty.json";
+	final String SWAGGER_V2_HTTP = "http://petstore.swagger.io/v2/swagger.json";
 
 	@Test
 	public void testEqual() {
-		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC, SWAGGER_V2_DOC);
+		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC2, SWAGGER_V2_DOC2);
 		List<Endpoint> newEndpoints = diff.getNewEndpoints();
 		List<Endpoint> missingEndpoints = diff.getMissingEndpoints();
 		List<ChangedEndpoint> changedEndPoints = diff.getChangedEndpoints();
@@ -34,7 +34,7 @@ public class SwaggerDiffTest {
 
 	@Test
 	public void testNewApi() {
-		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_EMPTY_DOC, SWAGGER_V2_DOC);
+		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_EMPTY_DOC, SWAGGER_V2_DOC2);
 		List<Endpoint> newEndpoints = diff.getNewEndpoints();
 		List<Endpoint> missingEndpoints = diff.getMissingEndpoints();
 		List<ChangedEndpoint> changedEndPoints = diff.getChangedEndpoints();
@@ -59,7 +59,7 @@ public class SwaggerDiffTest {
 
 	@Test
 	public void testDeprecatedApi() {
-		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V1_DOC, SWAGGER_EMPTY_DOC);
+		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_EMPTY_DOC);
 		List<Endpoint> newEndpoints = diff.getNewEndpoints();
 		List<Endpoint> missingEndpoints = diff.getMissingEndpoints();
 		List<ChangedEndpoint> changedEndPoints = diff.getChangedEndpoints();
@@ -84,7 +84,7 @@ public class SwaggerDiffTest {
 	
 	@Test
 	public void testDiff() {
-		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V1_DOC, SWAGGER_V2_DOC);
+		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
 		List<ChangedEndpoint> changedEndPoints = diff.getChangedEndpoints();
 		String html = new HtmlRender("Changelog",
 				"http://deepoove.com/swagger-diff/stylesheets/demo.css")
@@ -105,7 +105,7 @@ public class SwaggerDiffTest {
 	
 	@Test
 	public void testDiffAndMarkdown() {
-		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V1_DOC, SWAGGER_V2_DOC);
+		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
 		String render = new MarkdownRender().render(diff);
 		try {
 			FileWriter fw = new FileWriter(
