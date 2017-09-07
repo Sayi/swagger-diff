@@ -35,16 +35,16 @@ SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
 # Swagger version
 v1.x
 ```java
-SwaggerDiff.compareV2(SWAGGER_V1_DOC1, SWAGGER_V1_DOC2);
+SwaggerDiff.compareV1(SWAGGER_V1_DOC1, SWAGGER_V1_DOC2);
 ```
 
 v2.0
 ```java
-SwaggerDiff.compareV1(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
+SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
 ```
 
 # Render difference
-#### html
+#### HTML
 ```java
 String html = new HtmlRender("Changelog",
         "http://deepoove.com/swagger-diff/stylesheets/demo.css")
@@ -62,7 +62,7 @@ try {
 ```
 ![image](./changelog.png)
 
-#### markdown
+#### Markdown
 ```java
 String render = new MarkdownRender().render(diff);
 try {
