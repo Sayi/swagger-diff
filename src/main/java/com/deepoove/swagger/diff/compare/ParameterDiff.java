@@ -13,6 +13,11 @@ import io.swagger.models.RefModel;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
 
+/**
+ * compare two parameter
+ * @author Sayi
+ * @version 
+ */
 public class ParameterDiff {
 
 	private List<Parameter> increased;

@@ -12,6 +12,11 @@ import io.swagger.models.Model;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 
+/**
+ * compare two model
+ * @author Sayi
+ * @version 
+ */
 public class ModelDiff {
 
 	private List<ElProperty> increased;

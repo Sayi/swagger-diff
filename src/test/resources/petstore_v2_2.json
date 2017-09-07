@@ -287,65 +287,6 @@
           }
         ]
       },
-      "post": {
-        "tags": [
-          "pet"
-        ],
-        "summary": "Updates a pet in the store with form data",
-        "description": "",
-        "operationId": "updatePetWithForm",
-        "consumes": [
-          "application/x-www-form-urlencoded"
-        ],
-        "produces": [
-          "application/xml",
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "petId",
-            "in": "path",
-            "description": "ID of pet that needs to be updated",
-            "required": true,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "name",
-            "in": "formData",
-            "description": "Updated name of the pet",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "status",
-            "in": "formData",
-            "description": "Updated status of the pet",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "newFormDataParam",
-            "in": "formData",
-            "description": "form data param demo",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "405": {
-            "description": "Invalid input"
-          }
-        },
-        "security": [
-          {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
-          }
-        ]
-      },
       "delete": {
         "tags": [
           "pet"
@@ -402,7 +343,7 @@
         "tags": [
           "pet"
         ],
-        "summary": "uploads an image",
+        "summary": "uploads an image for pet",
         "description": "",
         "operationId": "uploadFile",
         "consumes": [
@@ -415,8 +356,8 @@
           {
             "name": "petId",
             "in": "path",
-            "description": "ID of pet to update",
-            "required": true,
+            "description": "ID of pet to update, default false",
+            "required": false,
             "type": "integer",
             "format": "int64"
           },

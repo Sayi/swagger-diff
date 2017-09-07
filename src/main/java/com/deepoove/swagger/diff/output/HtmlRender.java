@@ -27,21 +27,21 @@ import com.deepoove.swagger.diff.SwaggerDiff;
 import com.deepoove.swagger.diff.model.ChangedEndpoint;
 import com.deepoove.swagger.diff.model.ChangedOperation;
 import com.deepoove.swagger.diff.model.ChangedParameter;
-import com.deepoove.swagger.diff.model.Endpoint;
 import com.deepoove.swagger.diff.model.ElProperty;
+import com.deepoove.swagger.diff.model.Endpoint;
 
 import io.swagger.models.HttpMethod;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
 import j2html.tags.ContainerTag;
-import j2html.tags.Tag;
 
-public class HtmlRender implements OutputRender {
+public class HtmlRender implements Render {
 	
-	private String title = "API change log";
-	private String linkCss = "demo.css";
+    private String title;
+    private String linkCss;
 	
 	public HtmlRender() {
+	    this("Api Change Log", "http://deepoove.com/swagger-diff/stylesheets/demo.css");
 	}
 	public HtmlRender(String title, String linkCss) {
 		this.title = title;
@@ -57,17 +57,12 @@ public class HtmlRender implements OutputRender {
 		ContainerTag ol_missingEndpoint = ol_missingEndpoint(missingEndpoints);
 		
 		List<ChangedEndpoint> changedEndpoints = diff.getChangedEndpoints();
-		Tag ol_changed = ol_changed(changedEndpoints);
+		ContainerTag ol_changed = ol_changed(changedEndpoints);
 		
-//		System.out.println(ol_newEndpoint.render());
-//		System.out.println(ol_missingEndpoint.render());
-//		System.out.println(ol_changed.render());
-		
-
 		return reanderHtml(ol_newEndpoint, ol_missingEndpoint, ol_changed);
 	}
 	
-	public String reanderHtml(Tag ol_new, Tag ol_miss, Tag ol_changed){
+	public String reanderHtml(ContainerTag ol_new, ContainerTag ol_miss, ContainerTag ol_changed){
 		ContainerTag html = html().attr("lang", "en").with(
 			    head().with(
 			    	meta().withCharset("utf-8"),
@@ -121,7 +116,7 @@ public class HtmlRender implements OutputRender {
 				del().withText(path)).with(span(" " + desc));
 	}
 	
-	private Tag ol_changed(List<ChangedEndpoint> changedEndpoints){
+	private ContainerTag ol_changed(List<ChangedEndpoint> changedEndpoints){
 		if (null == changedEndpoints) return ol();
 		ContainerTag ol = ol();
 		for (ChangedEndpoint changedEndpoint:changedEndpoints){
@@ -134,10 +129,10 @@ public class HtmlRender implements OutputRender {
 				
 				ContainerTag ul_detail = ul().withClass("detail");
 				if (changedOperation.isDiffParam()){
-					ul_detail.with(li().with(h3("参数")).with(ul_param(changedOperation)));
+					ul_detail.with(li().with(h3("Parameter")).with(ul_param(changedOperation)));
 				}
 				if (changedOperation.isDiffProp()){
-					ul_detail.with(li().with(h3("返回类型")).with(ul_response(changedOperation)));
+					ul_detail.with(li().with(h3("Return Type")).with(ul_response(changedOperation)));
 				}
 				ol.with(li().with(span(method).withClass(method)).withText(pathUrl + " ").with(span(desc))
 						.with(ul_detail));
@@ -146,7 +141,7 @@ public class HtmlRender implements OutputRender {
 		return ol;
 	}
 
-	private Tag ul_response(ChangedOperation changedOperation) {
+	private ContainerTag ul_response(ChangedOperation changedOperation) {
 		List<ElProperty> addProps = changedOperation.getAddProps();
 		List<ElProperty> delProps = changedOperation.getMissingProps();
 		ContainerTag ul = ul().withClass("change response");
@@ -159,17 +154,17 @@ public class HtmlRender implements OutputRender {
 		return ul;
 	}
 
-	private Tag li_missingProp(ElProperty prop) {
+	private ContainerTag li_missingProp(ElProperty prop) {
 		Property property = prop.getProperty();
 		return li().withClass("missing").withText("Delete").with(del(prop.getEl())).with(span(null == property.getDescription() ? "" : ("//" + property.getDescription())).withClass("comment"));
 	}
 
-	private Tag li_addProp(ElProperty prop) {
+	private ContainerTag li_addProp(ElProperty prop) {
 		Property property = prop.getProperty();
 		return li().withText("Add " + prop.getEl()).with(span(null == property.getDescription() ? "" : ("//" + property.getDescription())).withClass("comment"));
 	}
 
-	private Tag ul_param(ChangedOperation changedOperation) {
+	private ContainerTag ul_param(ChangedOperation changedOperation) {
 			List<Parameter> addParameters = changedOperation.getAddParameters();
 			List<Parameter> delParameters = changedOperation.getMissingParameters();
 			List<ChangedParameter> changedParameters = changedOperation.getChangedParameter();
@@ -201,23 +196,23 @@ public class HtmlRender implements OutputRender {
 			return ul;
 	}
 	
-	private Tag li_addParam(Parameter param){
+	private ContainerTag li_addParam(Parameter param){
 		return li().withText("Add " + param.getName()).with(span(null == param.getDescription() ? "" : ("//" + param.getDescription())).withClass("comment"));
 	}
-	private Tag li_missingParam(Parameter param){
+	private ContainerTag li_missingParam(Parameter param){
 		return li().withClass("missing").with(span("Delete")).with(del(param.getName())).with(span(null == param.getDescription() ? "" : ("//" + param.getDescription())).withClass("comment"));
 	}
-	private Tag li_changedParam(ChangedParameter changeParam){
+	private ContainerTag li_changedParam(ChangedParameter changeParam){
 		boolean changeRequired = changeParam.isChangeRequired();
 		boolean changeDescription = changeParam.isChangeDescription();
 		Parameter rightParam = changeParam.getRightParameter();
 		Parameter leftParam = changeParam.getLeftParameter();
 		ContainerTag li = li().withText(rightParam.getName());
 		if (changeRequired){
-			li.withText(" 修改为" + (rightParam.getRequired() ? "必填" : "非必填"));
+			li.withText(" change into " + (rightParam.getRequired() ? "required" : "not required"));
 		}
 		if (changeDescription){
-			li.withText(" 注释 ").with(del(leftParam.getDescription()).withClass("comment")).withText(" 改为 ").with(span(rightParam.getDescription()).withClass("comment"));
+			li.withText(" Notes ").with(del(leftParam.getDescription()).withClass("comment")).withText(" change into ").with(span(rightParam.getDescription()).withClass("comment"));
 		}
 		return li;
 	}

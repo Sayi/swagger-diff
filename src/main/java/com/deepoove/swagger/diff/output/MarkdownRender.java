@@ -15,7 +15,7 @@ import io.swagger.models.HttpMethod;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
 
-public class MarkdownRender implements OutputRender {
+public class MarkdownRender implements Render {
 
 	final String H3 = "### ";
 	final String BLOCKQUOTE = "> ";
@@ -79,14 +79,6 @@ public class MarkdownRender implements OutputRender {
 		return sb.toString();
 	}
 
-	// private String li_missingEndpoint(String method, String path,
-	// String desc) {
-	// StringBuffer sb = new StringBuffer();
-	// sb.append(LI).append(CODE).append(method).append(CODE).append(" " +
-	// path).append(" " + desc);
-	// return sb.toString();
-	// }
-
 	private String ol_changed(List<ChangedEndpoint> changedEndpoints) {
 		if (null == changedEndpoints) return "";
 		StringBuffer sb = new StringBuffer();
@@ -102,11 +94,11 @@ public class MarkdownRender implements OutputRender {
 
 				StringBuffer ul_detail = new StringBuffer();
 				if (changedOperation.isDiffParam()) {
-					ul_detail.append(PRE_LI).append("参数")
+					ul_detail.append(PRE_LI).append("Parameter")
 							.append(ul_param(changedOperation));
 				}
 				if (changedOperation.isDiffProp()) {
-					ul_detail.append(PRE_LI).append("返回类型")
+					ul_detail.append(PRE_LI).append("Return Type")
 							.append(ul_response(changedOperation));
 				}
 				sb.append(LI).append(CODE).append(method).append(CODE)
@@ -210,10 +202,10 @@ public class MarkdownRender implements OutputRender {
 		StringBuffer sb = new StringBuffer("");
 		sb.append(rightParam.getName());
 		if (changeRequired) {
-			sb.append(" 修改为" + (rightParam.getRequired() ? "必填" : "非必填"));
+			sb.append(" change into " + (rightParam.getRequired() ? "required" : "not required"));
 		}
 		if (changeDescription) {
-			sb.append(" 注释 ").append(leftParam.getDescription()).append(" 改为 ")
+			sb.append(" Notes ").append(leftParam.getDescription()).append(" change into ")
 					.append(rightParam.getDescription());
 		}
 		return sb.toString();

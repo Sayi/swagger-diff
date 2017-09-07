@@ -2,6 +2,11 @@ package com.deepoove.swagger.diff.model;
 
 import io.swagger.models.properties.Property;
 
+/**
+ * property with expression Language grammar
+ * @author Sayi
+ * @version 
+ */
 public class ElProperty {
 
 	private String el;
