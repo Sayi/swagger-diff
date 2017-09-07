@@ -10,7 +10,7 @@
 
 	<groupId>com.deepoove</groupId>
 	<artifactId>swagger-diff</artifactId>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.1.0</version>
 	<packaging>jar</packaging>
 
 	<name>swagger-diff</name>
