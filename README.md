@@ -4,7 +4,7 @@
 
 Compare two swagger API specifications(1.x or v2.0) and render the difference to html file or markdown file.
 
-# Requriements
+# Requirements
 `jdk1.6+`
 
 # Feature
