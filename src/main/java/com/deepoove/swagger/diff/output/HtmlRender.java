@@ -97,7 +97,7 @@ public class HtmlRender implements Render {
 	private ContainerTag li_newEndpoint(String method, String path,
 			String desc) {
 		return li().with(span(method).withClass(method)).withText(path + " ")
-				.with(span(desc));
+				.with(span(null == desc ? "" : desc));
 	}
 
 	private ContainerTag ol_missingEndpoint(List<Endpoint> endpoints) {
@@ -113,7 +113,7 @@ public class HtmlRender implements Render {
 	private ContainerTag li_missingEndpoint(String method, String path,
 			String desc) {
 		return li().with(span(method).withClass(method),
-				del().withText(path)).with(span(" " + desc));
+				del().withText(path)).with(span(null == desc ? "" : " " + desc));
 	}
 	
 	private ContainerTag ol_changed(List<ChangedEndpoint> changedEndpoints){
@@ -134,7 +134,7 @@ public class HtmlRender implements Render {
 				if (changedOperation.isDiffProp()){
 					ul_detail.with(li().with(h3("Return Type")).with(ul_response(changedOperation)));
 				}
-				ol.with(li().with(span(method).withClass(method)).withText(pathUrl + " ").with(span(desc))
+				ol.with(li().with(span(method).withClass(method)).withText(pathUrl + " ").with(span(null == desc ? "" : desc))
 						.with(ul_detail));
 			}
 		}
@@ -212,7 +212,7 @@ public class HtmlRender implements Render {
 			li.withText(" change into " + (rightParam.getRequired() ? "required" : "not required"));
 		}
 		if (changeDescription){
-			li.withText(" Notes ").with(del(leftParam.getDescription()).withClass("comment")).withText(" change into ").with(span(rightParam.getDescription()).withClass("comment"));
+			li.withText(" Notes ").with(del(leftParam.getDescription()).withClass("comment")).withText(" change into ").with(span(span(null == rightParam.getDescription() ? "" : rightParam.getDescription()).withClass("comment")));
 		}
 		return li;
 	}
