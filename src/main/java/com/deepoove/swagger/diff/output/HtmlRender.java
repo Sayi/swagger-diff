@@ -3,6 +3,7 @@ package com.deepoove.swagger.diff.output;
 import static j2html.TagCreator.body;
 import static j2html.TagCreator.del;
 import static j2html.TagCreator.div;
+import static j2html.TagCreator.rawHtml;
 import static j2html.TagCreator.document;
 import static j2html.TagCreator.h1;
 import static j2html.TagCreator.h2;
@@ -10,6 +11,8 @@ import static j2html.TagCreator.h3;
 import static j2html.TagCreator.head;
 import static j2html.TagCreator.header;
 import static j2html.TagCreator.hr;
+import static j2html.TagCreator.script; 
+import static j2html.TagCreator.a;
 import static j2html.TagCreator.html;
 import static j2html.TagCreator.li;
 import static j2html.TagCreator.link;
@@ -67,14 +70,15 @@ public class HtmlRender implements Render {
 			    head().with(
 			    	meta().withCharset("utf-8"),
 			        title(title),
+ 			        script(rawHtml("function showHide(id){if(document.getElementById(id).style.display==\'none\'){document.getElementById(id).style.display=\'block\';document.getElementById(\'btn_\'+id).innerHTML=\'&uArr;\';}else{document.getElementById(id).style.display=\'none\';document.getElementById(\'btn_\'+id).innerHTML=\'&dArr;\';}return true;}")).withType("text/javascript"),
 			        link().withRel("stylesheet").withHref(linkCss)
 			    ),
 			    body().with(
 			        header().with(h1(title)),
 			        div().withClass("article").with(
-			        		div().with(h2("What's New"),hr(),ol_new),
-			        		div().with(h2("What's Deprecated"),hr(),ol_miss),
-			        		div().with(h2("What's Changed"),hr(),ol_changed)
+			                div_headArticle("What's New", "new", ol_new), 
+			                div_headArticle("What's Deprecated", "deprecated", ol_miss), 
+			                div_headArticle("What's Changed", "changed", ol_changed)
 			        	)
 			    )
 			);
@@ -82,11 +86,13 @@ public class HtmlRender implements Render {
 		return document().render() + html.render();
 	}
 	
-	
+	private ContainerTag div_headArticle(final String title, final String type, final ContainerTag ol) { 
+	    return div().with(h2(title).with(a(rawHtml("&uArr;")).withId("btn_" + type).withClass("showhide").withHref("#").attr("onClick", "javascript:showHide('" + type + "');")), hr(), ol); 
+	}
 
 	private ContainerTag ol_newEndpoint(List<Endpoint> endpoints) {
-		if (null == endpoints) return ol();
-		ContainerTag ol = ol();
+		if (null == endpoints) return ol().withId("new");
+		ContainerTag ol = ol().withId("new");
 		for (Endpoint endpoint : endpoints) {
 			ol.with(li_newEndpoint(endpoint.getMethod().toString(),
 					endpoint.getPathUrl(), endpoint.getSummary()));
@@ -101,8 +107,8 @@ public class HtmlRender implements Render {
 	}
 
 	private ContainerTag ol_missingEndpoint(List<Endpoint> endpoints) {
-		if (null == endpoints) return ol();
-		ContainerTag ol = ol();
+		if (null == endpoints) return ol().withId("deprecated"); 
+		ContainerTag ol = ol().withId("deprecated"); 
 		for (Endpoint endpoint : endpoints) {
 			ol.with(li_missingEndpoint(endpoint.getMethod().toString(),
 					endpoint.getPathUrl(), endpoint.getSummary()));
@@ -117,8 +123,8 @@ public class HtmlRender implements Render {
 	}
 	
 	private ContainerTag ol_changed(List<ChangedEndpoint> changedEndpoints){
-		if (null == changedEndpoints) return ol();
-		ContainerTag ol = ol();
+		if (null == changedEndpoints) return ol().withId("changed"); 
+		ContainerTag ol = ol().withId("changed"); 
 		for (ChangedEndpoint changedEndpoint:changedEndpoints){
 			String pathUrl = changedEndpoint.getPathUrl();
 			Map<HttpMethod, ChangedOperation> changedOperations = changedEndpoint.getChangedOperations();
