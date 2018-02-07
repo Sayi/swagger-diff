@@ -21,3 +21,5 @@ hs_err_pid*
 *.html
 
 testDiff\.md
+
+*.swp

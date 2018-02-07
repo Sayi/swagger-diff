@@ -207,8 +207,7 @@
             "in": "path",
             "description": "ID of pet that needs to be updated",
             "required": true,
-            "type": "integer",
-            "format": "int64"
+            "type": "string"
           },
           {
             "name": "name",
@@ -599,7 +598,7 @@
             "in": "query",
             "description": "The password for login in clear text",
             "required": true,
-            "type": "string"
+            "type": "integer"
           }
         ],
         "responses": {

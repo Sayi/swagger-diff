@@ -240,7 +240,7 @@ public class HtmlRender implements Render {
 
     private ContainerTag li_changeTypeProp(final ElProperty prop) {
         Property property = prop.getProperty();
-        return li().withText("Change type ").with(textField(prop.getEl())).with(i_backwardsIncompatibilitiesWarning()).with(span(null == property.getDescription() ? "" : ("//" + property.getDescription())).withClass("comment"));
+        return li().with(textField(prop.getEl())).withText(" changes type").with(i_backwardsIncompatibilitiesWarning()).with(span(null == property.getDescription() ? "" : ("//" + property.getDescription())).withClass("comment"));
     }
 
     private ContainerTag textField(final String pField) {
@@ -279,9 +279,7 @@ public class HtmlRender implements Render {
             }
         }
         for (ChangedParameter param : changedParameters){
-            boolean changeRequired = param.isChangeRequired();
-            boolean changeDescription = param.isChangeDescription();
-            if (changeRequired || changeDescription) {
+            if (param.isChangeRequired() || param.isChangeDescription() || param.isChangeType()) {
                 ul.with(li_changedParam(param));
             }
         }
@@ -312,14 +310,21 @@ public class HtmlRender implements Render {
     private ContainerTag li_changedParam(final ChangedParameter changeParam){
         boolean changeRequired = changeParam.isChangeRequired();
         boolean changeDescription = changeParam.isChangeDescription();
+        boolean changeType = changeParam.isChangeType();
         Parameter rightParam = changeParam.getRightParameter();
         Parameter leftParam = changeParam.getLeftParameter();
         ContainerTag li = li().with(textField(rightParam.getName()));
-        if (changeRequired){
-            li.withText(" change into " + (rightParam.getRequired() ? "required " : "not required "));
-        }
-        if (changeDescription){
-            li.withText(" Notes ").with(del(leftParam.getDescription()).withClass("comment")).withText(" change into ").with(span(span(null == rightParam.getDescription() ? "" : rightParam.getDescription()).withClass("comment")));
+        if(changeRequired || changeType || changeDescription) {
+            li.withText(" : ");
+            if (changeRequired){
+                li.with(br()).withText(" - becomes " + (rightParam.getRequired() ? "required " : "not required "));
+            }
+            if (changeType) {
+                li.with(br()).withText(" - changes type ");
+            }
+            if (changeDescription){
+                li.with(br()).withText(" - notes ").with(del(leftParam.getDescription()).withClass("comment")).withText(" change into ").with(span(span(null == rightParam.getDescription() ? "" : rightParam.getDescription()).withClass("comment")));
+            }
         }
         if(!changeParam.isBackwardsCompatible()) {
             li.with(i_backwardsIncompatibilitiesWarning());

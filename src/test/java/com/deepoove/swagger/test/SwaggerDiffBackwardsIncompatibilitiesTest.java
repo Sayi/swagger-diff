@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.deepoove.swagger.diff.SwaggerDiff;
@@ -82,17 +81,13 @@ public class SwaggerDiffBackwardsIncompatibilitiesTest {
     }
 
     @Test
-    @Ignore
     public void testBackwardsIncompatibilitiesChangeTypeQueryParam() {
         verifyBackwardsIncompatibilities(SWAGGER_V2_WITH_CHANGE_TYPE_QUERY_PARAM_DOC);
-        // TODO JLA not implemented
     }
 
     @Test
-    @Ignore
     public void testBackwardsIncompatibilitiesChangeTypePathParam() {
         verifyBackwardsIncompatibilities(SWAGGER_V2_WITH_CHANGE_TYPE_PATH_PARAM_DOC);
-        // TODO JLA not implemented
     }
 
     @Test

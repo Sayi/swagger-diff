@@ -18,7 +18,7 @@ public class ChangedParameter implements Changed {
     private Parameter rightParameter;
 
     private boolean isChangeRequired;
-//    private boolean isChangeType; // TODO JLA hard ?
+    private boolean isChangeType;
     private boolean isChangeDescription;
 
     @Override
@@ -27,6 +27,7 @@ public class ChangedParameter implements Changed {
                 || isChangeDescription
                 || !increased.isEmpty()
                 || !missing.isEmpty()
+                || isChangeType
                 || !requiredChanges.isEmpty()
                 || !typesChanges.isEmpty();
     }
@@ -34,6 +35,7 @@ public class ChangedParameter implements Changed {
     @Override
     public boolean isBackwardsCompatible() {
         boolean isBackwardsCompatible = !isChangeRequired
+                && !isChangeType
                 && missing.isEmpty()
                 && requiredChanges.isEmpty()
                 && typesChanges.isEmpty();

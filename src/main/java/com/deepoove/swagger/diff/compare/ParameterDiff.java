@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.deepoove.swagger.diff.model.ChangedParameter;
 
 import io.swagger.models.Model;
 import io.swagger.models.RefModel;
+import io.swagger.models.parameters.AbstractSerializableParameter;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
 import lombok.Data;
@@ -57,7 +59,7 @@ public class ParameterDiff {
             int index = index(instance.increased, name);
             if (-1 == index){
                 instance.missing.add(leftPara);
-            }else{
+            } else {
                 Parameter rightPara = instance.increased.get(index);
                 instance.increased.remove(index);
                 ChangedParameter changedParameter = new ChangedParameter();
@@ -83,27 +85,17 @@ public class ParameterDiff {
                 }
 
 
-                //is required
+                //is becomes required
                 boolean rightRequired = rightPara.getRequired();
                 boolean leftRequired = leftPara.getRequired();
                 changedParameter.setChangeRequired(leftRequired != rightRequired && rightRequired);
 
-                // TODO JLA
-//                //is change type
-//                if(rightPara.getName().contains("username")){
-//                    SerializableParameter s =  (SerializableParameter) rightPara;
-//                    System.out.println(rightPara.getDescription());
-//                    System.out.println(s.getName());
-//                    System.out.println(s.getIn());
-//                    System.out.println(s.getType());
-//                }
-//                if(leftPara.getName().contains("username")){
-//                    SerializableParameter s =  (SerializableParameter) leftPara;
-//                    System.out.println(leftPara.getDescription());
-//                    System.out.println(s.getName());
-//                    System.out.println(s.getIn());
-//                    System.out.println(s.getType());
-//                }
+                //is change type
+                if (ClassUtils.getAllSuperclasses(leftPara.getClass()).contains(AbstractSerializableParameter.class)
+                        && ClassUtils.getAllSuperclasses(rightPara.getClass()).contains(AbstractSerializableParameter.class)
+                        && !(((AbstractSerializableParameter) leftPara).getType()).equals(((AbstractSerializableParameter) rightPara).getType())) {
+                    changedParameter.setChangeType(true);
+                }
 
                 //description
                 String description = rightPara.getDescription();
