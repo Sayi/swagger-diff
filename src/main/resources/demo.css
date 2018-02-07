@@ -186,3 +186,10 @@ s, del, .missing, del.comment {
     font-size: 12px;
     float: right;
 }
+
+/* Class for icon warning backwards */
+.warnbackward {
+    color:#e2c600;
+    padding-left:5px;
+    padding-right:5px;
+}

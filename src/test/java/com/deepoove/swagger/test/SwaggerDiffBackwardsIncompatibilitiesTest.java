@@ -119,11 +119,9 @@ public class SwaggerDiffBackwardsIncompatibilitiesTest {
 
     private void buildRenderHtml(final SwaggerDiff pSwaggerDiff, final String pFileName) {
         List<String> css = new ArrayList<String>();
-        css.add("https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css");
         css.add("https://use.fontawesome.com/releases/v5.0.6/css/all.css");
         css.add("http://deepoove.com/swagger-diff/stylesheets/demo.css");
         List<String> scripts = new ArrayList<String>();
-//        css.add("https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js");
         String html = new HtmlRender("Changelog", css, scripts).withBackwardsIncompatibilities()
                 .render(pSwaggerDiff);
         try {

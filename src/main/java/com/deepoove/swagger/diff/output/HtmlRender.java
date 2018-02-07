@@ -304,9 +304,11 @@ public class HtmlRender implements Render {
         }
         return li.with(span(null == param.getDescription() ? "" : ("//" + param.getDescription())).withClass("comment"));
     }
+
     private ContainerTag li_missingParam(final Parameter param){
         return li().withClass("missing").with(span("Delete")).with(del(textField(param.getName()))).with(i_backwardsIncompatibilitiesWarning()).with(span(null == param.getDescription() ? "" : ("//" + param.getDescription())).withClass("comment"));
     }
+
     private ContainerTag li_changedParam(final ChangedParameter changeParam){
         boolean changeRequired = changeParam.isChangeRequired();
         boolean changeDescription = changeParam.isChangeDescription();
@@ -334,7 +336,7 @@ public class HtmlRender implements Render {
 
     /** Add icon if modifications make backwards incompatibilies. */
     private ContainerTag i_backwardsIncompatibilitiesWarning() {
-        return showBackwardsIncompatibilities ? i().withClass("fas fa-fire text-warning").withStyle("padding-left:5px;padding-right:5px").withTitle(NON_BACKWARDS_CHANGES):null;
+        return showBackwardsIncompatibilities ? i().withClass("fas fa-exclamation-circle warnbackward").withTitle(NON_BACKWARDS_CHANGES):null;
     }
 
 
