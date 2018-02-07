@@ -4,70 +4,45 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.swagger.models.parameters.Parameter;
+import lombok.Data;
 
+@Data
 public class ChangedParameter implements Changed {
-	
-	private List<ElProperty> increased = new ArrayList<ElProperty>();
-	private List<ElProperty> missing = new ArrayList<ElProperty>();;
 
-	private Parameter leftParameter;
-	private Parameter rightParameter;
+    private List<ElProperty> increased = new ArrayList<ElProperty>();
+    private List<ElProperty> missing = new ArrayList<ElProperty>();
+    private List<ElProperty> requiredChanges = new ArrayList<ElProperty>();
+    private List<ElProperty> typesChanges = new ArrayList<ElProperty>();
 
-	private boolean isChangeRequired;
-	// private boolean isChangeType;
-	private boolean isChangeDescription;
+    private Parameter leftParameter;
+    private Parameter rightParameter;
 
-	public boolean isChangeRequired() {
-		return isChangeRequired;
-	}
+    private boolean isChangeRequired;
+//    private boolean isChangeType; // TODO JLA hard ?
+    private boolean isChangeDescription;
 
-	public void setChangeRequired(boolean isChangeRequired) {
-		this.isChangeRequired = isChangeRequired;
-	}
+    @Override
+    public boolean isDiff() {
+        return isChangeRequired
+                || isChangeDescription
+                || !increased.isEmpty()
+                || !missing.isEmpty()
+                || !requiredChanges.isEmpty()
+                || !typesChanges.isEmpty();
+    }
 
-	public boolean isChangeDescription() {
-		return isChangeDescription;
-	}
-
-	public void setChangeDescription(boolean isChangeDescription) {
-		this.isChangeDescription = isChangeDescription;
-	}
-
-	public Parameter getLeftParameter() {
-		return leftParameter;
-	}
-
-	public void setLeftParameter(Parameter leftParameter) {
-		this.leftParameter = leftParameter;
-	}
-
-	public Parameter getRightParameter() {
-		return rightParameter;
-	}
-
-	public void setRightParameter(Parameter rightParameter) {
-		this.rightParameter = rightParameter;
-	}
-
-	public boolean isDiff() {
-		return isChangeRequired || isChangeDescription || !increased.isEmpty() || !missing.isEmpty();
-	}
-
-	public List<ElProperty> getIncreased() {
-		return increased;
-	}
-
-	public void setIncreased(List<ElProperty> increased) {
-		this.increased = increased;
-	}
-
-	public List<ElProperty> getMissing() {
-		return missing;
-	}
-
-	public void setMissing(List<ElProperty> missing) {
-		this.missing = missing;
-	}
-	
+    @Override
+    public boolean isBackwardsCompatible() {
+        boolean isBackwardsCompatible = !isChangeRequired
+                && missing.isEmpty()
+                && requiredChanges.isEmpty()
+                && typesChanges.isEmpty();
+        for (ElProperty elProperty : increased) {
+            if(elProperty.getProperty() != null && elProperty.getProperty().getRequired()) {
+                return false;
+            }
+        }
+        return isBackwardsCompatible;
+    }
 
 }

@@ -7,53 +7,69 @@ import io.swagger.models.Operation;
 
 public class ChangedEndpoint implements Changed{
 
-	private String pathUrl;
+    private String pathUrl;
 
-	private Map<HttpMethod, Operation> newOperations;
-	private Map<HttpMethod, Operation> missingOperations;
+    private Map<HttpMethod, Operation> newOperations;
+    private Map<HttpMethod, Operation> missingOperations;
 
-	private Map<HttpMethod, ChangedOperation> changedOperations;
+    private Map<HttpMethod, ChangedOperation> changedOperations;
 
-	public Map<HttpMethod, Operation> getNewOperations() {
-		return newOperations;
-	}
+    public Map<HttpMethod, Operation> getNewOperations() {
+        return newOperations;
+    }
 
-	public void setNewOperations(Map<HttpMethod, Operation> newOperations) {
-		this.newOperations = newOperations;
-	}
+    public void setNewOperations(final Map<HttpMethod, Operation> newOperations) {
+        this.newOperations = newOperations;
+    }
 
-	public Map<HttpMethod, Operation> getMissingOperations() {
-		return missingOperations;
-	}
+    public Map<HttpMethod, Operation> getMissingOperations() {
+        return missingOperations;
+    }
 
-	public void setMissingOperations(
-			Map<HttpMethod, Operation> missingOperations) {
-		this.missingOperations = missingOperations;
-	}
-	
+    public void setMissingOperations(
+            final Map<HttpMethod, Operation> missingOperations) {
+        this.missingOperations = missingOperations;
+    }
 
-	public Map<HttpMethod, ChangedOperation> getChangedOperations() {
-		return changedOperations;
-	}
 
-	public void setChangedOperations(
-			Map<HttpMethod, ChangedOperation> changedOperations) {
-		this.changedOperations = changedOperations;
-	}
+    public Map<HttpMethod, ChangedOperation> getChangedOperations() {
+        return changedOperations;
+    }
 
-	public String getPathUrl() {
-		return pathUrl;
-	}
+    public void setChangedOperations(
+            final Map<HttpMethod, ChangedOperation> changedOperations) {
+        this.changedOperations = changedOperations;
+    }
 
-	public void setPathUrl(String pathUrl) {
-		this.pathUrl = pathUrl;
-	}
+    public String getPathUrl() {
+        return pathUrl;
+    }
 
-	public boolean isDiff() {
-//		newOperations.isEmpty() 
+    public void setPathUrl(final String pathUrl) {
+        this.pathUrl = pathUrl;
+    }
+
+    @Override
+    public boolean isDiff() {
+//		newOperations.isEmpty()
 //		|| !missingOperations.isEmpty()
-//		|| 
-		return !changedOperations.isEmpty();
-	}
+//		||
+        return !changedOperations.isEmpty();
+    }
+
+    @Override
+    public boolean isBackwardsCompatible() {
+        if(!missingOperations.isEmpty()) {
+            return false;
+        } else {
+            for (ChangedOperation changedOperation : changedOperations.values()) {
+                if(!changedOperation.isBackwardsCompatible()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 
 }

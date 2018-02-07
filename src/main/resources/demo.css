@@ -102,6 +102,11 @@ h3 {
 	margin-top: 80px;
 }
 
+.article .field {
+    font-style: italic;
+    color: #8cc5c0;
+}
+
 .article>div {
 	padding: 10px 10px;
 }

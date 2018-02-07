@@ -28,7 +28,9 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
 import io.swagger.parser.SwaggerCompatConverter;
 import io.swagger.parser.SwaggerParser;
+import lombok.Data;
 
+@Data
 public class SwaggerDiff {
 
     public static final String SWAGGER_VERSION_V2 = "2.0";
@@ -44,30 +46,30 @@ public class SwaggerDiff {
 
     /**
      * compare two swagger 1.x doc
-     * 
+     *
      * @param oldSpec
      *            old api-doc location:Json or Http
      * @param newSpec
      *            new api-doc location:Json or Http
      */
-    public static SwaggerDiff compareV1(String oldSpec, String newSpec) {
+    public static SwaggerDiff compareV1(final String oldSpec, final String newSpec) {
         return compare(oldSpec, newSpec, null, null);
     }
 
     /**
      * compare two swagger v2.0 doc
-     * 
+     *
      * @param oldSpec
      *            old api-doc location:Json or Http
      * @param newSpec
      *            new api-doc location:Json or Http
      */
-    public static SwaggerDiff compareV2(String oldSpec, String newSpec) {
+    public static SwaggerDiff compareV2(final String oldSpec, final String newSpec) {
         return compare(oldSpec, newSpec, null, SWAGGER_VERSION_V2);
     }
 
-    public static SwaggerDiff compare(String oldSpec, String newSpec,
-            List<AuthorizationValue> auths, String version) {
+    public static SwaggerDiff compare(final String oldSpec, final String newSpec,
+            final List<AuthorizationValue> auths, final String version) {
         return new SwaggerDiff(oldSpec, newSpec, auths, version).compare();
     }
 
@@ -77,8 +79,8 @@ public class SwaggerDiff {
      * @param auths
      * @param version
      */
-    private SwaggerDiff(String oldSpec, String newSpec, List<AuthorizationValue> auths,
-            String version) {
+    private SwaggerDiff(final String oldSpec, final String newSpec, final List<AuthorizationValue> auths,
+            final String version) {
         if (SWAGGER_VERSION_V2.equals(version)) {
             SwaggerParser swaggerParser = new SwaggerParser();
             oldSpecSwagger = swaggerParser.read(oldSpec, auths, true);
@@ -140,7 +142,7 @@ public class SwaggerDiff {
                         .diff(oldParameters, newParameters);
                 changedOperation.setAddParameters(parameterDiff.getIncreased());
                 changedOperation.setMissingParameters(parameterDiff.getMissing());
-                changedOperation.setChangedParameter(parameterDiff.getChanged());
+                changedOperation.setChangedParameters(parameterDiff.getChanged());
 
                 Property oldResponseProperty = getResponseProperty(oldOperation);
                 Property newResponseProperty = getResponseProperty(newOperation);
@@ -149,6 +151,7 @@ public class SwaggerDiff {
                 propertyDiff.diff(oldResponseProperty, newResponseProperty);
                 changedOperation.setAddProps(propertyDiff.getIncreased());
                 changedOperation.setMissingProps(propertyDiff.getMissing());
+                changedOperation.setChangedProps(propertyDiff.getTypeChanges());
 
                 if (changedOperation.isDiff()) {
                     operas.put(method, changedOperation);
@@ -169,15 +172,17 @@ public class SwaggerDiff {
         return this;
     }
 
-    private Property getResponseProperty(Operation operation) {
+    private Property getResponseProperty(final Operation operation) {
         Map<String, Response> responses = operation.getResponses();
         Response response = responses.get("200");
         return null == response ? null : response.getSchema();
     }
 
-    private List<Endpoint> convert2EndpointList(Map<String, Path> map) {
+    private List<Endpoint> convert2EndpointList(final Map<String, Path> map) {
         List<Endpoint> endpoints = new ArrayList<Endpoint>();
-        if (null == map) return endpoints;
+        if (null == map) {
+            return endpoints;
+        }
         for (Entry<String, Path> entry : map.entrySet()) {
             String url = entry.getKey();
             Path path = entry.getValue();
@@ -199,10 +204,12 @@ public class SwaggerDiff {
         return endpoints;
     }
 
-    private Collection<? extends Endpoint> convert2EndpointList(String pathUrl,
-            Map<HttpMethod, Operation> map) {
+    private Collection<? extends Endpoint> convert2EndpointList(final String pathUrl,
+            final Map<HttpMethod, Operation> map) {
         List<Endpoint> endpoints = new ArrayList<Endpoint>();
-        if (null == map) return endpoints;
+        if (null == map) {
+            return endpoints;
+        }
         for (Entry<HttpMethod, Operation> entry : map.entrySet()) {
             HttpMethod httpMethod = entry.getKey();
             Operation operation = entry.getValue();
@@ -216,16 +223,18 @@ public class SwaggerDiff {
         return endpoints;
     }
 
-    public List<Endpoint> getNewEndpoints() {
-        return newEndpoints;
-    }
-
-    public List<Endpoint> getMissingEndpoints() {
-        return missingEndpoints;
-    }
-
-    public List<ChangedEndpoint> getChangedEndpoints() {
-        return changedEndpoints;
+    public boolean isBackwardsCompatible() {
+        // Si la comparaison contient une modification flaguée comme non rétro-compatible, on renvoie false
+        if(!getMissingEndpoints().isEmpty()) {
+            return false;
+        } else {
+            for (ChangedEndpoint changedEndpoint : getChangedEndpoints()) {
+                if(!changedEndpoint.isBackwardsCompatible()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 }
