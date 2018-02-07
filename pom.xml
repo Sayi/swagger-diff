@@ -58,12 +58,12 @@
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-parser</artifactId>
-			<version>1.0.31</version>
+			<version>1.0.34</version>
 		</dependency>
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-compat-spec-parser</artifactId>
-			<version>1.0.31</version>
+			<version>1.0.34</version>
 		</dependency>
 		<dependency>
 			<groupId>com.j2html</groupId>
@@ -81,6 +81,11 @@
 			<version>4.8.2</version>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.20</version>
+        </dependency>
 	</dependencies>
 
 	<profiles>
@@ -91,8 +96,8 @@
 					<plugin>
 						<artifactId>maven-compiler-plugin</artifactId>
 						<configuration>
-							<source>1.6</source>
-							<target>1.6</target>
+							<source>1.8</source>
+							<target>1.8</target>
 							<encoding>UTF-8</encoding>
 						</configuration>
 						<version>3.2</version>
@@ -165,8 +170,8 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.8</source>
+					<target>1.8</target>
 					<encoding>UTF-8</encoding>
 				</configuration>
 				<version>3.2</version>
