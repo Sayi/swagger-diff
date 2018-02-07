@@ -104,8 +104,6 @@ public class SwaggerDiffBackwardsIncompatibilitiesTest {
         Assert.assertFalse(diff.getNewEndpoints().isEmpty());
     }
 
-    // TODO faire les tests avec cas retro, add new path + add attribute + add param non requis + etc.
-
     @Test
     public void testAllBackwardsIncompatibilities() {
         SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_WITH_ALL_BACKWARDS_INCOMPATIBILITIES_DOC);
@@ -128,7 +126,7 @@ public class SwaggerDiffBackwardsIncompatibilitiesTest {
         List<String> css = new ArrayList<String>();
         css.add("https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css");
         css.add("https://use.fontawesome.com/releases/v5.0.6/css/all.css");
-        css.add("file:///Users/lamaille/pagesjaunes/git/externe/swagger-diff/src/main/resources/demo.css"); // TODO à nettoyer
+        css.add("http://deepoove.com/swagger-diff/stylesheets/demo.css");
         List<String> scripts = new ArrayList<String>();
 //        css.add("https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js");
         String html = new HtmlRender("Changelog", css, scripts).withBackwardsIncompatibilities()

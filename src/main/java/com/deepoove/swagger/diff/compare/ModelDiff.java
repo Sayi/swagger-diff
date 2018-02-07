@@ -68,13 +68,13 @@ public class ModelDiff {
             Property right = rightProperties.get(key);
             // Check if type change
             if(left.getType() != null && right.getType() != null && !left.getType().equals(right.getType())) {
-                Map<String, Property> map = new HashMap<String, Property>(); // TODO JLA ?
+                Map<String, Property> map = new HashMap<String, Property>();
                 map.put(key, right);
                 typeChanges.addAll(convert2ElPropertys(map, parentEl , true));
             }
             // Check if property becomes required
             if(left.getRequired() != right.getRequired() && right.getRequired()) {
-                Map<String, Property> map = new HashMap<String, Property>(); // TODO JLA ?
+                Map<String, Property> map = new HashMap<String, Property>();
                 map.put(key, right);
                 requiredChanges.addAll(convert2ElPropertys(map, parentEl , true));
             }
