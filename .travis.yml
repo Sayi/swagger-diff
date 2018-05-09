@@ -2,5 +2,5 @@ language: java
 script: mvn clean install
 
 after_success:
-  - mvn clean org.eluder.coveralls:coveralls-maven-plugin:report
+  - mvn clean cobertura:cobertura org.eluder.coveralls:coveralls-maven-plugin:report
 
