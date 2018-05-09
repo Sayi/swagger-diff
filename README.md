@@ -1,6 +1,6 @@
 # swagger-diff
 
-![Build Status](https://travis-ci.org/Sayi/swagger-diff.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/Sayi/swagger-diff/badge.svg)](https://coveralls.io/github/Sayi/swagger-diff)
+![Build Status](https://travis-ci.org/Sayi/swagger-diff.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/Sayi/swagger-diff/badge.svg)](https://coveralls.io/github/Sayi/swagger-diff) [![Maven](https://maven-badges.herokuapp.com/maven-central/com.deepoove/swagger-diff/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/com.deepoove/swagger-diff)
 
 Compare two swagger API specifications(1.x or v2.0) and render the difference to html file or markdown file.
 
