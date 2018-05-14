@@ -17,6 +17,7 @@ import com.deepoove.swagger.diff.compare.PropertyDiff;
 import com.deepoove.swagger.diff.model.ChangedEndpoint;
 import com.deepoove.swagger.diff.model.ChangedOperation;
 import com.deepoove.swagger.diff.model.Endpoint;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import io.swagger.models.HttpMethod;
 import io.swagger.models.Operation;
@@ -66,6 +67,18 @@ public class SwaggerDiff {
         return compare(oldSpec, newSpec, null, SWAGGER_VERSION_V2);
     }
 
+    /**
+     * Compare two swagger v2.0 docs by JsonNode
+     *
+     * @param oldSpec
+     *            old Swagger specification document in v2.0 format as a JsonNode
+     * @param newSpec
+     *            new Swagger specification document in v2.0 format as a JsonNode
+     */
+    public static SwaggerDiff compareV2(JsonNode oldSpec, JsonNode newSpec) {
+        return new SwaggerDiff(oldSpec, newSpec).compare();
+    }
+
     public static SwaggerDiff compare(String oldSpec, String newSpec,
             List<AuthorizationValue> auths, String version) {
         return new SwaggerDiff(oldSpec, newSpec, auths, version).compare();
@@ -95,6 +108,14 @@ public class SwaggerDiff {
         }
         if (null == oldSpecSwagger || null == newSpecSwagger) { throw new RuntimeException(
                 "cannot read api-doc from spec."); }
+    }
+
+    private SwaggerDiff(JsonNode oldSpec, JsonNode newSpec) {
+        SwaggerParser swaggerParser = new SwaggerParser();
+        oldSpecSwagger = swaggerParser.read(oldSpec, true);
+        newSpecSwagger = swaggerParser.read(newSpec, true);
+        if (null == oldSpecSwagger || null == newSpecSwagger) { throw new RuntimeException(
+            "cannot read api-doc from spec."); }
     }
 
     private SwaggerDiff compare() {

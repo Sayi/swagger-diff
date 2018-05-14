@@ -2,6 +2,7 @@ package com.deepoove.swagger.test;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import org.junit.Assert;
@@ -12,6 +13,8 @@ import com.deepoove.swagger.diff.model.ChangedEndpoint;
 import com.deepoove.swagger.diff.model.Endpoint;
 import com.deepoove.swagger.diff.output.HtmlRender;
 import com.deepoove.swagger.diff.output.MarkdownRender;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class SwaggerDiffTest {
 
@@ -23,12 +26,7 @@ public class SwaggerDiffTest {
 	@Test
 	public void testEqual() {
 		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC2, SWAGGER_V2_DOC2);
-		List<Endpoint> newEndpoints = diff.getNewEndpoints();
-		List<Endpoint> missingEndpoints = diff.getMissingEndpoints();
-		List<ChangedEndpoint> changedEndPoints = diff.getChangedEndpoints();
-		Assert.assertTrue(newEndpoints.isEmpty());
-		Assert.assertTrue(missingEndpoints.isEmpty());
-		Assert.assertTrue(changedEndPoints.isEmpty());
+		assertEqual(diff);
 
 	}
 
@@ -116,7 +114,30 @@ public class SwaggerDiffTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
+	}
+
+	@Test
+	public void testEqualJson() {
+		try {
+			InputStream inputStream = getClass().getClassLoader().getResourceAsStream(SWAGGER_V2_DOC1);
+			JsonNode json = new ObjectMapper().readTree(inputStream);
+			SwaggerDiff diff = SwaggerDiff.compareV2(json, json);
+			assertEqual(diff);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void assertEqual(SwaggerDiff diff) {
+		List<Endpoint> newEndpoints = diff.getNewEndpoints();
+		List<Endpoint> missingEndpoints = diff.getMissingEndpoints();
+		List<ChangedEndpoint> changedEndPoints = diff.getChangedEndpoints();
+		Assert.assertTrue(newEndpoints.isEmpty());
+		Assert.assertTrue(missingEndpoints.isEmpty());
+		Assert.assertTrue(changedEndPoints.isEmpty());
+
 	}
 
 }
