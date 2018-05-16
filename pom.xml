@@ -10,7 +10,7 @@
 
 	<groupId>com.deepoove</groupId>
 	<artifactId>swagger-diff</artifactId>
-	<version>1.1.1-SNAPSHOT</version>
+	<version>1.2.0</version>
 	<packaging>jar</packaging>
 
 	<name>swagger-diff</name>
@@ -74,6 +74,16 @@
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
 			<version>1.2.7</version>
+		</dependency>
+		<dependency>
+		  <groupId>com.beust</groupId>
+		  <artifactId>jcommander</artifactId>
+		  <version>1.71</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-nop</artifactId>
+		    <version>1.6.3</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
