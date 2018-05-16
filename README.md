@@ -1,6 +1,6 @@
 ## swagger-diff
 
-![Build Status](https://travis-ci.org/Sayi/swagger-diff.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/Sayi/swagger-diff/badge.svg)](https://coveralls.io/github/Sayi/swagger-diff) [![Maven](https://maven-badges.herokuapp.com/maven-central/com.deepoove/swagger-diff/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/com.deepoove/swagger-diff)
+![Build Status](https://travis-ci.org/Sayi/swagger-diff.svg?branch=master) ![jdk1.6+](https://img.shields.io/badge/jdk-1.6%2B-orange.svg) [![Coverage Status](https://coveralls.io/repos/github/Sayi/swagger-diff/badge.svg)](https://coveralls.io/github/Sayi/swagger-diff) [![Maven](https://maven-badges.herokuapp.com/maven-central/com.deepoove/swagger-diff/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/com.deepoove/swagger-diff)
 
 Compare two swagger API specifications(1.x or v2.0) and render the difference to html file or markdown file.
 
@@ -33,10 +33,7 @@ java -jar swagger-diff.jar \
 -v 2.0 \
 -output-mode html > diff.html
 ```
-**Download the fatJar: [![Swagger-diff.jar](https://img.shields.io/badge/swagger--diff.jar-download-blue.svg)](https://github.com/Sayi/swagger-diff/releases)**
-
-## Requirements
-`jdk1.6+`
+Download the fatJar or view the changelog on the **[Release Page](https://github.com/Sayi/swagger-diff/releases),** and thanks to all contributors.
 
 ## Feature
 * Supports swagger spec v1.x and v2.0.
@@ -47,13 +44,17 @@ java -jar swagger-diff.jar \
 * Command line interface
 
 ## Maven
-
 ```xml
 <dependency>
   <groupId>com.deepoove</groupId>
   <artifactId>swagger-diff</artifactId>
   <version>1.2.0</version>
 </dependency>
+```
+
+## Gradle
+```shell
+compile group: 'com.deepoove', name: 'swagger-diff', version: '1.2.0'
 ```
 
 ## Usage
@@ -157,9 +158,6 @@ try {
         Delete body.phone
 
 ```
-
-## License
-swagger-diff is released under the Apache License 2.0.
 
 ## How it works
 ![image](./swagger-diff.png)
