@@ -4,7 +4,8 @@
 
 Compare two swagger API specifications(1.x or v2.0) and render the difference to html file or markdown file.
 
-## Command line interface (CLI) 
+## :black_large_square: Command line interface (CLI) 
+
 ```shell
 $ java -jar swagger-diff.jar --help
 Usage: java -jar swagger-diff.jar [options]
@@ -57,20 +58,17 @@ java -jar swagger-diff.jar \
 ## Usage
 SwaggerDiff can read swagger api spec from json file or http.
 ```java
-final String SWAGGER_V2_DOC1 = "petstore_v2_1.json";
-final String SWAGGER_V2_DOC2 = "http://petstore.swagger.io/v2/swagger.json";
-
-SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
+SwaggerDiff diff = SwaggerDiff.compareV2("petstore_v2_1.json", "http://petstore.swagger.io/v2/swagger.json");
 ```
 ## Swagger version
 v1.x
 ```java
-SwaggerDiff.compareV1(SWAGGER_V1_DOC1, SWAGGER_V1_DOC2);
+SwaggerDiff.compareV1("petstore_v1_1.json", "petstore_v1_2.json");
 ```
 
 v2.0
 ```java
-SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
+SwaggerDiff.compareV2("petstore_v2_1.json", "petstore_v2_2.json");
 ```
 
 ## Render difference
