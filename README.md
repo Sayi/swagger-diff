@@ -33,7 +33,7 @@ java -jar swagger-diff.jar \
 -v 2.0 \
 -output-mode html > diff.html
 ```
-**Download the fatJar from the [Release Page](https://github.com/Sayi/swagger-diff/releases)**
+**Download the fatJar: [![Swagger-diff.jar](https://img.shields.io/badge/swagger--diff.jar-download-blue.svg)](https://github.com/Sayi/swagger-diff/releases)**
 
 ## Requirements
 `jdk1.6+`
@@ -163,8 +163,6 @@ swagger-diff is released under the Apache License 2.0.
 
 ## How it works
 ![image](./swagger-diff.png)
-
-
 
 
 
