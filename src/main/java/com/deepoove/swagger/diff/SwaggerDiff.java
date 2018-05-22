@@ -249,4 +249,11 @@ public class SwaggerDiff {
         return changedEndpoints;
     }
 
+    public String getOldVersion() {
+        return oldSpecSwagger.getInfo().getVersion();
+    }
+
+    public String getNewVersion() {
+        return newSpecSwagger.getInfo().getVersion();
+    }
 }

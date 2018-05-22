@@ -18,6 +18,7 @@ import io.swagger.models.properties.Property;
 public class MarkdownRender implements Render {
 
 	final String H3 = "### ";
+	final String H2 = "## ";
 	final String BLOCKQUOTE = "> ";
 	final String CODE = "`";
 	final String PRE_CODE = "    ";
@@ -37,12 +38,13 @@ public class MarkdownRender implements Render {
 		List<ChangedEndpoint> changedEndpoints = diff.getChangedEndpoints();
 		String ol_changed = ol_changed(changedEndpoints);
 
-		return reanderHtml(ol_newEndpoint, ol_missingEndpoint, ol_changed);
+		return renderHtml(diff.getOldVersion(), diff.getNewVersion(), ol_newEndpoint, ol_missingEndpoint, ol_changed);
 	}
 
-	public String reanderHtml(String ol_new, String ol_miss,
-			String ol_changed) {
+	public String renderHtml(String oldVersion, String newVersion, String ol_new, String ol_miss,
+							 String ol_changed) {
 		StringBuffer sb = new StringBuffer();
+		sb.append(H2).append("Version " + oldVersion + " to " + newVersion).append("\n").append(HR);
 		sb.append(H3).append("What's New").append("\n").append(HR)
 				.append(ol_new).append("\n").append(H3)
 				.append("What's Deprecated").append("\n").append(HR)
