@@ -27,7 +27,6 @@ public class SwaggerDiffTest {
 	public void testEqual() {
 		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC2, SWAGGER_V2_DOC2);
 		assertEqual(diff);
-
 	}
 
 	@Test
