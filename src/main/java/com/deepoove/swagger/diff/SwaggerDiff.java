@@ -192,6 +192,8 @@ public class SwaggerDiff {
 
     private Property getResponseProperty(Operation operation) {
         Map<String, Response> responses = operation.getResponses();
+        // temporary workaround for missing response messages
+        if(responses == null) return null;
         Response response = responses.get("200");
         return null == response ? null : response.getSchema();
     }
