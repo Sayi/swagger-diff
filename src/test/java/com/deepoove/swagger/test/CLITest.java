@@ -93,7 +93,7 @@ public class CLITest {
         JCommander jCommander = JCommander.newBuilder().addObject(cli).build();
         jCommander.parse(argv);
         cli.run(jCommander);
-        Assert.assertTrue(outContent.toString().startsWith("### What's New"));
+        Assert.assertTrue(outContent.toString().startsWith("## Version 1.0.0 to 1.0.2"));
     }
 
 }

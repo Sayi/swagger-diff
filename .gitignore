@@ -15,3 +15,10 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 /target/
+.idea
+swagger-diff.iml
+testDiff.html 
+testDiff.md
+testDeprecatedApi.html
+testNewApi.html
+
