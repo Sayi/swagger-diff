@@ -5,6 +5,7 @@ import com.beust.jcommander.Parameter;
 import com.deepoove.swagger.diff.SwaggerDiff;
 import com.deepoove.swagger.diff.output.HtmlRender;
 import com.deepoove.swagger.diff.output.MarkdownRender;
+import com.deepoove.swagger.diff.output.Render;
 
 /**
  * $java -jar swagger-diff.jar -old http://www.petstore.com/swagger.json \n
@@ -59,22 +60,16 @@ public class CLI {
             return;
         }
         
-        SwaggerDiff diff = null;
-        if (SwaggerDiff.SWAGGER_VERSION_V2.equals(version)){
-            diff = SwaggerDiff.compareV2(oldSpec, newSpec);
-        }else {
-            diff = SwaggerDiff.compareV1(oldSpec, newSpec);
-        }
+        SwaggerDiff diff = SwaggerDiff.SWAGGER_VERSION_V2.equals(version)
+                ? SwaggerDiff.compareV2(oldSpec, newSpec) : SwaggerDiff.compareV1(oldSpec, newSpec);
         
-        String render = null;
-        if (OUTPUT_MODE_MARKDOWN.equals(outputMode)){
-            render = new MarkdownRender().render(diff);
-        }else{
-            render = new HtmlRender("Changelog",
-                    "http://deepoove.com/swagger-diff/stylesheets/demo.css")
-                    .render(diff);
-        }
+        String render = getRender(outputMode).render(diff);
         JCommander.getConsole().println(render);
+    }
+
+    private Render getRender(String outputMode) {
+        if (OUTPUT_MODE_MARKDOWN.equals(outputMode)) return new MarkdownRender();
+        return new HtmlRender("Changelog", "http://deepoove.com/swagger-diff/stylesheets/demo.css");
     }
 
     public String getOldSpec() {
