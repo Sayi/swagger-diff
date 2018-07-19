@@ -61,6 +61,12 @@ public class ModelDiff {
 					&& right instanceof RefProperty) {
 				String leftRef = ((RefProperty) left).getSimpleRef();
 				String rightRef = ((RefProperty) right).getSimpleRef();
+				// remove cycles refs
+				if (parentEl != null){
+					if (parentEl.endsWith("." + key)){
+						return this;
+					}
+				}
 				diff(oldDedinitions.get(leftRef),
 						newDedinitions.get(rightRef),
 						null == parentEl ? key : (parentEl + "." + key));
