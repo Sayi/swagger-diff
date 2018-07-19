@@ -22,6 +22,7 @@ public class SwaggerDiffTest {
 	final String SWAGGER_V2_DOC2 = "petstore_v2_2.json";
 	final String SWAGGER_V2_EMPTY_DOC = "petstore_v2_empty.json";
 	final String SWAGGER_V2_HTTP = "http://petstore.swagger.io/v2/swagger.json";
+	final String SWAGGER_V2_CYCLE_REFS = "cycle_refs.json";
 
 	@Test
 	public void testEqual() {
@@ -52,6 +53,12 @@ public class SwaggerDiffTest {
 		Assert.assertTrue(missingEndpoints.isEmpty());
 		Assert.assertTrue(changedEndPoints.isEmpty());
 
+	}
+
+	@Test
+	public void testCycleRefsInModels() {
+		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_CYCLE_REFS, SWAGGER_V2_CYCLE_REFS);
+		assertEqual(diff);
 	}
 
 	@Test
