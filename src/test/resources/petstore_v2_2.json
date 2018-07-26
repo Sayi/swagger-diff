@@ -11,7 +11,9 @@
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-    }
+    },
+    "x-create-info-ext": "i was created!",
+    "x-change-info-ext": "i was changed!"
   },
   "host": "petstore.swagger.io",
   "basePath": "/v2",
@@ -22,7 +24,9 @@
       "externalDocs": {
         "description": "Find out more",
         "url": "http://swagger.io"
-      }
+      },
+      "x-create-tags-ext": "i was created!",
+      "x-change-tags-ext": "i was changed!"
     },
     {
       "name": "store",
@@ -42,7 +46,11 @@
   ],
   "paths": {
     "/pet": {
+      "x-create-path-ext": "i was created!",
+      "x-change-path-ext": "i was changed!",
       "post": {
+        "x-create-method-ext": "i was created!",
+        "x-change-method-ext": "i was changed!",
         "tags": [
           "pet"
         ],
@@ -65,7 +73,9 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/Pet"
-            }
+            },
+            "x-create-param-ext": "i was created!",
+            "x-change-param-ext": "i was changed!"
           },
           {
             "name": "tags",
@@ -720,7 +730,8 @@
             "description": "successful operation",
             "schema": {
               "$ref": "#/definitions/User"
-            }
+            },
+            "x-create-response-ext": "i was created!"
           },
           "400": {
             "description": "Invalid username supplied"
@@ -801,6 +812,8 @@
   },
   "securityDefinitions": {
     "petstore_auth": {
+      "x-create-security-ext": "i was created!",
+      "x-change-security-ext": "i was changed!",
       "type": "oauth2",
       "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
       "flow": "implicit",

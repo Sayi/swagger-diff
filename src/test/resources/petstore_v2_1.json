@@ -11,7 +11,9 @@
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-    }
+    },
+    "x-remove-info-ext": "remove me!",
+    "x-change-info-ext": "change me!"
   },
   "host": "petstore.swagger.io",
   "basePath": "/v2",
@@ -22,7 +24,9 @@
       "externalDocs": {
         "description": "Find out more",
         "url": "http://swagger.io"
-      }
+      },
+      "x-remove-tags-ext": "remove me!",
+      "x-change-tags-ext": "change me!"
     },
     {
       "name": "store",
@@ -42,7 +46,11 @@
   ],
   "paths": {
     "/pet": {
+      "x-remove-path-ext": "remove me!",
+      "x-change-path-ext": "change me!",
       "post": {
+        "x-remove-method-ext": "remove me!",
+        "x-change-method-ext": "change me!",
         "tags": [
           "pet"
         ],
@@ -65,12 +73,15 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/Pet"
-            }
+            },
+            "x-remove-param-ext": "remove me!",
+            "x-change-param-ext": "change me!"
           }
         ],
         "responses": {
           "405": {
-            "description": "Invalid input"
+            "description": "Invalid input",
+            "x-remove-response-ext": "remove me!"
           }
         },
         "security": [
@@ -802,6 +813,8 @@
   },
   "securityDefinitions": {
     "petstore_auth": {
+      "x-remove-security-ext": "remove me!",
+      "x-change-security-ext": "change me!",
       "type": "oauth2",
       "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
       "flow": "implicit",
