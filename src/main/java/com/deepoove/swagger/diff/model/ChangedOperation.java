@@ -5,7 +5,7 @@ import java.util.List;
 
 import io.swagger.models.parameters.Parameter;
 
-public class ChangedOperation implements Changed {
+public class ChangedOperation extends ChangedVendorExtensionGroup implements Changed {
 
 	private String summary;
 
@@ -16,6 +16,7 @@ public class ChangedOperation implements Changed {
 
 	private List<ElProperty> addProps = new ArrayList<ElProperty>();
 	private List<ElProperty> missingProps = new ArrayList<ElProperty>();
+	private List<ElProperty> changedProps = new ArrayList<ElProperty>();
 
 	public List<Parameter> getAddParameters() {
 		return addParameters;
@@ -57,6 +58,14 @@ public class ChangedOperation implements Changed {
 		this.missingProps = missingProps;
 	}
 
+	public List<ElProperty> getChangedProps() {
+		return changedProps;
+	}
+
+	public void setChangedProps(List<ElProperty> changedProps) {
+		this.changedProps = changedProps;
+	}
+
 	public String getSummary() {
 		return summary;
 	}
@@ -68,12 +77,22 @@ public class ChangedOperation implements Changed {
 	public boolean isDiff() {
 		return !addParameters.isEmpty() || !missingParameters.isEmpty()
 				|| !changedParameter.isEmpty() || !addProps.isEmpty()
-				|| !missingProps.isEmpty();
+				|| !missingProps.isEmpty() || vendorExtensionsAreDiff();
 	}
 	public boolean isDiffProp(){
 		return !addProps.isEmpty()
-				|| !missingProps.isEmpty();
+				|| !missingProps.isEmpty()
+				|| propVendorExtsAreDiff();
 	}
+
+	public boolean propVendorExtsAreDiff() {
+		boolean accumulator = false;
+		for (ElProperty prop : changedProps) {
+			accumulator = accumulator || prop.vendorExtensionsAreDiff();
+		}
+		return accumulator;
+	}
+
 	public boolean isDiffParam(){
 		return !addParameters.isEmpty() || !missingParameters.isEmpty()
 				|| !changedParameter.isEmpty();

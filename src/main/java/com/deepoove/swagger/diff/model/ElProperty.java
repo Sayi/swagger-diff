@@ -7,7 +7,7 @@ import io.swagger.models.properties.Property;
  * @author Sayi
  * @version 
  */
-public class ElProperty {
+public class ElProperty extends ChangedVendorExtensionGroup {
 
 	private String el;
 

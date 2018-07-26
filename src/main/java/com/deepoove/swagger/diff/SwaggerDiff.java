@@ -2,12 +2,14 @@ package com.deepoove.swagger.diff;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.deepoove.swagger.diff.compare.SpecificationDiff;
 import com.deepoove.swagger.diff.model.ChangedEndpoint;
+import com.deepoove.swagger.diff.model.ChangedVendorExtensionGroup;
 import com.deepoove.swagger.diff.model.Endpoint;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -28,6 +30,8 @@ public class SwaggerDiff {
     private List<Endpoint> newEndpoints;
     private List<Endpoint> missingEndpoints;
     private List<ChangedEndpoint> changedEndpoints;
+
+    private ChangedVendorExtensionGroup changedTopLevelVendorExtensions;
 
     /**
      * compare two swagger 1.x doc
@@ -109,6 +113,7 @@ public class SwaggerDiff {
         this.newEndpoints = diff.getNewEndpoints();
         this.missingEndpoints = diff.getMissingEndpoints();
         this.changedEndpoints = diff.getChangedEndpoints();
+        this.changedTopLevelVendorExtensions = diff.getNonPathVendorExtGroup();
         return this;
     }
 
@@ -122,6 +127,10 @@ public class SwaggerDiff {
 
     public List<ChangedEndpoint> getChangedEndpoints() {
         return changedEndpoints;
+    }
+
+    public ChangedVendorExtensionGroup getChangedTopLevelVendorExtensions() {
+        return changedTopLevelVendorExtensions;
     }
 
     public String getOldVersion() {

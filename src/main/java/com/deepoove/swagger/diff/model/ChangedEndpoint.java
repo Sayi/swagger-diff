@@ -5,13 +5,12 @@ import java.util.Map;
 import io.swagger.models.HttpMethod;
 import io.swagger.models.Operation;
 
-public class ChangedEndpoint implements Changed{
+public class ChangedEndpoint extends ChangedVendorExtensionGroup implements Changed {
 
 	private String pathUrl;
 
 	private Map<HttpMethod, Operation> newOperations;
 	private Map<HttpMethod, Operation> missingOperations;
-
 	private Map<HttpMethod, ChangedOperation> changedOperations;
 
 	public Map<HttpMethod, Operation> getNewOperations() {
@@ -53,7 +52,7 @@ public class ChangedEndpoint implements Changed{
 //		newOperations.isEmpty() 
 //		|| !missingOperations.isEmpty()
 //		|| 
-		return !changedOperations.isEmpty();
+		return !changedOperations.isEmpty() || vendorExtensionsAreDiff();
 	}
 
 }
