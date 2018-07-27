@@ -5,7 +5,7 @@ import java.util.List;
 
 import io.swagger.models.parameters.Parameter;
 
-public class ChangedOperation extends ChangedVendorExtensionGroup implements Changed {
+public class ChangedOperation extends ChangedExtensionGroup implements Changed {
 
 	private String summary;
 

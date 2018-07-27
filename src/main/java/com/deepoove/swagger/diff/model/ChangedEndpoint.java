@@ -5,7 +5,7 @@ import java.util.Map;
 import io.swagger.models.HttpMethod;
 import io.swagger.models.Operation;
 
-public class ChangedEndpoint extends ChangedVendorExtensionGroup implements Changed {
+public class ChangedEndpoint extends ChangedExtensionGroup implements Changed {
 
 	private String pathUrl;
 

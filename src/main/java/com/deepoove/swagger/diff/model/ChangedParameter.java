@@ -5,7 +5,7 @@ import java.util.List;
 
 import io.swagger.models.parameters.Parameter;
 
-public class ChangedParameter extends ChangedVendorExtensionGroup implements Changed {
+public class ChangedParameter extends ChangedExtensionGroup implements Changed {
 	
 	private List<ElProperty> increased = new ArrayList<ElProperty>();
 	private List<ElProperty> missing = new ArrayList<ElProperty>();;

@@ -10,7 +10,7 @@ import com.deepoove.swagger.diff.SwaggerDiff;
 import com.deepoove.swagger.diff.model.ChangedEndpoint;
 import com.deepoove.swagger.diff.model.ChangedOperation;
 import com.deepoove.swagger.diff.model.ChangedParameter;
-import com.deepoove.swagger.diff.model.ChangedVendorExtensionGroup;
+import com.deepoove.swagger.diff.model.ChangedExtensionGroup;
 import com.deepoove.swagger.diff.model.Endpoint;
 import com.deepoove.swagger.diff.model.ElProperty;
 
@@ -147,17 +147,17 @@ public class MarkdownRender implements Render {
 		return sb.toString();
 	}
 
-	private String ol_vendorExtSummary(ChangedVendorExtensionGroup container, String pre) {
+	private String ol_vendorExtSummary(ChangedExtensionGroup container, String pre) {
 		return ol_vendorExtSummary(container, null, pre);
 	}
 
-	private String ol_vendorExtSummary(ChangedVendorExtensionGroup container, String title, String pre) {
+	private String ol_vendorExtSummary(ChangedExtensionGroup container, String title, String pre) {
 		if (!container.vendorExtensionsAreDiff()) return "";
 
 		Map<String, Object> increased = container.getIncreasedVendorExtensions();
 		Map<String, Object> missing = container.getMissingVendorExtensions();
 		Map<String, Pair<Object, Object>> changed = container.getChangedVendorExtensions();
-		Map<String, ChangedVendorExtensionGroup> subgroups = container.getChangedSubGroups();
+		Map<String, ChangedExtensionGroup> subgroups = container.getChangedSubGroups();
 
 		String titlePrefix = pre + LI + BD;
 		String vendorExtPrefix = pre + LI;

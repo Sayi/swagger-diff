@@ -137,10 +137,19 @@ ol>li {
 	margin: 24px;
 }
 
-ol>li>ul {
+ol>li>ul, .extension-container {
 	background-color: #504949;
 	color: #fff;
 	padding: 8px 16px;
+}
+
+.extension-container {
+  margin-top: 0px;
+}
+
+.indent {
+  margin-left: 24px;
+  margin-right: 24px;
 }
 
 ul.change>li {

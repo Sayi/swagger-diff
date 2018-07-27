@@ -5,13 +5,11 @@ import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.deepoove.swagger.diff.compare.MapDiff;
-
-public class ChangedVendorExtensionGroup {
+public class ChangedExtensionGroup {
   protected Map<String, Object> increasedVendorExtensions = new LinkedHashMap<String, Object>();
   protected Map<String, Object> missingVendorExtensions = new LinkedHashMap<String, Object>();
   protected Map<String, Pair<Object, Object>> changedVendorExtensions = new LinkedHashMap<String, Pair<Object, Object>>();
-  protected Map<String, ChangedVendorExtensionGroup> changedSubGroups = new LinkedHashMap<String, ChangedVendorExtensionGroup>();
+  protected Map<String, ChangedExtensionGroup> changedSubGroups = new LinkedHashMap<String, ChangedExtensionGroup>();
 
   public boolean vendorExtensionsAreDiff() {
     return !increasedVendorExtensions.isEmpty()
@@ -22,7 +20,7 @@ public class ChangedVendorExtensionGroup {
 
   private boolean subVendorExtensionsAreDiff() {
     boolean accumulator = false;
-    for (ChangedVendorExtensionGroup subgroup : changedSubGroups.values()) {
+    for (ChangedExtensionGroup subgroup : changedSubGroups.values()) {
       accumulator = accumulator || subgroup.vendorExtensionsAreDiff();
     }
     return accumulator;
@@ -52,11 +50,23 @@ public class ChangedVendorExtensionGroup {
     this.changedVendorExtensions = changedVendorExtensions;
   }
 
-  public Map<String, ChangedVendorExtensionGroup> getChangedSubGroups() {
+  public Map<String, ChangedExtensionGroup> getChangedSubGroups() {
     return changedSubGroups;
   }
 
-  public void setVendorExtsFromGroup(ChangedVendorExtensionGroup newDiffs) {
+  public boolean hasSubGroup(String key) {
+    return changedSubGroups.containsKey(key);
+  }
+
+  public ChangedExtensionGroup getSubGroup(String key) {
+    return changedSubGroups.get(key);
+  }
+
+  public void putSubGroup(String key, ChangedExtensionGroup group) {
+    changedSubGroups.put(key, group);
+  }
+
+  public void setVendorExtsFromGroup(ChangedExtensionGroup newDiffs) {
     this.increasedVendorExtensions = newDiffs.getIncreasedVendorExtensions();
     this.missingVendorExtensions = newDiffs.getMissingVendorExtensions();
     this.changedVendorExtensions = newDiffs.getChangedVendorExtensions();

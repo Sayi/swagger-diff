@@ -8,13 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.deepoove.swagger.diff.model.ChangedEndpoint;
 import com.deepoove.swagger.diff.model.ChangedOperation;
 import com.deepoove.swagger.diff.model.ChangedParameter;
-import com.deepoove.swagger.diff.model.ChangedVendorExtensionGroup;
-import com.deepoove.swagger.diff.model.ElProperty;
+import com.deepoove.swagger.diff.model.ChangedExtensionGroup;
 import com.deepoove.swagger.diff.model.Endpoint;
 
 import io.swagger.models.HttpMethod;
@@ -39,12 +36,16 @@ public class SpecificationDiff {
 	private List<Endpoint> missingEndpoints;
 	private List<ChangedEndpoint> changedEndpoints;
 
-	private ChangedVendorExtensionGroup nonPathVendorExtGroup = new ChangedVendorExtensionGroup();
+	private ChangedExtensionGroup nonPathVendorExtGroup = new ChangedExtensionGroup();
 
 	private SpecificationDiff() {
 	}
 
 	public static SpecificationDiff diff(Swagger oldSpec, Swagger newSpec) {
+		return diff(oldSpec, newSpec, true);
+	}
+
+	public static SpecificationDiff diff(Swagger oldSpec, Swagger newSpec, boolean withExtensions) {
 		SpecificationDiff instance = new SpecificationDiff();
 		if (null == oldSpec || null == newSpec) {
 			throw new IllegalArgumentException("cannot diff null spec.");
@@ -56,10 +57,16 @@ public class SpecificationDiff {
 		instance.missingEndpoints = convert2EndpointList(pathDiff.getMissing());
 		instance.changedEndpoints = new ArrayList<ChangedEndpoint>();
 
-		Map<String, Object> oldExts = oldSpec.getInfo().getVendorExtensions();
-		Map<String, Object> newExts = newSpec.getInfo().getVendorExtensions();
-		instance.nonPathVendorExtGroup.getChangedSubGroups()
-				.put("Info", getChangedVendorExtsGroup(oldExts, newExts));
+
+		Map<String, Object> oldExts;
+		Map<String, Object> newExts;
+
+		if (withExtensions) {
+			oldExts = oldSpec.getInfo().getVendorExtensions();
+			newExts = newSpec.getInfo().getVendorExtensions();
+			instance.nonPathVendorExtGroup.getChangedSubGroups()
+					.put("info", getChangedVendorExtsGroup(oldExts, newExts));
+		}
 
 		List<String> sharedKey = pathDiff.getSharedKey();
 		ChangedEndpoint changedEndpoint = null;
@@ -69,9 +76,11 @@ public class SpecificationDiff {
 			Path oldPath = oldPaths.get(pathUrl);
 			Path newPath = newPaths.get(pathUrl);
 
-			oldExts = oldPath.getVendorExtensions();
-			newExts = newPath.getVendorExtensions();
-			changedEndpoint.setVendorExtsFromGroup(getChangedVendorExtsGroup(oldExts, newExts));
+			if (withExtensions) {
+				oldExts = oldPath.getVendorExtensions();
+				newExts = newPath.getVendorExtensions();
+				changedEndpoint.setVendorExtsFromGroup(getChangedVendorExtsGroup(oldExts, newExts));
+			}
 
 			Map<HttpMethod, Operation> oldOperationMap = oldPath.getOperationMap();
 			Map<HttpMethod, Operation> newOperationMap = newPath.getOperationMap();
@@ -90,9 +99,11 @@ public class SpecificationDiff {
 				Operation newOperation = newOperationMap.get(method);
 				changedOperation.setSummary(newOperation.getSummary());
 
-				oldExts = oldOperation.getVendorExtensions();
-				newExts = newOperation.getVendorExtensions();
-				changedOperation.setVendorExtsFromGroup(getChangedVendorExtsGroup( oldExts, newExts));
+				if (withExtensions) {
+					oldExts = oldOperation.getVendorExtensions();
+					newExts = newOperation.getVendorExtensions();
+					changedOperation.setVendorExtsFromGroup(getChangedVendorExtsGroup( oldExts, newExts));
+				}
 
 				List<Parameter> oldParameters = oldOperation.getParameters();
 				List<Parameter> newParameters = newOperation.getParameters();
@@ -103,10 +114,12 @@ public class SpecificationDiff {
 				changedOperation.setMissingParameters(parameterDiff.getMissing());
 				changedOperation.setChangedParameter(parameterDiff.getChanged());
 
-				for (ChangedParameter param : parameterDiff.getChanged()) {
-					oldExts = param.getLeftParameter().getVendorExtensions();
-					newExts = param.getRightParameter().getVendorExtensions();
-					param.setVendorExtsFromGroup(getChangedVendorExtsGroup(oldExts, newExts));
+				if (withExtensions) {
+					for (ChangedParameter param : parameterDiff.getChanged()) {
+						oldExts = param.getLeftParameter().getVendorExtensions();
+						newExts = param.getRightParameter().getVendorExtensions();
+						param.setVendorExtsFromGroup(getChangedVendorExtsGroup(oldExts, newExts));
+					}
 				}
 
 				Property oldResponseProperty = getResponseProperty(oldOperation);
@@ -117,16 +130,17 @@ public class SpecificationDiff {
 				changedOperation.setAddProps(propertyDiff.getIncreased());
 				changedOperation.setMissingProps(propertyDiff.getMissing());
 
-				Map<String, Response> oldRes = oldOperation.getResponses();
-				Map<String, Response> newRes = newOperation.getResponses();
-				MapKeyDiff<String, Response> responseDiff = MapKeyDiff.diff(oldRes, newRes);
-				ChangedVendorExtensionGroup responseGroup = new ChangedVendorExtensionGroup();
-				changedOperation.getChangedSubGroups().put("Responses", responseGroup);
-				for (String key : responseDiff.getSharedKey()) {
-					ChangedVendorExtensionGroup group = getChangedVendorExtsGroup(
-							oldRes.get(key).getVendorExtensions(), newRes.get(key).getVendorExtensions());
-
-					responseGroup.getChangedSubGroups().put(key, group);
+				if (withExtensions) {
+					Map<String, Response> oldRes = oldOperation.getResponses();
+					Map<String, Response> newRes = newOperation.getResponses();
+					MapKeyDiff<String, Response> responseDiff = MapKeyDiff.diff(oldRes, newRes);
+					ChangedExtensionGroup responseGroup = new ChangedExtensionGroup();
+					changedOperation.putSubGroup("responses", responseGroup);
+					for (String key : responseDiff.getSharedKey()) {
+						ChangedExtensionGroup group = getChangedVendorExtsGroup(
+								oldRes.get(key).getVendorExtensions(), newRes.get(key).getVendorExtensions());
+						responseGroup.putSubGroup(key, group);
+					}
 				}
 
 				if (changedOperation.isDiff()) {
@@ -145,27 +159,29 @@ public class SpecificationDiff {
 			}
 		}
 
-		ChangedVendorExtensionGroup securityDefsGroup = new ChangedVendorExtensionGroup();
-		Map<String, SecuritySchemeDefinition> oldDefs = oldSpec.getSecurityDefinitions();
-		Map<String, SecuritySchemeDefinition> newDefs = newSpec.getSecurityDefinitions();
+		if (withExtensions) {
+			ChangedExtensionGroup securityDefsGroup = new ChangedExtensionGroup();
+			Map<String, SecuritySchemeDefinition> oldDefs = oldSpec.getSecurityDefinitions();
+			Map<String, SecuritySchemeDefinition> newDefs = newSpec.getSecurityDefinitions();
 
-		MapKeyDiff<String, SecuritySchemeDefinition> securityDefsDiff = MapKeyDiff.diff(oldDefs, newDefs);
-		for (String key : securityDefsDiff.getSharedKey()) {
-			securityDefsGroup.getChangedSubGroups().put(key, getChangedVendorExtsGroup(
-					oldDefs.get(key).getVendorExtensions(), newDefs.get(key).getVendorExtensions()));
+			MapKeyDiff<String, SecuritySchemeDefinition> securityDefsDiff = MapKeyDiff.diff(oldDefs, newDefs);
+			for (String key : securityDefsDiff.getSharedKey()) {
+				securityDefsGroup.getChangedSubGroups().put(key, getChangedVendorExtsGroup(
+						oldDefs.get(key).getVendorExtensions(), newDefs.get(key).getVendorExtensions()));
+			}
+			instance.nonPathVendorExtGroup.getChangedSubGroups().put("securityDefinitions", securityDefsGroup);
+
+			ChangedExtensionGroup tagsGroup = new ChangedExtensionGroup();
+			Map<String, Tag> oldTags = mapTagsByName(oldSpec.getTags());
+			Map<String, Tag> newTags = mapTagsByName(newSpec.getTags());
+
+			MapKeyDiff<String, Tag> tagDiff = MapKeyDiff.diff(oldTags, newTags);
+			for (String key : tagDiff.getSharedKey()) {
+				tagsGroup.getChangedSubGroups().put(key, getChangedVendorExtsGroup(
+						oldSpec.getTag(key).getVendorExtensions(), newSpec.getTag(key).getVendorExtensions()));
+			}
+			instance.nonPathVendorExtGroup.getChangedSubGroups().put("tags", tagsGroup);
 		}
-		instance.nonPathVendorExtGroup.getChangedSubGroups().put("Security Definitions", securityDefsGroup);
-
-		ChangedVendorExtensionGroup tagsGroup = new ChangedVendorExtensionGroup();
-		Map<String, Tag> oldTags = mapTagsByName(oldSpec.getTags());
-		Map<String, Tag> newTags = mapTagsByName(newSpec.getTags());
-
-		MapKeyDiff<String, Tag> tagDiff = MapKeyDiff.diff(oldTags, newTags);
-		for (String key : tagDiff.getSharedKey()) {
-			tagsGroup.getChangedSubGroups().put(key, getChangedVendorExtsGroup(
-					oldSpec.getTag(key).getVendorExtensions(), newSpec.getTag(key).getVendorExtensions()));
-		}
-		instance.nonPathVendorExtGroup.getChangedSubGroups().put("Tags", tagsGroup);
 
 		return instance;
 
@@ -179,10 +195,10 @@ public class SpecificationDiff {
 		return mappedTags;
 	}
 
-	private static ChangedVendorExtensionGroup getChangedVendorExtsGroup(
+	private static ChangedExtensionGroup getChangedVendorExtsGroup(
 			Map<String, Object> oldExts, Map<String, Object> newExts) {
 		MapDiff<String, Object> mapDiff = MapDiff.diff(oldExts, newExts);
-		ChangedVendorExtensionGroup group = new ChangedVendorExtensionGroup();
+		ChangedExtensionGroup group = new ChangedExtensionGroup();
 		group.setMissingVendorExtensions(mapDiff.getMissing());
 		group.setIncreasedVendorExtensions(mapDiff.getIncreased());
 		group.setChangedVendorExtensions(mapDiff.getChanged());
@@ -252,7 +268,7 @@ public class SpecificationDiff {
 		return changedEndpoints;
 	}
 
-	public ChangedVendorExtensionGroup getNonPathVendorExtGroup() {
+	public ChangedExtensionGroup getNonPathVendorExtGroup() {
 		return nonPathVendorExtGroup;
 	}
 }
