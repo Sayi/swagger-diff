@@ -11,10 +11,14 @@ public class ChangedExtensionGroup {
   protected Map<String, Pair<Object, Object>> changedVendorExtensions = new LinkedHashMap<String, Pair<Object, Object>>();
   protected Map<String, ChangedExtensionGroup> changedSubGroups = new LinkedHashMap<String, ChangedExtensionGroup>();
 
+  public boolean vendorExtensionsAreDiffShallow() {
+    return !(increasedVendorExtensions.isEmpty()
+        && changedVendorExtensions.isEmpty()
+        && missingVendorExtensions.isEmpty());
+  }
+
   public boolean vendorExtensionsAreDiff() {
-    return !increasedVendorExtensions.isEmpty()
-        || !changedVendorExtensions.isEmpty()
-        || !missingVendorExtensions.isEmpty()
+    return vendorExtensionsAreDiffShallow()
         || subVendorExtensionsAreDiff();
   }
 
