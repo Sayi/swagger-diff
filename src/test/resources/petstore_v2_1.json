@@ -81,7 +81,8 @@
         "responses": {
           "405": {
             "description": "Invalid input",
-            "x-remove-response-ext": "remove me!"
+            "x-remove-response-ext": "remove me!",
+            "x-change-response-ext": "change me!"
           }
         },
         "security": [

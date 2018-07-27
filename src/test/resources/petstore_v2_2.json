@@ -91,7 +91,9 @@
         ],
         "responses": {
           "405": {
-            "description": "Invalid input"
+            "description": "Invalid input",
+            "x-create-response-ext": "i was created!",
+            "x-change-response-ext": "i was changed!"
           }
         },
         "security": [
@@ -730,8 +732,7 @@
             "description": "successful operation",
             "schema": {
               "$ref": "#/definitions/User"
-            },
-            "x-create-response-ext": "i was created!"
+            }
           },
           "400": {
             "description": "Invalid username supplied"

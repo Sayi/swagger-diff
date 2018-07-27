@@ -11,7 +11,7 @@ import org.junit.Test;
 import com.deepoove.swagger.diff.SwaggerDiff;
 import com.deepoove.swagger.diff.model.ChangedEndpoint;
 import com.deepoove.swagger.diff.model.ChangedOperation;
-import com.deepoove.swagger.diff.model.ChangedVendorExtensionGroup;
+import com.deepoove.swagger.diff.model.ChangedExtensionGroup;
 import com.deepoove.swagger.diff.model.Endpoint;
 import com.deepoove.swagger.diff.output.HtmlRender;
 import com.deepoove.swagger.diff.output.MarkdownRender;
@@ -83,11 +83,29 @@ public class SwaggerDiffTest {
 
 	}
 
+	private void assertVendorExtensionsAreDiff(ChangedExtensionGroup vendorExtensions) {
+		Assert.assertTrue(vendorExtensions.vendorExtensionsAreDiff());
+	}
+	
 	@Test
-	public void testDiffVendorExtension() {
+	public void testDiff() {
 		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
+		List<ChangedEndpoint> changedEndPoints = diff.getChangedEndpoints();
+		String html = new HtmlRender("Changelog",
+				"src/main/resources/demo.css")
+				.render(diff);
+		
+		try {
+			FileWriter fw = new FileWriter(
+					"testDiff.html");
+			fw.write(html);
+			fw.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-		ChangedVendorExtensionGroup tlVendorExts = diff.getChangedTopLevelVendorExtensions();
+		ChangedExtensionGroup tlVendorExts = diff.getChangedTopLevelVendorExtensions();
 		assertVendorExtensionsAreDiff(tlVendorExts);
 		for (String key : tlVendorExts.getChangedSubGroups().keySet()) {
 			assertVendorExtensionsAreDiff(tlVendorExts.getChangedSubGroups().get(key));
@@ -101,29 +119,6 @@ public class SwaggerDiffTest {
 				ChangedOperation changedOperation = changedEndpoint.getChangedOperations().get(HttpMethod.POST);
 				assertVendorExtensionsAreDiff(changedOperation);
 			}
-		}
-	}
-
-	private void assertVendorExtensionsAreDiff(ChangedVendorExtensionGroup vendorExtensions) {
-		Assert.assertTrue(vendorExtensions.vendorExtensionsAreDiff());
-	}
-	
-	@Test
-	public void testDiff() {
-		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
-		List<ChangedEndpoint> changedEndPoints = diff.getChangedEndpoints();
-		String html = new HtmlRender("Changelog",
-				"http://deepoove.com/swagger-diff/stylesheets/demo.css")
-				.render(diff);
-		
-		try {
-			FileWriter fw = new FileWriter(
-					"testDiff.html");
-			fw.write(html);
-			fw.close();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 //		Assert.assertFalse(changedEndPoints.isEmpty());
 	}
