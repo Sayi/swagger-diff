@@ -57,8 +57,6 @@ public class SpecificationDiff {
 		instance.missingEndpoints = convert2EndpointList(pathDiff.getMissing());
 		instance.changedEndpoints = new ArrayList<ChangedEndpoint>();
 
-		System.out.println(oldSpec.getVendorExtensions());
-
 		Map<String, Object> oldExts;
 		Map<String, Object> newExts;
 
