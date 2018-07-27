@@ -103,21 +103,7 @@ public class MarkdownRender implements Render {
 		StringBuffer sb = new StringBuffer();
 
 		ChangedExtensionGroup topLevelExts = diff.getChangedTopLevelVendorExtensions();
-		ChangedExtensionGroup group = topLevelExts.getSubGroup("info");
-		if (group.vendorExtensionsAreDiff()) {
-			sb.append(LI + "info\n");
-			sb.append(ul_changedVendorExts(group, PRE_LI));
-		}
-		group = topLevelExts.getSubGroup("securityDefinitions");
-		if (group.vendorExtensionsAreDiff()) {
-			sb.append(LI + "securityDefinitions\n");
-			sb.append(ul_changedVendorExtsDeep(group, PRE_LI));
-		}
-		group = topLevelExts.getSubGroup("tags");
-		if (group.vendorExtensionsAreDiff()) {
-			sb.append(LI + "tags\n");
-			sb.append(ul_changedVendorExtsDeep(group, PRE_LI));
-		}
+		sb.append(ul_changedVendorExtsDeep(topLevelExts, ""));
 
 		List<ChangedEndpoint> changedEndpoints = diff.getChangedEndpoints();
 		String ol_changed = ol_changed(changedEndpoints);
@@ -180,7 +166,7 @@ public class MarkdownRender implements Render {
 			String key = entry.getKey();
 			ChangedExtensionGroup subgroup = entry.getValue();
 			if (subgroup.vendorExtensionsAreDiff()) {
-				sb.append(pre + LI + key + "\n");
+				sb.append(pre + LI + IT + key + IT + "\n");
 				sb.append(ul_changedVendorExtsDeep(subgroup, pre + PRE_LI));
 			}
 		}
