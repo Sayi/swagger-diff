@@ -34,7 +34,7 @@ public class MarkdownRender implements Render {
 	String IT = "_";
 	String BD = "__";
 	String ST = "~~";
-	String RIGHT_ARROW = "&rarr;";
+	String RIGHT_ARROW = " &rarr; ";
 
 	public MarkdownRender() {}
 
@@ -45,7 +45,7 @@ public class MarkdownRender implements Render {
 		List<Endpoint> missingEndpoints = diff.getMissingEndpoints();
 		String ol_missingEndpoint = ol_missingEndpoint(missingEndpoints);
 
-		String ol_change = ol_changeSummary(diff);
+		String ol_change = ol_changeSummary(diff).replace("\n\n", "\n");
 
 		return renderMarkdown(diff.getOldVersion(), diff.getNewVersion(), ol_newEndpoint, ol_missingEndpoint, ol_change);
 	}
@@ -114,9 +114,9 @@ public class MarkdownRender implements Render {
 	private String ol_changed(List<ChangedEndpoint> changedEndpoints) {
 		if (null == changedEndpoints) return "";
 
-		String detailPrefix = PRE_LI + PRE_LI;
+		String detailPrefix = PRE_LI;
 		String detailTitlePrefix = detailPrefix + LI + BD;
-		String operationPrefix = PRE_LI + LI + BD + CODE;
+		String operationPrefix = LI + BD + CODE;
 
 		StringBuffer sb = new StringBuffer();
 		for (ChangedEndpoint changedEndpoint : changedEndpoints) {
@@ -124,9 +124,8 @@ public class MarkdownRender implements Render {
 			Map<HttpMethod, ChangedOperation> changedOperations = changedEndpoint
 					.getChangedOperations();
 
-			sb.append(LI).append(pathUrl).append("\n");
-
 			if (changedEndpoint.vendorExtensionsAreDiff()) {
+				sb.append(LI).append(pathUrl).append("\n");
 				sb.append(ul_changedVendorExts(changedEndpoint, PRE_LI));
 			}
 
@@ -148,13 +147,23 @@ public class MarkdownRender implements Render {
 					ul_detail.append(detailTitlePrefix).append("Return Type")
 							.append(BD).append(ul_response(changedOperation));
 				}
+				if (changedOperation.hasSubGroup("responses")) {
+					ChangedExtensionGroup group = changedOperation.getSubGroup("responses");
+					if (group.vendorExtensionsAreDiff()) {
+						ul_detail.append(detailTitlePrefix + "Responses:" + BD + "\n");
+						ul_detail.append(ul_changedVendorExtsDeep(group, PRE_LI + PRE_LI));
+						System.out.println(group.getChangedSubGroups());
+					}
+				}
 				sb.append(operationPrefix).append(method).append(CODE + BD)
-						.append(" - " + desc + "  \n")
+						.append(" " + pathUrl + " " + desc + "  \n")
 						.append(ul_detail);
 			}
 		}
 		return sb.toString();
 	}
+
+	private String li_changedResponse(){ return null;}
 
 	private String ul_changedVendorExtsDeep(ChangedExtensionGroup group, String pre) {
 		StringBuffer sb = new StringBuffer();
@@ -166,7 +175,7 @@ public class MarkdownRender implements Render {
 			String key = entry.getKey();
 			ChangedExtensionGroup subgroup = entry.getValue();
 			if (subgroup.vendorExtensionsAreDiff()) {
-				sb.append(pre + LI + IT + key + IT + "\n");
+				sb.append(pre + LI + key + "\n");
 				sb.append(ul_changedVendorExtsDeep(subgroup, pre + PRE_LI));
 			}
 		}
@@ -202,7 +211,7 @@ public class MarkdownRender implements Render {
 	private String li_changedVendorExt(String key, Object left, Object right) {
 		String fmtKey = CODE + key + CODE;
 		String fmtLeft = ST + left + ST;
-		String fmtRight = IT + right + IT;
+		String fmtRight = right.toString();
 		return LI + fmtKey + ": " + fmtLeft + RIGHT_ARROW + fmtRight + "\n";
 	}
 
@@ -257,7 +266,7 @@ public class MarkdownRender implements Render {
 		List<ChangedParameter> changedParameters = changedOperation
 				.getChangedParameter();
 
-		String prefix = PRE_LI + PRE_LI + PRE_CODE + LI;
+		String prefix = PRE_LI + PRE_LI + LI;
 
 		StringBuffer sb = new StringBuffer("\n");
 
@@ -300,7 +309,7 @@ public class MarkdownRender implements Render {
 		StringBuffer sb = new StringBuffer("");
 		sb.append(prefix).append(param.getName())
 				.append(postfix);
-		return sb.toString();
+		return sb.append("\n").toString();
 	}
 
 	private String li_missingParam(Parameter param) {
@@ -311,7 +320,7 @@ public class MarkdownRender implements Render {
 				(null == param.getDescription() ? "" : desc);
 		sb.append(prefix).append(param.getName())
 				.append(postfix);
-		return sb.toString();
+		return sb.append("\n").toString();
 	}
 
 	private String li_changedParam(ChangedParameter changeParam) {
@@ -321,8 +330,7 @@ public class MarkdownRender implements Render {
 		Parameter rightParam = changeParam.getRightParameter();
 		Parameter leftParam = changeParam.getLeftParameter();
 
-		String prefix = PRE_LI + PRE_LI + PRE_LI + PRE_LI;
-		String extPrefix = prefix + PRE_LI;
+		String prefix = PRE_LI + PRE_LI + PRE_LI;
 
 		StringBuffer sb = new StringBuffer("");
 		sb.append(CODE + rightParam.getName() + CODE + ": " + "\n");
@@ -330,7 +338,7 @@ public class MarkdownRender implements Render {
 			String oldValue = (rightParam.getRequired() ? "required" : "not required");
 			String newValue = (!rightParam.getRequired() ? "required" : "not required");
 			sb.append(prefix).append(LI)
-					.append(ST + oldValue + ST + " " + RIGHT_ARROW + " " + IT + newValue + IT + "\n");
+					.append(ST + oldValue + ST + " " + RIGHT_ARROW + " " + newValue + "\n");
 		}
 		if (changeDescription) {
 			sb.append(prefix).append(LI).append(" Notes ")
@@ -338,9 +346,9 @@ public class MarkdownRender implements Render {
 					.append(rightParam.getDescription()).append("\n");
 		}
 		if (vendorExtsChanged) {
-			sb.append(ul_changedVendorExts(changeParam, extPrefix));
+			sb.append(ul_changedVendorExts(changeParam, prefix));
 		}
-		return sb.toString();
+		return sb.append("\n").toString();
 	}
 
 }
