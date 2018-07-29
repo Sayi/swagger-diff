@@ -114,22 +114,29 @@ public class HtmlRender implements Render {
         ContainerTag ol_changed = ol_changed(changedEndpoints);
 
         ContainerTag container = div().withId("changed");
+        ChangedExtensionGroup group;
 
         ChangedExtensionGroup topLevelExts = diff.getChangedTopLevelVendorExtensions();
-        ChangedExtensionGroup group = topLevelExts.getSubGroup("info");
-        if (group.vendorExtensionsAreDiff()) {
-            container.with(li().withClass("indent").withText("info")
-                .with(ul_changedVendorExtList(group, false, true)));
+        if (topLevelExts.hasSubGroup("info")) {
+            group = topLevelExts.getSubGroup("info");
+            if (group.vendorExtensionsAreDiff()) {
+                container.with(li().withClass("indent").withText("info")
+                        .with(ul_changedVendorExtList(group, false, true)));
+            }
         }
-        group = topLevelExts.getSubGroup("securityDefinitions");
-        if (group.vendorExtensionsAreDiff()) {
-            container.with(li().withClass("indent").withText("securityDefinitions"))
-                .with(ul_changedVendorExtMap(group, true));
+        if (topLevelExts.hasSubGroup("securityDefinitions")) {
+            group = topLevelExts.getSubGroup("securityDefinitions");
+            if (group.vendorExtensionsAreDiff()) {
+                container.with(li().withClass("indent").withText("securityDefinitions"))
+                        .with(ul_changedVendorExtMap(group, true));
+            }
         }
-        group = topLevelExts.getSubGroup("tags");
-        if (group.vendorExtensionsAreDiff()) {
-            container.with(li().withClass("indent").withText("tags"))
-                .with(ul_changedVendorExtMap(group, true));
+        if (topLevelExts.hasSubGroup("tags")) {
+            group = topLevelExts.getSubGroup("tags");
+            if (group.vendorExtensionsAreDiff()) {
+                container.with(li().withClass("indent").withText("tags"))
+                        .with(ul_changedVendorExtMap(group, true));
+            }
         }
 
         return container.with(ol_changed);
