@@ -152,7 +152,6 @@ public class MarkdownRender implements Render {
 					if (group.vendorExtensionsAreDiff()) {
 						ul_detail.append(detailTitlePrefix + "Responses:" + BD + "\n");
 						ul_detail.append(ul_changedVendorExtsDeep(group, PRE_LI + PRE_LI));
-						System.out.println(group.getChangedSubGroups());
 					}
 				}
 				sb.append(operationPrefix).append(method).append(CODE + BD)
