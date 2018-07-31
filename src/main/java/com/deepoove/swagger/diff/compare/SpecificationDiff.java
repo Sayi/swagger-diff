@@ -42,7 +42,7 @@ public class SpecificationDiff {
 	}
 
 	public static SpecificationDiff diff(Swagger oldSpec, Swagger newSpec) {
-		return diff(oldSpec, newSpec, true);
+		return diff(oldSpec, newSpec, false);
 	}
 
 	public static SpecificationDiff diff(Swagger oldSpec, Swagger newSpec, boolean withExtensions) {

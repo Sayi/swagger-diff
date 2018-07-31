@@ -41,7 +41,11 @@ public class SwaggerDiff {
      *            new api-doc location:Json or Http
      */
     public static SwaggerDiff compareV1(String oldSpec, String newSpec) {
-        return compare(oldSpec, newSpec, null, null);
+        return compareV1(oldSpec, oldSpec, false);
+    }
+
+    public static SwaggerDiff compareV1(String oldSpec, String newSpec, boolean withExtensions) {
+        return compare(oldSpec, newSpec, null, null, withExtensions);
     }
 
     /**
@@ -53,7 +57,11 @@ public class SwaggerDiff {
      *            new api-doc location:Json or Http
      */
     public static SwaggerDiff compareV2(String oldSpec, String newSpec) {
-        return compare(oldSpec, newSpec, null, SWAGGER_VERSION_V2);
+        return compare(oldSpec, newSpec, null, SWAGGER_VERSION_V2, false);
+    }
+
+    public static SwaggerDiff compareV2(String oldSpec, String newSpec, boolean withExtensions) {
+        return compare(oldSpec, newSpec, null, SWAGGER_VERSION_V2, withExtensions);
     }
 
     /**
@@ -65,12 +73,16 @@ public class SwaggerDiff {
      *            new Swagger specification document in v2.0 format as a JsonNode
      */
     public static SwaggerDiff compareV2(JsonNode oldSpec, JsonNode newSpec) {
-        return new SwaggerDiff(oldSpec, newSpec).compare();
+        return compareV2(oldSpec, newSpec, false);
+    }
+
+    public static SwaggerDiff compareV2(JsonNode oldSpec, JsonNode newSpec, boolean withExtensions) {
+        return new SwaggerDiff(oldSpec, newSpec).compare(withExtensions);
     }
 
     public static SwaggerDiff compare(String oldSpec, String newSpec,
-            List<AuthorizationValue> auths, String version) {
-        return new SwaggerDiff(oldSpec, newSpec, auths, version).compare();
+            List<AuthorizationValue> auths, String version, boolean withExtensions) {
+        return new SwaggerDiff(oldSpec, newSpec, auths, version).compare(withExtensions);
     }
 
     /**
@@ -107,8 +119,8 @@ public class SwaggerDiff {
             "cannot read api-doc from spec."); }
     }
 
-    private SwaggerDiff compare() {
-    	SpecificationDiff diff = SpecificationDiff.diff(oldSpecSwagger, newSpecSwagger);
+    private SwaggerDiff compare(boolean withExtensions) {
+    	SpecificationDiff diff = SpecificationDiff.diff(oldSpecSwagger, newSpecSwagger, withExtensions);
         this.newEndpoints = diff.getNewEndpoints();
         this.missingEndpoints = diff.getMissingEndpoints();
         this.changedEndpoints = diff.getChangedEndpoints();

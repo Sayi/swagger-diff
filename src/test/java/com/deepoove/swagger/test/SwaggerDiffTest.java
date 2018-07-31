@@ -89,7 +89,7 @@ public class SwaggerDiffTest {
 	
 	@Test
 	public void testDiff() {
-		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
+		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2, true);
 		List<ChangedEndpoint> changedEndPoints = diff.getChangedEndpoints();
 		String html = new HtmlRender("Changelog",
 				"src/main/resources/demo.css")
