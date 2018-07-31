@@ -29,13 +29,13 @@ public class SwaggerDiffTest {
 
 	@Test
 	public void testEqual() {
-		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC2, SWAGGER_V2_DOC2);
+		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC2, SWAGGER_V2_DOC2, true);
 		assertEqual(diff);
 	}
 
 	@Test
 	public void testNewApi() {
-		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_EMPTY_DOC, SWAGGER_V2_DOC2);
+		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_EMPTY_DOC, SWAGGER_V2_DOC2, true);
 		List<Endpoint> newEndpoints = diff.getNewEndpoints();
 		List<Endpoint> missingEndpoints = diff.getMissingEndpoints();
 		List<ChangedEndpoint> changedEndPoints = diff.getChangedEndpoints();
@@ -60,7 +60,7 @@ public class SwaggerDiffTest {
 
 	@Test
 	public void testDeprecatedApi() {
-		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_EMPTY_DOC);
+		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_EMPTY_DOC, true);
 		List<Endpoint> newEndpoints = diff.getNewEndpoints();
 		List<Endpoint> missingEndpoints = diff.getMissingEndpoints();
 		List<ChangedEndpoint> changedEndPoints = diff.getChangedEndpoints();
@@ -125,7 +125,7 @@ public class SwaggerDiffTest {
 	
 	@Test
 	public void testDiffAndMarkdown() {
-		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
+		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2, true);
 		String render = new MarkdownRender().render(diff);
 		try {
 			FileWriter fw = new FileWriter(
@@ -144,7 +144,7 @@ public class SwaggerDiffTest {
 		try {
 			InputStream inputStream = getClass().getClassLoader().getResourceAsStream(SWAGGER_V2_DOC1);
 			JsonNode json = new ObjectMapper().readTree(inputStream);
-			SwaggerDiff diff = SwaggerDiff.compareV2(json, json);
+			SwaggerDiff diff = SwaggerDiff.compareV2(json, json, true);
 			assertEqual(diff);
 		} catch (IOException e) {
 			e.printStackTrace();
