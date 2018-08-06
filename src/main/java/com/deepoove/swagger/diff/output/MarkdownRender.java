@@ -3,8 +3,6 @@ package com.deepoove.swagger.diff.output;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingDeque;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -102,7 +100,7 @@ public class MarkdownRender implements Render {
 	private String ol_changeSummary(SwaggerDiff diff) {
 		StringBuffer sb = new StringBuffer();
 
-		ChangedExtensionGroup topLevelExts = diff.getChangedTopLevelVendorExtensions();
+		ChangedExtensionGroup topLevelExts = diff.getChangedVendorExtensions();
 		sb.append(ul_changedVendorExtsDeep(topLevelExts, ""));
 
 		List<ChangedEndpoint> changedEndpoints = diff.getChangedEndpoints();
@@ -161,8 +159,6 @@ public class MarkdownRender implements Render {
 		}
 		return sb.toString();
 	}
-
-	private String li_changedResponse(){ return null;}
 
 	private String ul_changedVendorExtsDeep(ChangedExtensionGroup group, String pre) {
 		StringBuffer sb = new StringBuffer();

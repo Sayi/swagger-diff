@@ -30,13 +30,11 @@ import io.swagger.models.properties.Property;
  * @author Sayi
  *
  */
-public class SpecificationDiff {
+public class SpecificationDiff extends ChangedExtensionGroup {
 
 	private List<Endpoint> newEndpoints;
 	private List<Endpoint> missingEndpoints;
 	private List<ChangedEndpoint> changedEndpoints;
-
-	private ChangedExtensionGroup nonPathVendorExtGroup = new ChangedExtensionGroup();
 
 	private SpecificationDiff() {
 	}
@@ -64,11 +62,11 @@ public class SpecificationDiff {
 
 			oldExts = oldSpec.getVendorExtensions();
 			newExts = newSpec.getVendorExtensions();
-			instance.nonPathVendorExtGroup.setVendorExtsFromGroup(getChangedVendorExtsGroup( oldExts, newExts));
+			instance.setVendorExtsFromGroup(getChangedVendorExtsGroup(oldExts, newExts));
 
 			oldExts = oldSpec.getInfo().getVendorExtensions();
 			newExts = newSpec.getInfo().getVendorExtensions();
-			instance.nonPathVendorExtGroup.getChangedSubGroups()
+			instance.getChangedSubGroups()
 					.put("info", getChangedVendorExtsGroup(oldExts, newExts));
 		}
 
@@ -173,7 +171,7 @@ public class SpecificationDiff {
 				securityDefsGroup.getChangedSubGroups().put(key, getChangedVendorExtsGroup(
 						oldDefs.get(key).getVendorExtensions(), newDefs.get(key).getVendorExtensions()));
 			}
-			instance.nonPathVendorExtGroup.getChangedSubGroups().put("securityDefinitions", securityDefsGroup);
+			instance.getChangedSubGroups().put("securityDefinitions", securityDefsGroup);
 
 			ChangedExtensionGroup tagsGroup = new ChangedExtensionGroup();
 			Map<String, Tag> oldTags = mapTagsByName(oldSpec.getTags());
@@ -184,7 +182,7 @@ public class SpecificationDiff {
 				tagsGroup.getChangedSubGroups().put(key, getChangedVendorExtsGroup(
 						oldSpec.getTag(key).getVendorExtensions(), newSpec.getTag(key).getVendorExtensions()));
 			}
-			instance.nonPathVendorExtGroup.getChangedSubGroups().put("tags", tagsGroup);
+			instance.getChangedSubGroups().put("tags", tagsGroup);
 		}
 
 		return instance;
@@ -270,9 +268,5 @@ public class SpecificationDiff {
 
 	public List<ChangedEndpoint> getChangedEndpoints() {
 		return changedEndpoints;
-	}
-
-	public ChangedExtensionGroup getNonPathVendorExtGroup() {
-		return nonPathVendorExtGroup;
 	}
 }

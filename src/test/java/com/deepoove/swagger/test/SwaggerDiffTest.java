@@ -105,7 +105,7 @@ public class SwaggerDiffTest {
 			e.printStackTrace();
 		}
 
-		ChangedExtensionGroup tlVendorExts = diff.getChangedTopLevelVendorExtensions();
+		ChangedExtensionGroup tlVendorExts = diff.getChangedVendorExtensions();
 		assertVendorExtensionsAreDiff(tlVendorExts);
 		for (String key : tlVendorExts.getChangedSubGroups().keySet()) {
 			assertVendorExtensionsAreDiff(tlVendorExts.getChangedSubGroups().get(key));

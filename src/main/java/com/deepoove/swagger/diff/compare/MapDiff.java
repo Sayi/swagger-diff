@@ -1,9 +1,6 @@
 package com.deepoove.swagger.diff.compare;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -65,6 +62,4 @@ public class MapDiff<K, V> {
   public Map<K, Pair<V, V>> getChanged() {
     return changed;
   }
-
-  public List<K> getSharedKey() { return new ArrayList<K>(changed.keySet()); }
 }

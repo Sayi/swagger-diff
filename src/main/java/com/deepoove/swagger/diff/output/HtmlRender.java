@@ -116,25 +116,29 @@ public class HtmlRender implements Render {
         ContainerTag container = div().withId("changed");
         ChangedExtensionGroup group;
 
-        ChangedExtensionGroup topLevelExts = diff.getChangedTopLevelVendorExtensions();
+        ChangedExtensionGroup topLevelExts = diff.getChangedVendorExtensions();
+        if (topLevelExts.vendorExtensionsAreDiffShallow()) {
+            container.with(li().withClass("indent")).withText("root-level extensions")
+                .with(ul_changedVendorExtList(topLevelExts, true, true));
+        }
         if (topLevelExts.hasSubGroup("info")) {
             group = topLevelExts.getSubGroup("info");
             if (group.vendorExtensionsAreDiff()) {
-                container.with(li().withClass("indent").withText("info")
+                container.with(li().withClass("indent").withText("info extensions")
                         .with(ul_changedVendorExtList(group, false, true)));
             }
         }
         if (topLevelExts.hasSubGroup("securityDefinitions")) {
             group = topLevelExts.getSubGroup("securityDefinitions");
             if (group.vendorExtensionsAreDiff()) {
-                container.with(li().withClass("indent").withText("securityDefinitions"))
+                container.with(li().withClass("indent").withText("securityDefinitions extensions"))
                         .with(ul_changedVendorExtMap(group, true));
             }
         }
         if (topLevelExts.hasSubGroup("tags")) {
             group = topLevelExts.getSubGroup("tags");
             if (group.vendorExtensionsAreDiff()) {
-                container.with(li().withClass("indent").withText("tags"))
+                container.with(li().withClass("indent").withText("tags extensions"))
                         .with(ul_changedVendorExtMap(group, true));
             }
         }

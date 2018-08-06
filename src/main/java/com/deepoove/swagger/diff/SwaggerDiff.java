@@ -30,7 +30,7 @@ public class SwaggerDiff {
     private List<Endpoint> missingEndpoints;
     private List<ChangedEndpoint> changedEndpoints;
 
-    private ChangedExtensionGroup changedTopLevelVendorExtensions;
+    private ChangedExtensionGroup changedVendorExtensions;
 
     /**
      * compare two swagger 1.x doc
@@ -41,7 +41,7 @@ public class SwaggerDiff {
      *            new api-doc location:Json or Http
      */
     public static SwaggerDiff compareV1(String oldSpec, String newSpec) {
-        return compareV1(oldSpec, oldSpec, false);
+        return compareV1(oldSpec, newSpec, false);
     }
 
     public static SwaggerDiff compareV1(String oldSpec, String newSpec, boolean withExtensions) {
@@ -57,7 +57,7 @@ public class SwaggerDiff {
      *            new api-doc location:Json or Http
      */
     public static SwaggerDiff compareV2(String oldSpec, String newSpec) {
-        return compare(oldSpec, newSpec, null, SWAGGER_VERSION_V2, false);
+        return compareV2(oldSpec, newSpec, false);
     }
 
     public static SwaggerDiff compareV2(String oldSpec, String newSpec, boolean withExtensions) {
@@ -124,7 +124,7 @@ public class SwaggerDiff {
         this.newEndpoints = diff.getNewEndpoints();
         this.missingEndpoints = diff.getMissingEndpoints();
         this.changedEndpoints = diff.getChangedEndpoints();
-        this.changedTopLevelVendorExtensions = diff.getNonPathVendorExtGroup();
+        this.changedVendorExtensions = diff;
         return this;
     }
 
@@ -140,8 +140,8 @@ public class SwaggerDiff {
         return changedEndpoints;
     }
 
-    public ChangedExtensionGroup getChangedTopLevelVendorExtensions() {
-        return changedTopLevelVendorExtensions;
+    public ChangedExtensionGroup getChangedVendorExtensions() {
+        return changedVendorExtensions;
     }
 
     public String getOldVersion() {
