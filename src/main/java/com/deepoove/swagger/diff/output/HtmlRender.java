@@ -1,20 +1,25 @@
 package com.deepoove.swagger.diff.output;
 
-import com.deepoove.swagger.diff.SwaggerDiff;
-import com.deepoove.swagger.diff.model.*;
-import io.swagger.models.HttpMethod;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.properties.Property;
-import j2html.tags.ContainerTag;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static j2html.TagCreator.*;
-
 import org.apache.commons.lang3.tuple.Pair;
+
+import com.deepoove.swagger.diff.SwaggerDiff;
+import com.deepoove.swagger.diff.model.ChangedEndpoint;
+import com.deepoove.swagger.diff.model.ChangedExtensionGroup;
+import com.deepoove.swagger.diff.model.ChangedOperation;
+import com.deepoove.swagger.diff.model.ChangedParameter;
+import com.deepoove.swagger.diff.model.ElProperty;
+import com.deepoove.swagger.diff.model.Endpoint;
+
+import io.swagger.models.HttpMethod;
+import io.swagger.models.parameters.Parameter;
+import io.swagger.models.properties.Property;
+import j2html.tags.ContainerTag;
+import static j2html.TagCreator.*;
 
 public class HtmlRender implements Render {
 
@@ -118,27 +123,28 @@ public class HtmlRender implements Render {
 
         ChangedExtensionGroup topLevelExts = diff.getChangedVendorExtensions();
         if (topLevelExts.vendorExtensionsAreDiffShallow()) {
-            container.with(li().withClass("indent")).withText("root-level extensions")
+            container.with(li().withClass("indent"))
+                .with(span("Root-Level Extensions").withClass("indent"))
                 .with(ul_changedVendorExtList(topLevelExts, true, true));
         }
         if (topLevelExts.hasSubGroup("info")) {
             group = topLevelExts.getSubGroup("info");
             if (group.vendorExtensionsAreDiff()) {
-                container.with(li().withClass("indent").withText("info extensions")
+                container.with(li().withClass("indent").withText("Info Extensions")
                         .with(ul_changedVendorExtList(group, false, true)));
             }
         }
         if (topLevelExts.hasSubGroup("securityDefinitions")) {
             group = topLevelExts.getSubGroup("securityDefinitions");
             if (group.vendorExtensionsAreDiff()) {
-                container.with(li().withClass("indent").withText("securityDefinitions extensions"))
+                container.with(li().withClass("indent").withText("Security Definition Extensions"))
                         .with(ul_changedVendorExtMap(group, true));
             }
         }
         if (topLevelExts.hasSubGroup("tags")) {
             group = topLevelExts.getSubGroup("tags");
             if (group.vendorExtensionsAreDiff()) {
-                container.with(li().withClass("indent").withText("tags extensions"))
+                container.with(li().withClass("indent").withText("Tag Extensions"))
                         .with(ul_changedVendorExtMap(group, true));
             }
         }
