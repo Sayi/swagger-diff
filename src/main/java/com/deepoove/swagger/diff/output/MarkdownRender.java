@@ -114,13 +114,18 @@ public class MarkdownRender implements Render {
 	private String ul_response(ChangedOperation changedOperation) {
 		List<ElProperty> addProps = changedOperation.getAddProps();
 		List<ElProperty> delProps = changedOperation.getMissingProps();
-		StringBuffer sb = new StringBuffer("\n\n");
+		List<ElProperty> changedProps = changedOperation.getChangedProps();
+		StringBuffer sb = new StringBuffer("\n");
+
+		String prefix = PRE_LI + PRE_CODE + LI;
 		for (ElProperty prop : addProps) {
 			sb.append(PRE_LI).append(PRE_CODE).append(li_addProp(prop) + "\n");
 		}
 		for (ElProperty prop : delProps) {
-			sb.append(PRE_LI).append(PRE_CODE)
-					.append(li_missingProp(prop) + "\n");
+			sb.append(prefix).append(li_missingProp(prop) + "\n");
+		}
+		for (ElProperty prop : changedProps) {
+			sb.append(prefix).append(li_changedProp(prop) + "\n");
 		}
 		return sb.toString();
 	}
@@ -140,6 +145,19 @@ public class MarkdownRender implements Render {
 		sb.append("Add ").append(prop.getEl())
 				.append(null == property.getDescription() ? ""
 						: (" //" + property.getDescription()));
+		return sb.toString();
+	}
+
+	private String li_changedProp(ElProperty prop) {
+		Property property = prop.getProperty();
+		String prefix = "Modified " + CODE;
+		String desc = " //" + property.getDescription();
+		String postfix = CODE +
+				(null == property.getDescription() ? "" : desc);
+
+		StringBuffer sb = new StringBuffer("");
+		sb.append(prefix).append(prop.getEl())
+				.append(postfix);
 		return sb.toString();
 	}
 
@@ -168,9 +186,13 @@ public class MarkdownRender implements Render {
 		}
 		for (ChangedParameter param : changedParameters) {
 			List<ElProperty> missing = param.getMissing();
+			List<ElProperty> changed = param.getChanged();
 			for (ElProperty prop : missing) {
 				sb.append(PRE_LI).append(PRE_CODE)
 						.append(li_missingProp(prop) + "\n");
+			}
+			for (ElProperty prop : changed) {
+				sb.append(li_changedProp(prop) + "\n");
 			}
 		}
 		for (Parameter param : delParameters) {

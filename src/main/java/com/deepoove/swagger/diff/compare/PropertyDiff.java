@@ -14,6 +14,7 @@ public class PropertyDiff {
 
 	private List<ElProperty> increased;
 	private List<ElProperty> missing;
+	private List<ElProperty> changed;
 
 	Map<String, Model> oldDedinitions;
 	Map<String, Model> newDedinitions;
@@ -21,6 +22,7 @@ public class PropertyDiff {
 	private PropertyDiff() {
 		increased = new ArrayList<ElProperty>();
 		missing = new ArrayList<ElProperty>();
+		changed = new ArrayList<ElProperty>();
 	}
 
 	public static PropertyDiff buildWithDefinition(Map<String, Model> left,
@@ -40,6 +42,7 @@ public class PropertyDiff {
 					.diff(leftModel, rightModel);
 			increased.addAll(diff.getIncreased());
 			missing.addAll(diff.getMissing());
+			changed.addAll(diff.getChanged());
 		}
 		return this;
 	}
@@ -60,4 +63,11 @@ public class PropertyDiff {
 		this.missing = missing;
 	}
 
+	public List<ElProperty> getChanged() {
+		return changed;
+	}
+
+	public void setChanged(List<ElProperty> changed) {
+		this.changed = changed;
+	}
 }

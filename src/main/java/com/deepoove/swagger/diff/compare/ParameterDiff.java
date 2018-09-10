@@ -72,6 +72,7 @@ public class ParameterDiff {
 						ModelDiff diff = ModelDiff.buildWithDefinition(oldDedinitions, newDedinitions).diff(leftModel, rightModel, name);
 						changedParameter.setIncreased(diff.getIncreased());
 						changedParameter.setMissing(diff.getMissing());
+						changedParameter.setChanged(diff.getChanged());
 					}
 				}
 				

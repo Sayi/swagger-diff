@@ -8,7 +8,8 @@ import io.swagger.models.parameters.Parameter;
 public class ChangedParameter implements Changed {
 	
 	private List<ElProperty> increased = new ArrayList<ElProperty>();
-	private List<ElProperty> missing = new ArrayList<ElProperty>();;
+	private List<ElProperty> missing = new ArrayList<ElProperty>();
+	private List<ElProperty> changed = new ArrayList<ElProperty>();
 
 	private Parameter leftParameter;
 	private Parameter rightParameter;
@@ -50,7 +51,11 @@ public class ChangedParameter implements Changed {
 	}
 
 	public boolean isDiff() {
-		return isChangeRequired || isChangeDescription || !increased.isEmpty() || !missing.isEmpty();
+		return isChangeRequired
+				|| isChangeDescription
+				|| !increased.isEmpty()
+				|| !missing.isEmpty()
+				|| !changed.isEmpty();
 	}
 
 	public List<ElProperty> getIncreased() {
@@ -68,6 +73,12 @@ public class ChangedParameter implements Changed {
 	public void setMissing(List<ElProperty> missing) {
 		this.missing = missing;
 	}
-	
 
+	public List<ElProperty> getChanged() {
+		return changed;
+	}
+
+	public void setChanged(List<ElProperty> changed) {
+		this.changed = changed;
+	}
 }
