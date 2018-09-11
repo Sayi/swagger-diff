@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.deepoove.swagger.diff.model.ElProperty;
-import com.google.common.collect.ImmutableMap;
 
 import io.swagger.models.Model;
 import io.swagger.models.properties.Property;
@@ -19,14 +18,13 @@ import io.swagger.models.properties.RefProperty;
 /**
  * compare two model
  * @author Sayi
- * @version 
+ * @version
  */
 public class ModelDiff {
 
 	private List<ElProperty> increased;
 	private List<ElProperty> missing;
 	private List<ElProperty> changed;
-	private int count = 0;
 
 	Map<String, Model> oldDedinitions;
 	Map<String, Model> newDedinitions;
@@ -46,24 +44,29 @@ public class ModelDiff {
 	}
 
 	public ModelDiff diff(Model leftModel, Model rightModel) {
-		return this.diff(leftModel, rightModel, null, new HashSet<String>());
+		return this.diff(leftModel, rightModel, null, new HashSet<Model>());
 	}
 
 	public ModelDiff diff(Model leftModel, Model rightModel, String parentEl) {
-		return this.diff(leftModel, rightModel, parentEl, new HashSet<String>());
+		return this.diff(leftModel, rightModel, parentEl, new HashSet<Model>());
 	}
 
-	private ModelDiff diff(Model leftModel, Model rightModel, String parentEl, Set<String> visited) {
-		if ((null == leftModel && null == rightModel)) return this;
+	private ModelDiff diff(Model leftModel, Model rightModel, String parentEl, Set<Model> visited) {
+		// Stop recursing if both models are null
+		// OR either model is already contained in the visiting history
+		if ((null == leftModel && null == rightModel) || visited.contains(leftModel) || visited.contains(rightModel)) {
+			return this;
+		}
 		Map<String, Property> leftProperties = null == leftModel ? null : leftModel.getProperties();
 		Map<String, Property> rightProperties = null == rightModel ? null : rightModel.getProperties();
+
+		// Diff the properties
 		MapKeyDiff<String, Property> propertyDiff = MapKeyDiff.diff(leftProperties, rightProperties);
-		Map<String, Property> increasedProp = propertyDiff.getIncreased();
-		Map<String, Property> missingProp = propertyDiff.getMissing();
 
-		increased.addAll(asElProperties(increasedProp, parentEl, false, new HashSet<String>()));
-		missing.addAll(asElProperties(missingProp, parentEl, true, new HashSet<String>()));
+		increased.addAll(buildElProperties(propertyDiff.getIncreased(), parentEl, false, new HashSet<Model>()));
+		missing.addAll(buildElProperties(propertyDiff.getMissing(), parentEl, true, new HashSet<Model>()));
 
+		// Recursively find the diff between properties
 		List<String> sharedKey = propertyDiff.getSharedKey();
 		for (String key : sharedKey) {
 			Property left = leftProperties.get(key);
@@ -73,47 +76,51 @@ public class ModelDiff {
 				String leftRef = ((RefProperty) left).getSimpleRef();
 				String rightRef = ((RefProperty) right).getSimpleRef();
 
-				if (!visited.contains(leftRef) && !visited.contains(rightRef)) {
-					count += 1;
-					diff(oldDedinitions.get(leftRef), newDedinitions.get(rightRef),
-							null == parentEl ? key : (parentEl + "." + key),
-							copyAndAdd(visited, leftRef, rightRef));
-				}
-			} else if (!left.equals(right)) {
-				changed.add(asElProperty(key, left, parentEl));
+				diff(oldDedinitions.get(leftRef), newDedinitions.get(rightRef),
+						null == parentEl ? key : (parentEl + "." + key),
+						copyAndAdd(visited, leftModel, rightModel));
+
+			} else if (left != null && right != null && !left.equals(right)) {
+				// Add a changed ElProperty if not a Reference
+				changed.add(buildElProperty(key, parentEl, left));
 			}
 		}
 		return this;
 	}
 
-	private ElProperty asElProperty(String propName, Property prop, String parentEl) {
-		return new ArrayList<ElProperty>(asElProperties(ImmutableMap.of(propName, prop), parentEl, true, new HashSet<String>())).get(0);
-	}
+	private Collection<? extends ElProperty> buildElProperties(
+			Map<String, Property> propMap, String parentEl, boolean isLeft, Set<Model> visited) {
 
-	private Collection<? extends ElProperty> asElProperties(
-			Map<String, Property> propMap, String parentEl, boolean isLeft, Set<String> visited) {
 		List<ElProperty> result = new ArrayList<ElProperty>();
-		if (null == propMap) return result;
+		if (null == propMap) {
+			return result;
+		}
+
 		for (Entry<String, Property> entry : propMap.entrySet()) {
 			String propName = entry.getKey();
 			Property property = entry.getValue();
-			if (property instanceof RefProperty) {
+
+			if (!RefProperty.class.isInstance(property)) {
+				// Add an ElProperty for non-ref changes
+				result.add(buildElProperty(propName, parentEl, property));
+			} else {
 				String ref = ((RefProperty) property).getSimpleRef();
-				Model model = isLeft ? oldDedinitions.get(ref)
-						: newDedinitions.get(ref);
+				Model model = isLeft ? oldDedinitions.get(ref) : newDedinitions.get(ref);
+
+				// Only recurse if this ref hasn't been visited
+				// in the direct history
 				if (model != null && !visited.contains(ref)) {
 					Map<String, Property> properties = model.getProperties();
-					result.addAll(
-							asElProperties(properties,
-									null == parentEl ? propName
-											: (parentEl + "." + propName),
-									isLeft, copyAndAdd(visited, ref)));
+					result.addAll(buildElProperties(properties, buildElString(parentEl, propName), isLeft, copyAndAdd(visited, model)));
 					return result;
 				}
 			}
-			result.add(buildElProperty(propName, parentEl, property));
 		}
 		return result;
+	}
+
+	private String buildElString(String parentEl, String propName) {
+		return null == parentEl ? propName : (parentEl + "." + propName);
 	}
 
 	private ElProperty buildElProperty(String propName, String parentEl, Property property) {
