@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.deepoove.swagger.diff.model.ChangedEndpoint;
 import com.deepoove.swagger.diff.model.ChangedExtensionGroup;
 import com.deepoove.swagger.diff.model.ChangedOperation;
@@ -17,13 +15,11 @@ import com.deepoove.swagger.diff.model.ChangedParameter;
 import com.deepoove.swagger.diff.model.Endpoint;
 
 import io.swagger.models.HttpMethod;
-import io.swagger.models.Info;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.Response;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
-import io.swagger.models.auth.SecuritySchemeDefinition;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
 
@@ -143,6 +139,9 @@ public class SpecificationDiff extends ChangedExtensionGroup {
 
 	private static Map<String, Tag> mapTagsByName(List<Tag> tags) {
 		Map<String, Tag> mappedTags = new LinkedHashMap<String, Tag>();
+		if (tags == null) {
+			return mappedTags;
+		}
 		for (Tag tag : tags) {
 			mappedTags.put(tag.getName(), tag);
 		}
