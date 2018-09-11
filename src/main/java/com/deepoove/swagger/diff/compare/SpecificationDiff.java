@@ -48,7 +48,7 @@ public class SpecificationDiff extends ChangedExtensionGroup {
 
 	public static SpecificationDiff diff(Swagger oldSpec, Swagger newSpec, boolean withExtensions) {
 		SpecificationDiff instance = new SpecificationDiff();
-		VendorExtDiffer extDiffer = new VendorExtDiffer(withExtensions);
+		VendorExtensionDiff extDiffer = new VendorExtensionDiff(withExtensions);
 		if (null == oldSpec || null == newSpec) {
 			throw new IllegalArgumentException("cannot diff null spec.");
 		}
@@ -210,93 +210,5 @@ public class SpecificationDiff extends ChangedExtensionGroup {
 
 	public List<ChangedEndpoint> getChangedEndpoints() {
 		return changedEndpoints;
-	}
-
-	private static class VendorExtDiffer {
-
-		private boolean withExts;
-
-		private VendorExtDiffer(boolean withExts) {
-			this.withExts = withExts;
-		}
-
-		public ChangedExtensionGroup diff(Parameter left, Parameter right) {
-			return diff(left.getVendorExtensions(), right.getVendorExtensions());
-		}
-
-		public ChangedExtensionGroup diff(Operation left, Operation right) {
-			return diff(left.getVendorExtensions(), right.getVendorExtensions());
-		}
-
-		public ChangedExtensionGroup diff(Swagger left, Swagger right) {
-			return diff(left.getVendorExtensions(), right.getVendorExtensions());
-		}
-
-		public ChangedExtensionGroup diff(Info left, Info right) {
-			return diff(left.getVendorExtensions(), right.getVendorExtensions());
-		}
-
-		public ChangedExtensionGroup diff(Path left, Path right) {
-			return diff(left.getVendorExtensions(), right.getVendorExtensions());
-		}
-
-		public ChangedExtensionGroup diff(Response left, Response right) {
-			return diff(left.getVendorExtensions(), right.getVendorExtensions());
-		}
-
-		public ChangedExtensionGroup diff(Tag left ,Tag right) {
-			return diff(left.getVendorExtensions(), right.getVendorExtensions());
-		}
-
-		public ChangedExtensionGroup diff(SecuritySchemeDefinition left, SecuritySchemeDefinition right) {
-			return diff(left.getVendorExtensions(), right.getVendorExtensions());
-		}
-
-		private ChangedExtensionGroup diff(Map<String, Object> oldExts, Map<String, Object> newExts) {
-			ChangedExtensionGroup group = new ChangedExtensionGroup();
-			if (withExts) {
-				MapDiff<String, Object> mapDiff = MapDiff.diff(oldExts, newExts);
-				group.setMissingVendorExtensions(mapDiff.getMissing());
-				group.setChangedVendorExtensions(mapDiff.getChanged());
-				group.setIncreasedVendorExtensions(mapDiff.getIncreased());
-			}
-			return group;
-		}
-
-		public ChangedExtensionGroup diffTagGroup(Map<String, Tag> left, Map<String, Tag> right) {
-			MapDiff<String, Tag> responseDiff = MapDiff.diff(left, right);
-			ChangedExtensionGroup responseGroup = new ChangedExtensionGroup();
-			for (Entry<String, Pair<Tag, Tag>> entry : responseDiff.getChanged().entrySet()) {
-				String code = entry.getKey();
-				Tag oldVal = entry.getValue().getLeft();
-				Tag newVal = entry.getValue().getRight();
-				responseGroup.putSubGroup(code, diff(oldVal, newVal));
-			}
-			return responseGroup;
-		}
-
-		public ChangedExtensionGroup diffSecGroup(Map<String, SecuritySchemeDefinition> left, Map<String, SecuritySchemeDefinition> right) {
-			MapDiff<String, SecuritySchemeDefinition> responseDiff = MapDiff.diff(left, right);
-			ChangedExtensionGroup responseGroup = new ChangedExtensionGroup();
-			for (Entry<String, Pair<SecuritySchemeDefinition, SecuritySchemeDefinition>> entry : responseDiff.getChanged().entrySet()) {
-				String code = entry.getKey();
-				SecuritySchemeDefinition oldVal = entry.getValue().getLeft();
-				SecuritySchemeDefinition newVal = entry.getValue().getRight();
-				responseGroup.putSubGroup(code, diff(oldVal, newVal));
-			}
-			return responseGroup;
-		}
-
-		public ChangedExtensionGroup diffResGroup(Map<String, Response> left, Map<String, Response> right) {
-			MapDiff<String, Response> responseDiff = MapDiff.diff(left, right);
-			ChangedExtensionGroup responseGroup = new ChangedExtensionGroup();
-			for (Entry<String, Pair<Response, Response>> entry : responseDiff.getChanged().entrySet()) {
-				String code = entry.getKey();
-				Response oldVal = entry.getValue().getLeft();
-				Response newVal = entry.getValue().getRight();
-				responseGroup.putSubGroup(code, diff(oldVal, newVal));
-			}
-			return responseGroup;
-		}
 	}
 }
