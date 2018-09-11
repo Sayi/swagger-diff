@@ -947,6 +947,9 @@
             "type": "string"
           }
         },
+        "parent": {
+          "$ref": "#/definitions/Pet"
+        },
         "tags": {
           "type": "array",
           "xml": {

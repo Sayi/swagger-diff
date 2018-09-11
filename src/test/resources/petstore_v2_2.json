@@ -943,6 +943,9 @@
           "example": "a feild demo by sayi",
           "description": "a feild demo by sayi"
         },
+        "parent": {
+          "$ref": "#/definitions/Pet"
+        },
         "photoUrls": {
           "type": "array",
           "xml": {
