@@ -195,6 +195,21 @@ public class MarkdownRender implements Render {
 		return sb.toString();
 	}
 
+	private String ul_paramChangedVendorExts(String paramName, ChangedExtensionGroup group, String pre) {
+		updateKeysWithParam(paramName, group.getIncreasedVendorExtensions());
+		updateKeysWithParam(paramName, group.getMissingVendorExtensions());
+		updateKeysWithParam(paramName, group.getChangedVendorExtensions());
+
+		return ul_changedVendorExts(group, pre);
+	}
+
+	private <V> void updateKeysWithParam(String prepend, Map<String, V> map) {
+		for (String key : map.keySet()) {
+			V value = map.remove(key);
+			map.put(prepend + "." + key, value);
+		}
+	}
+
 	private String li_addVendorExt(String key) {
 		return LI + "Add " + CODE + key + CODE + "\n";
 	}
@@ -280,7 +295,7 @@ public class MarkdownRender implements Render {
 			boolean changeVendorExts = param.vendorExtensionsAreDiff();
 
 			if (changeRequired || changeDescription || changeVendorExts) {
-				sb.append(prefix).append(li_changedParam(param));
+				sb.append(li_changedParam(param));
 			}
 		}
 		for (ChangedParameter param : changedParameters) {
@@ -325,10 +340,12 @@ public class MarkdownRender implements Render {
 		Parameter rightParam = changeParam.getRightParameter();
 		Parameter leftParam = changeParam.getLeftParameter();
 
-		String prefix = PRE_LI + PRE_LI + PRE_LI;
+		String prefix = PRE_LI + PRE_LI;
 
 		StringBuffer sb = new StringBuffer("");
-		sb.append(CODE + rightParam.getName() + CODE + ": " + "\n");
+		if (vendorExtsChanged) {
+			sb.append(ul_paramChangedVendorExts(rightParam.getName(), changeParam, prefix));
+		}
 		if (changeRequired) {
 			String oldValue = (rightParam.getRequired() ? "required" : "not required");
 			String newValue = (!rightParam.getRequired() ? "required" : "not required");
@@ -339,9 +356,6 @@ public class MarkdownRender implements Render {
 			sb.append(prefix).append(LI).append(" Notes ")
 					.append(leftParam.getDescription()).append(RIGHT_ARROW)
 					.append(rightParam.getDescription()).append("\n");
-		}
-		if (vendorExtsChanged) {
-			sb.append(ul_changedVendorExts(changeParam, prefix));
 		}
 		return sb.append("\n").toString();
 	}
