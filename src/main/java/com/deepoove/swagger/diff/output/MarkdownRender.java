@@ -103,7 +103,7 @@ public class MarkdownRender implements Render {
 					ul_detail.append(PRE_LI).append("Return Type")
 							.append(ul_response(changedOperation));
 				}
-				sb.append(LI).append(CODE).append(method).append(CODE)
+				sb.append(CODE).append(method).append(CODE)
 						.append(" " + pathUrl).append(" " + desc + "  \n")
 						.append(ul_detail);
 			}
@@ -117,7 +117,7 @@ public class MarkdownRender implements Render {
 		List<ElProperty> changedProps = changedOperation.getChangedProps();
 		StringBuffer sb = new StringBuffer("\n");
 
-		String prefix = PRE_LI + PRE_CODE + LI;
+		String prefix = PRE_LI + PRE_CODE;
 		for (ElProperty prop : addProps) {
 			sb.append(PRE_LI).append(PRE_CODE).append(li_addProp(prop) + "\n");
 		}
