@@ -890,6 +890,9 @@
         "password": {
           "type": "string"
         },
+        "favorite": {
+          "$ref": "#/definitions/Pet"
+        },
         "userStatus": {
           "type": "integer",
           "format": "int32",
@@ -942,6 +945,9 @@
           "type": "string",
           "example": "a feild demo by sayi",
           "description": "a feild demo by sayi"
+        },
+        "owner": {
+          "$ref": "#/definitions/User"
         },
         "parent": {
           "$ref": "#/definitions/Pet"
