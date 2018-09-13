@@ -939,7 +939,7 @@
         },
         "name": {
           "type": "string",
-          "example": "doggie"
+          "example": "doggies"
         },
         "newFeild": {
           "type": "string",

@@ -63,8 +63,8 @@ public class ModelDiff {
 		// Diff the properties
 		MapKeyDiff<String, Property> propertyDiff = MapKeyDiff.diff(leftProperties, rightProperties);
 
-		increased.addAll(convert2ElPropertys(propertyDiff.getIncreased(), parentEl, false, new HashSet<Model>()));
-		missing.addAll(convert2ElPropertys(propertyDiff.getMissing(), parentEl, true, new HashSet<Model>()));
+		increased.addAll(convert2ElPropertys(propertyDiff.getIncreased(), parentEl));
+		missing.addAll(convert2ElPropertys(propertyDiff.getMissing(), parentEl));
 
 		// Recursively find the diff between properties
 		List<String> sharedKey = propertyDiff.getSharedKey();
@@ -89,30 +89,13 @@ public class ModelDiff {
 	}
 
 	private Collection<? extends ElProperty> convert2ElPropertys(
-			Map<String, Property> propMap, String parentEl, boolean isLeft, Set<Model> visited) {
+			Map<String, Property> propMap, String parentEl) {
 
 		List<ElProperty> result = new ArrayList<ElProperty>();
 		if (null == propMap) return result;
 
 		for (Entry<String, Property> entry : propMap.entrySet()) {
-			String propName = entry.getKey();
-			Property property = entry.getValue();
-
-			if (!(property instanceof RefProperty)) {
-				// Add an ElProperty for non-ref changes
-				result.add(convert2ElProperty(propName, parentEl, property));
-			} else {
-				String ref = ((RefProperty) property).getSimpleRef();
-				Model model = isLeft ? oldDedinitions.get(ref) : newDedinitions.get(ref);
-
-				// Only recurse if this ref hasn't been visited
-				// in the direct history
-				if (model != null && !visited.contains(ref)) {
-					Map<String, Property> properties = model.getProperties();
-					result.addAll(convert2ElPropertys(properties, buildElString(parentEl, propName), isLeft, copyAndAdd(visited, model)));
-					return result;
-				}
-			}
+			result.add(convert2ElProperty(entry.getKey(), parentEl, entry.getValue()));
 		}
 		return result;
 	}
@@ -124,8 +107,7 @@ public class ModelDiff {
 	private ElProperty convert2ElProperty(String propName, String parentEl, Property property) {
 		ElProperty pWithPath = new ElProperty();
 		pWithPath.setProperty(property);
-		pWithPath.setEl(null == parentEl ? propName
-				: (parentEl + "." + propName));
+		pWithPath.setEl(buildElString(parentEl, propName));
 		return pWithPath;
 	}
 

@@ -96,7 +96,7 @@ public class MarkdownRender implements Render {
 
 				StringBuffer ul_detail = new StringBuffer();
 				if (changedOperation.isDiffParam()) {
-					ul_detail.append(PRE_LI).append("Parameter")
+					ul_detail.append(PRE_LI).append("Parameters")
 							.append(ul_param(changedOperation));
 				}
 				if (changedOperation.isDiffProp()) {
@@ -115,7 +115,7 @@ public class MarkdownRender implements Render {
 		List<ElProperty> addProps = changedOperation.getAddProps();
 		List<ElProperty> delProps = changedOperation.getMissingProps();
 		List<ElProperty> changedProps = changedOperation.getChangedProps();
-		StringBuffer sb = new StringBuffer("\n");
+		StringBuffer sb = new StringBuffer("\n\n");
 
 		String prefix = PRE_LI + PRE_CODE;
 		for (ElProperty prop : addProps) {
@@ -142,7 +142,7 @@ public class MarkdownRender implements Render {
 	private String li_addProp(ElProperty prop) {
 		Property property = prop.getProperty();
 		StringBuffer sb = new StringBuffer("");
-		sb.append("Add ").append(prop.getEl())
+		sb.append("Insert ").append(prop.getEl())
 				.append(null == property.getDescription() ? ""
 						: (" //" + property.getDescription()));
 		return sb.toString();
@@ -150,10 +150,9 @@ public class MarkdownRender implements Render {
 
 	private String li_changedProp(ElProperty prop) {
 		Property property = prop.getProperty();
-		String prefix = "Modified " + CODE;
+		String prefix = "Modify ";
 		String desc = " //" + property.getDescription();
-		String postfix = CODE +
-				(null == property.getDescription() ? "" : desc);
+		String postfix = (null == property.getDescription() ? "" : desc);
 
 		StringBuffer sb = new StringBuffer("");
 		sb.append(prefix).append(prop.getEl())
@@ -192,7 +191,8 @@ public class MarkdownRender implements Render {
 						.append(li_missingProp(prop) + "\n");
 			}
 			for (ElProperty prop : changed) {
-				sb.append(li_changedProp(prop) + "\n");
+				sb.append(PRE_LI).append(PRE_CODE)
+						.append(li_changedProp(prop) + "\n");
 			}
 		}
 		for (Parameter param : delParameters) {
