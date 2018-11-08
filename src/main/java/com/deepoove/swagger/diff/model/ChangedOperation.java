@@ -16,6 +16,7 @@ public class ChangedOperation implements Changed {
 
 	private List<ElProperty> addProps = new ArrayList<ElProperty>();
 	private List<ElProperty> missingProps = new ArrayList<ElProperty>();
+	private List<ElProperty> changedProps = new ArrayList<ElProperty>();
 
 	public List<Parameter> getAddParameters() {
 		return addParameters;
@@ -57,6 +58,14 @@ public class ChangedOperation implements Changed {
 		this.missingProps = missingProps;
 	}
 
+	public List<ElProperty> getChangedProps() {
+		return changedProps;
+	}
+
+	public void setChangedProps(List<ElProperty> changedProps) {
+		this.changedProps = changedProps;
+	}
+
 	public String getSummary() {
 		return summary;
 	}
@@ -67,16 +76,15 @@ public class ChangedOperation implements Changed {
 
 	public boolean isDiff() {
 		return !addParameters.isEmpty() || !missingParameters.isEmpty()
-				|| !changedParameter.isEmpty() || !addProps.isEmpty()
-				|| !missingProps.isEmpty();
+				|| !changedParameter.isEmpty() || isDiffProp();
 	}
 	public boolean isDiffProp(){
 		return !addProps.isEmpty()
-				|| !missingProps.isEmpty();
+				|| !missingProps.isEmpty()
+				|| !changedProps.isEmpty();
 	}
 	public boolean isDiffParam(){
 		return !addParameters.isEmpty() || !missingParameters.isEmpty()
 				|| !changedParameter.isEmpty();
 	}
-
 }
