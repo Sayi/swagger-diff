@@ -83,7 +83,7 @@ public class CLITest {
         JCommander jCommander = JCommander.newBuilder().addObject(cli).build();
         jCommander.parse(argv);
         cli.run(jCommander);
-        Assert.assertEquals(outContent.toString().trim(), "1.2.0");
+        Assert.assertEquals(outContent.toString().trim(), "1.2.1");
     }
     
     @Test
