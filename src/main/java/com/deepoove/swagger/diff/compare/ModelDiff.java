@@ -68,7 +68,7 @@ public class ModelDiff {
 
 		// Recursively find the diff between properties
 		List<String> sharedKey = propertyDiff.getSharedKey();
-		for (String key : sharedKey) {
+		sharedKey.stream().forEach((key) -> {
 			Property left = leftProperties.get(key);
 			Property right = rightProperties.get(key);
 
@@ -77,14 +77,15 @@ public class ModelDiff {
 				String rightRef = ((RefProperty) right).getSimpleRef();
 
 				diff(oldDedinitions.get(leftRef), newDedinitions.get(rightRef),
-						null == parentEl ? key : (parentEl + "." + key),
+						buildElString(parentEl, key),
 						copyAndAdd(visited, leftModel, rightModel));
 
 			} else if (left != null && right != null && !left.equals(right)) {
 				// Add a changed ElProperty if not a Reference
+			    // Useless
 				changed.add(convert2ElProperty(key, parentEl, left));
 			}
-		}
+		});
 		return this;
 	}
 
@@ -95,6 +96,7 @@ public class ModelDiff {
 		if (null == propMap) return result;
 
 		for (Entry<String, Property> entry : propMap.entrySet()) {
+		    // TODO Recursively get the properties
 			result.add(convert2ElProperty(entry.getKey(), parentEl, entry.getValue()));
 		}
 		return result;
@@ -111,7 +113,8 @@ public class ModelDiff {
 		return pWithPath;
 	}
 
-	private <T> Set<T> copyAndAdd(Set<T> set, T... add) {
+	@SuppressWarnings("unchecked")
+    private <T> Set<T> copyAndAdd(Set<T> set, T... add) {
 		Set<T> newSet = new HashSet<T>(set);
 		newSet.addAll(Arrays.asList(add));
 		return newSet;

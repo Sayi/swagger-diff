@@ -53,17 +53,6 @@ public class SwaggerDiff {
         return compare(oldSpec, newSpec, null, SWAGGER_VERSION_V2);
     }
 
-    /**
-     * Compare two swagger v2.0 docs by JsonNode
-     *
-     * @param oldSpec
-     *            old Swagger specification document in v2.0 format as a JsonNode
-     * @param newSpec
-     *            new Swagger specification document in v2.0 format as a JsonNode
-     */
-    public static SwaggerDiff compareV2(JsonNode oldSpec, JsonNode newSpec) {
-        return new SwaggerDiff(oldSpec, newSpec).compare();
-    }
 
     public static SwaggerDiff compare(String oldSpec, String newSpec,
             List<AuthorizationValue> auths, String version) {
@@ -94,6 +83,18 @@ public class SwaggerDiff {
         }
         if (null == oldSpecSwagger || null == newSpecSwagger) { throw new RuntimeException(
                 "cannot read api-doc from spec."); }
+    }
+    
+    /**
+     * Compare two swagger v2.0 docs by JsonNode
+     *
+     * @param oldSpec
+     *            old Swagger specification document in v2.0 format as a JsonNode
+     * @param newSpec
+     *            new Swagger specification document in v2.0 format as a JsonNode
+     */
+    public static SwaggerDiff compareV2(JsonNode oldSpec, JsonNode newSpec) {
+        return new SwaggerDiff(oldSpec, newSpec).compare();
     }
 
     private SwaggerDiff(JsonNode oldSpec, JsonNode newSpec) {
