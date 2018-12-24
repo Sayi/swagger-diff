@@ -29,8 +29,10 @@ public class MarkdownRender implements Render {
 	public MarkdownRender() {}
 
 	public String render(SwaggerDiff diff) {
-		List<Endpoint> newEndpoints = diff.getNewEndpoints();
-		String ol_newEndpoint = ol_newEndpoint(newEndpoints);
+		// for now we don't need to new endpoints
+//		List<Endpoint> newEndpoints = diff.getNewEndpoints();
+//		String ol_newEndpoint = ol_newEndpoint(newEndpoints);
+		String ol_newEndpoint = "";
 
 		List<Endpoint> missingEndpoints = diff.getMissingEndpoints();
 		String ol_missingEndpoint = ol_missingEndpoint(missingEndpoints);

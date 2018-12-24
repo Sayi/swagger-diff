@@ -36,6 +36,9 @@ public class CLI {
     
     @Parameter(names = "--help", help = true, order = 5)
     private boolean help;
+
+    @Parameter(names = "--strict-mode", description = "Strict mode, exception is thrown if diff found")
+    private boolean strictMode = false;
     
     @Parameter(names = "--version", description = "swagger-diff tool version", help = true, order = 6)
     private boolean v;
@@ -65,6 +68,9 @@ public class CLI {
         
         String render = getRender(outputMode).render(diff);
         JCommander.getConsole().println(render);
+        if (strictMode && (!diff.getChangedEndpoints().isEmpty() || !diff.getMissingEndpoints().isEmpty())) {
+            throw new IllegalStateException("Swagger differences were found, please refer to console logs and fix it.");
+        }
     }
 
     private Render getRender(String outputMode) {

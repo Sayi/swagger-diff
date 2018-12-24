@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.deepoove.swagger.diff.model.ChangedParameter;
 
 import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
 import io.swagger.models.RefModel;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
@@ -78,6 +79,14 @@ public class ParameterDiff {
                     changedParameter.setMissing(diff.getMissing());
                     changedParameter.setChanged(diff.getChanged());
                 }
+                if (leftSchema instanceof ModelImpl && rightSchema instanceof RefModel) {
+                    String rightRef = ((RefModel) rightSchema).getSimpleRef();
+                    Model rightModel = newDedinitions.get(rightRef);
+                    RefModelPropertiesDiff diff = RefModelPropertiesDiff.buildWithDefinition(newDedinitions).diff(leftSchema.getProperties(), rightModel.getProperties());
+                    changedParameter.setIncreased(diff.getIncreased());
+                    changedParameter.setMissing(diff.getMissing());
+                    changedParameter.setChanged(diff.getChanged());
+                }
             }
 
             // is requried
@@ -90,7 +99,7 @@ public class ParameterDiff {
             String oldPescription = leftPara.getDescription();
             if (StringUtils.isBlank(description)) description = "";
             if (StringUtils.isBlank(oldPescription)) oldPescription = "";
-            changedParameter.setChangeDescription(!description.equals(oldPescription));
+//            changedParameter.setChangeDescription(!description.equals(oldPescription)); //TODO fix or forget
 
             if (changedParameter.isDiff()) {
                 this.changed.add(changedParameter);

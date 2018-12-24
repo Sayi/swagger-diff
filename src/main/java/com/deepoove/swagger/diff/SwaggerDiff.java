@@ -1,6 +1,7 @@
 package com.deepoove.swagger.diff;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import com.deepoove.swagger.diff.model.ChangedEndpoint;
 import com.deepoove.swagger.diff.model.Endpoint;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import io.swagger.models.Path;
 import io.swagger.models.Swagger;
 import io.swagger.models.auth.AuthorizationValue;
 import io.swagger.parser.SwaggerCompatConverter;
@@ -71,6 +73,8 @@ public class SwaggerDiff {
             SwaggerParser swaggerParser = new SwaggerParser();
             oldSpecSwagger = swaggerParser.read(oldSpec, auths, true);
             newSpecSwagger = swaggerParser.read(newSpec, auths, true);
+            postProcessPaths(oldSpecSwagger);
+            postProcessPaths(newSpecSwagger);
         } else {
             SwaggerCompatConverter swaggerCompatConverter = new SwaggerCompatConverter();
             try {
@@ -103,6 +107,17 @@ public class SwaggerDiff {
         newSpecSwagger = swaggerParser.read(newSpec, true);
         if (null == oldSpecSwagger || null == newSpecSwagger) { throw new RuntimeException(
             "cannot read api-doc from spec."); }
+    }
+
+    private void postProcessPaths(Swagger specSwagger) {
+        for (String path : new HashSet<>(specSwagger.getPaths().keySet())) {
+            if (path.startsWith("/auth/")) {
+                String newPath = path.replaceFirst("/auth/", "/");
+                Path value = specSwagger.getPaths().remove(path);
+                specSwagger.getPaths().put(newPath, value);
+                logger.info("Path: " + path + " was replaced by: " + newPath);
+            }
+        }
     }
 
     private SwaggerDiff compare() {

@@ -52,7 +52,7 @@ public class ListDiff<K> {
         for (K ele : left) {
             K rightEle = biFunc.apply(right, ele);
             if (null != rightEle) {
-                instance.increased.remove(ele);
+                instance.increased.remove(rightEle);
                 instance.shared.put(ele, rightEle);
             } else {
                 instance.missing.add(ele);

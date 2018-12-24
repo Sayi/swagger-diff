@@ -86,6 +86,13 @@
 			<version>4.8.2</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+
 	</dependencies>
 
 	<profiles>
@@ -175,6 +182,43 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 				<version>3.2</version>
+			</plugin>
+			<!--<plugin>-->
+				<!--&lt;!&ndash; Build an executable JAR &ndash;&gt;-->
+				<!--<groupId>org.apache.maven.plugins</groupId>-->
+				<!--<artifactId>maven-jar-plugin</artifactId>-->
+				<!--<version>3.1.0</version>-->
+				<!--<configuration>-->
+					<!--<archive>-->
+						<!--<manifest>-->
+							<!--<addClasspath>true</addClasspath>-->
+							<!--&lt;!&ndash;<classpathPrefix>lib/</classpathPrefix>&ndash;&gt;-->
+							<!--<mainClass>com.deepoove.swagger.diff.cli.CLI</mainClass>-->
+						<!--</manifest>-->
+					<!--</archive>-->
+				<!--</configuration>-->
+			<!--</plugin>-->
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<archive>
+					<manifest>
+					<addClasspath>true</addClasspath>
+					<mainClass>com.deepoove.swagger.diff.cli.CLI</mainClass>
+					</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
 			</plugin>
 			<plugin>
 			    <groupId>org.codehaus.mojo</groupId>

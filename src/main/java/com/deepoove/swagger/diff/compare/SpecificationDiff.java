@@ -2,6 +2,7 @@ package com.deepoove.swagger.diff.compare;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,12 +84,27 @@ public class SpecificationDiff {
                 // Diff response
                 Property oldResponseProperty = getResponseProperty(oldOperation);
                 Property newResponseProperty = getResponseProperty(newOperation);
-                PropertyDiff propertyDiff = PropertyDiff
-                        .buildWithDefinition(oldSpec.getDefinitions(), newSpec.getDefinitions());
-                propertyDiff.diff(oldResponseProperty, newResponseProperty);
-                changedOperation.setAddProps(propertyDiff.getIncreased());
-                changedOperation.setMissingProps(propertyDiff.getMissing());
-                changedOperation.setChangedProps(propertyDiff.getChanged());
+
+                if (oldSpec.getDefinitions() == null) {
+                    RefModelPropertiesDiff diff = RefModelPropertiesDiff.buildWithDefinition(newSpec.getDefinitions()).diff(oldResponseProperty, newResponseProperty);
+                    changedOperation.setAddProps(diff.getIncreased());
+                    changedOperation.setMissingProps(diff.getMissing());
+                    changedOperation.setChangedProps(diff.getChanged());
+                }
+                else if (newSpec.getDefinitions() == null) {
+                    RefModelPropertiesDiff diff = RefModelPropertiesDiff.buildWithDefinition(oldSpec.getDefinitions()).diff(newResponseProperty, oldResponseProperty);
+                    changedOperation.setMissingProps(diff.getIncreased());
+                    changedOperation.setAddProps(diff.getMissing());
+                    changedOperation.setChangedProps(diff.getChanged());
+                }
+                else {
+                    PropertyDiff propertyDiff = PropertyDiff
+                            .buildWithDefinition(oldSpec.getDefinitions(), newSpec.getDefinitions());
+                    propertyDiff.diff(oldResponseProperty, newResponseProperty);
+                    changedOperation.setAddProps(propertyDiff.getIncreased());
+                    changedOperation.setMissingProps(propertyDiff.getMissing());
+                    changedOperation.setChangedProps(propertyDiff.getChanged());
+                }
 
                 if (changedOperation.isDiff()) {
                     operas.put(method, changedOperation);
