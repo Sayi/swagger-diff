@@ -117,6 +117,12 @@ public class SwaggerDiff {
                 specSwagger.getPaths().put(newPath, value);
                 logger.info("Path: " + path + " was replaced by: " + newPath);
             }
+            if (path.endsWith("/user/restore/reset-password")
+                    || path.endsWith("/user/restore/forgot-password")
+                    || path.endsWith("/user/signup/add")) {
+                logger.info("removing path: " + path);
+                specSwagger.getPaths().remove(path);
+            }
         }
     }
 
