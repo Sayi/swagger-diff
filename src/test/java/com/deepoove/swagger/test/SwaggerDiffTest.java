@@ -1,20 +1,20 @@
 package com.deepoove.swagger.test;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.deepoove.swagger.diff.SwaggerDiff;
 import com.deepoove.swagger.diff.model.ChangedEndpoint;
 import com.deepoove.swagger.diff.model.Endpoint;
 import com.deepoove.swagger.diff.output.HtmlRender;
+import com.deepoove.swagger.diff.output.JsonRender;
 import com.deepoove.swagger.diff.output.MarkdownRender;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 public class SwaggerDiffTest {
 
@@ -128,6 +128,23 @@ public class SwaggerDiffTest {
 		}
 
 	}
+
+
+	@Test
+	public void testJsonRender() {
+		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
+		String render = new JsonRender().render(diff);
+		try {
+			FileWriter fw = new FileWriter(
+					"testDiff.json");
+			fw.write(render);
+			fw.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 
 	private void assertEqual(SwaggerDiff diff) {
 		List<Endpoint> newEndpoints = diff.getNewEndpoints();
