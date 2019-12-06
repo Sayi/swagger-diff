@@ -18,9 +18,14 @@ import io.swagger.models.Swagger;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
 
+import java.util.*;
+import java.util.Map.Entry;
+
+import static java.util.stream.Collectors.toMap;
+
 /**
  * compare two Swagger
- * 
+ *
  * @author Sayi
  *
  */
@@ -36,8 +41,8 @@ public class SpecificationDiff {
         if (null == oldSpec || null == newSpec) { throw new IllegalArgumentException(
                 "cannot diff null spec."); }
         SpecificationDiff instance = new SpecificationDiff();
-        Map<String, Path> oldPaths = oldSpec.getPaths();
-        Map<String, Path> newPaths = newSpec.getPaths();
+		Map<String, Path> oldPaths = getPathsWithBasePath(oldSpec);
+		Map<String, Path> newPaths = getPathsWithBasePath(newSpec);
 
         // Diff path
         MapKeyDiff<String, Path> pathDiff = MapKeyDiff.diff(oldPaths, newPaths);
@@ -109,6 +114,18 @@ public class SpecificationDiff {
         return instance;
 
     }
+
+	private static Map<String, Path> getPathsWithBasePath(Swagger spec) {
+		return spec.getPaths()
+				.entrySet()
+				.stream()
+				.collect(toMap(entry -> spec.getBasePath() + entry.getKey(), //keyMapper
+                                Entry::getValue, //valueMapper
+                                (u, v) -> {
+				                    throw new IllegalStateException(String.format("Duplicate key %s", u));
+                                }, //mergeFunction
+                                LinkedHashMap::new));  //mapSupplier
+	}
 
     private static Property getResponseProperty(Operation operation) {
         Map<String, Response> responses = operation.getResponses();

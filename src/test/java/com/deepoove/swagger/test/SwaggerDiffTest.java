@@ -21,7 +21,9 @@ public class SwaggerDiffTest {
 	final String SWAGGER_V2_DOC1 = "petstore_v2_1.json";
 	final String SWAGGER_V2_DOC2 = "petstore_v2_2.json";
 	final String SWAGGER_V2_EMPTY_DOC = "petstore_v2_empty.json";
-	final String SWAGGER_V2_HTTP = "http://petstore.swagger.io/v2/swagger.json";
+	final String PATH_ORIGINAL_SWAGGER = "original-swagger.yaml";
+	private String PATH_NONE_BREAKING_BASEPATH_CHANGED =
+			"change.non-breaking.basePath-changed.and.operations-changed.yaml";
 
 	@Test
 	public void testEqual() {
@@ -154,6 +156,12 @@ public class SwaggerDiffTest {
 		Assert.assertTrue(missingEndpoints.isEmpty());
 		Assert.assertTrue(changedEndPoints.isEmpty());
 
+	}
+
+	@Test
+	public void testBasePath_And_OperationUpdate_with_No_Breaking_Change(){
+		SwaggerDiff diff = SwaggerDiff.compareV2(PATH_ORIGINAL_SWAGGER, PATH_NONE_BREAKING_BASEPATH_CHANGED);
+		assertEqual(diff);
 	}
 
 }
