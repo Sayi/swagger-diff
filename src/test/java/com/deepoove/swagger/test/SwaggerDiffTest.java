@@ -22,6 +22,15 @@ public class SwaggerDiffTest {
 	final String SWAGGER_V2_DOC2 = "petstore_v2_2.json";
 	final String SWAGGER_V2_EMPTY_DOC = "petstore_v2_empty.json";
 	final String SWAGGER_V2_HTTP = "http://petstore.swagger.io/v2/swagger.json";
+	final String SWAGGER_V2_RESPONSE_NEW_MANDATORY_DOC1 = "response-changed/petstore_v2_1.yaml";
+    final String SWAGGER_V2_RESPONSE_NEW_MANDATORY_DOC2 = "response-changed/petstore_v2_2.yaml";
+
+	@Test
+    public void testResponseNewMandatoryProperty(){
+        SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_RESPONSE_NEW_MANDATORY_DOC1, SWAGGER_V2_RESPONSE_NEW_MANDATORY_DOC2);
+        List<ChangedEndpoint> changedEndPoints = diff.getChangedEndpoints();
+        Assert.assertFalse(changedEndPoints.isEmpty());
+    }
 
 	@Test
 	public void testEqual() {
