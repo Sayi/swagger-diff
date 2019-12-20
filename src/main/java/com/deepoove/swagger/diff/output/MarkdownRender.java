@@ -5,11 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.deepoove.swagger.diff.SwaggerDiff;
-import com.deepoove.swagger.diff.model.ChangedEndpoint;
-import com.deepoove.swagger.diff.model.ChangedOperation;
-import com.deepoove.swagger.diff.model.ChangedParameter;
-import com.deepoove.swagger.diff.model.Endpoint;
-import com.deepoove.swagger.diff.model.ElProperty;
+import com.deepoove.swagger.diff.model.*;
 
 import io.swagger.models.HttpMethod;
 import io.swagger.models.parameters.Parameter;
@@ -102,6 +98,14 @@ public class MarkdownRender implements Render {
 				if (changedOperation.isDiffProp()) {
 					ul_detail.append(PRE_LI).append("Return Type")
 							.append(ul_response(changedOperation));
+				}
+				if (changedOperation.isDiffProduces()) {
+					ul_detail.append(PRE_LI).append("Produces")
+							.append(ul_produce(changedOperation));
+				}
+				if (changedOperation.isDiffConsumes()) {
+					ul_detail.append(PRE_LI).append("Consumes")
+							.append(ul_consume(changedOperation));
 				}
 				sb.append(CODE).append(method).append(CODE)
 						.append(" " + pathUrl).append(" " + desc + "  \n")
@@ -235,4 +239,45 @@ public class MarkdownRender implements Render {
 		return sb.toString();
 	}
 
+	private String ul_produce(ChangedOperation changedOperation) {
+		List<String> addProduce = changedOperation.getAddProduces();
+		List<String> delProduce = changedOperation.getMissingProduces();
+		StringBuffer sb = new StringBuffer("\n\n");
+
+		String prefix = PRE_LI + PRE_CODE;
+		for (String mt : addProduce) {
+			sb.append(PRE_LI).append(PRE_CODE).append(li_addMediaType(mt) + "\n");
+		}
+		for (String mt : delProduce) {
+			sb.append(prefix).append(li_missingMediaType(mt) + "\n");
+		}
+		return sb.toString();
+	}
+
+	private String ul_consume(ChangedOperation changedOperation) {
+		List<String> addConsume = changedOperation.getAddConsumes();
+		List<String> delConsume = changedOperation.getMissingConsumes();
+		StringBuffer sb = new StringBuffer("\n\n");
+
+		String prefix = PRE_LI + PRE_CODE;
+		for (String mt : addConsume) {
+			sb.append(PRE_LI).append(PRE_CODE).append(li_addMediaType(mt) + "\n");
+		}
+		for (String mt : delConsume) {
+			sb.append(prefix).append(li_missingMediaType(mt) + "\n");
+		}
+		return sb.toString();
+	}
+
+	private String li_missingMediaType(String type) {
+		StringBuffer sb = new StringBuffer("");
+		sb.append("Delete ").append(type);
+		return sb.toString();
+	}
+
+	private String li_addMediaType(String type) {
+		StringBuffer sb = new StringBuffer("");
+		sb.append("Insert ").append(type);
+		return sb.toString();
+	}
 }

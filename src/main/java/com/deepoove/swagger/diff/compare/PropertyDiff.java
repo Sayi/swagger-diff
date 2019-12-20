@@ -8,7 +8,6 @@ import com.deepoove.swagger.diff.model.ElProperty;
 
 import io.swagger.models.Model;
 import io.swagger.models.properties.Property;
-import io.swagger.models.properties.RefProperty;
 
 public class PropertyDiff {
 
@@ -34,16 +33,12 @@ public class PropertyDiff {
 	}
 
 	public PropertyDiff diff(Property left, Property right) {
-		if ((null == left || left instanceof RefProperty) && (null == right || right instanceof RefProperty)) {
-			Model leftModel = null == left ? null : oldDedinitions.get(((RefProperty) left).getSimpleRef());
-			Model rightModel = null == right ? null : newDedinitions.get(((RefProperty) right).getSimpleRef());
-			ModelDiff diff = ModelDiff
-					.buildWithDefinition(oldDedinitions, newDedinitions)
-					.diff(leftModel, rightModel);
-			increased.addAll(diff.getIncreased());
-			missing.addAll(diff.getMissing());
-			changed.addAll(diff.getChanged());
-		}
+		ModelDiff diff = ModelDiff
+				.buildWithDefinition(oldDedinitions, newDedinitions)
+				.diff(left, right);
+		increased.addAll(diff.getIncreased());
+		missing.addAll(diff.getMissing());
+		changed.addAll(diff.getChanged());
 		return this;
 	}
 

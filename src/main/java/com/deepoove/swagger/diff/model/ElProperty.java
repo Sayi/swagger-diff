@@ -13,6 +13,11 @@ public class ElProperty {
 
 	private Property property;
 
+	// optional change metadata
+	private boolean isTypeChange;
+	private boolean newEnums;
+	private boolean removedEnums;
+
 	public Property getProperty() {
 		return property;
 	}
@@ -29,4 +34,27 @@ public class ElProperty {
 		this.el = el;
 	}
 
+	public boolean isTypeChange() {
+		return isTypeChange;
+	}
+
+	public void setTypeChange(boolean typeChange) {
+		isTypeChange = typeChange;
+	}
+
+	public boolean isNewEnums() {
+		return newEnums;
+	}
+
+	public void setNewEnums(boolean newEnums) {
+		this.newEnums = newEnums;
+	}
+
+	public boolean isRemovedEnums() {
+		return removedEnums;
+	}
+
+	public void setRemovedEnums(boolean removedEnums) {
+		this.removedEnums = removedEnums;
+	}
 }
