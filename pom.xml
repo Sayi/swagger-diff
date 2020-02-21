@@ -8,9 +8,9 @@
 		<version>7</version>
 	</parent>
 
-	<groupId>com.deepoove</groupId>
+	<groupId>com.hlag.api</groupId>
 	<artifactId>swagger-diff</artifactId>
-	<version>1.2.1</version>
+	<version>1.2.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>swagger-diff</name>
