@@ -1,6 +1,11 @@
 language: java
-script: mvn clean install
+jdk:
+  - openjdk8
+  - openjdk11
 
-after_success:
-  - mvn clean cobertura:cobertura org.eluder.coveralls:coveralls-maven-plugin:report
+install: skip
+script: mvn install -Dgpg.skip=true --batch-mode --show-version --update-snapshots
 
+cache:
+  directories:
+    - $HOME/.m2/repository
