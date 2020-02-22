@@ -18,3 +18,4 @@ jobs:
       env:
         SONAR_PROJECTKEY: "herve-brun_swagger-diff"
         SONAR_ORGANIZATION: "herve-brun"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
