@@ -58,7 +58,7 @@
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-parser</artifactId>
-			<version>1.0.31</version>
+			<version>1.0.49</version>
 		</dependency>
 		<dependency>
 			<groupId>io.swagger</groupId>
