@@ -17,6 +17,7 @@ import io.swagger.models.Response;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
+import io.swagger.models.utils.PropertyModelConverter;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -132,7 +133,7 @@ public class SpecificationDiff {
         // temporary workaround for missing response messages
         if (responses == null) return null;
         Response response = responses.get("200");
-        return null == response ? null : response.getSchema();
+        return null == response ? null : new PropertyModelConverter().modelToProperty(response.getResponseSchema());
     }
 
     private static List<Endpoint> convert2EndpointList(Map<String, Path> map) {
