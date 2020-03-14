@@ -27,3 +27,7 @@ jobs:
         SONAR_PROJECTKEY: "herve-brun_swagger-diff"
         SONAR_ORGANIZATION: "herve-brun"
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Codecov
+      uses: codecov/codecov-action@v1.0.6
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
