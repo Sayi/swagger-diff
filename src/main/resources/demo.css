@@ -90,7 +90,7 @@ h3 {
 	display: inline-block;
 	border-radius: 2px;
 	padding: 0px 4px;
-	
+
 }
 
 .article {
@@ -106,7 +106,7 @@ h3 {
 	padding: 10px 10px;
 }
 
-.POST, .post, .get, .GET, .put, .PUT,.delete, .DELETE {
+.POST, .post, .get, .GET, .put, .PUT, .delete, .DELETE, .head, .HEAD {
 	color: #fff;
 	padding: 4px;
 	border-radius: 2px;
@@ -127,6 +127,9 @@ h3 {
 }
 .delete, .DELETE {
 	background-color: #F44336;
+}
+.head, .HEAD {
+	background-color: #b2f436;
 }
 
 hr {
@@ -173,10 +176,10 @@ s, del, .missing, del.comment {
 	color: #F44336;
 }
 
-/* Class for link show/hide article */ 
+/* Class for link show/hide article */
 .showhide {
     color: #3e373785;
-    text-decoration: none; 
+    text-decoration: none;
     padding: 2px;
     font-size: 12px;
     float: right;
