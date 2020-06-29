@@ -78,7 +78,7 @@ public class SpecificationDiff {
                         .diff(oldParameters, newParameters);
                 changedOperation.setAddParameters(parameterDiff.getIncreased());
                 changedOperation.setMissingParameters(parameterDiff.getMissing());
-                changedOperation.setChangedParameter(parameterDiff.getChanged());
+                changedOperation.setChangedParameters(parameterDiff.getChanged());
 
                 // Diff response
                 Property oldResponseProperty = getResponseProperty(oldOperation);
