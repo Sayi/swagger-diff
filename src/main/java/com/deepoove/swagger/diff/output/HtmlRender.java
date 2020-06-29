@@ -1,30 +1,5 @@
 package com.deepoove.swagger.diff.output;
 
-import static j2html.TagCreator.a;
-import static j2html.TagCreator.body;
-import static j2html.TagCreator.br;
-import static j2html.TagCreator.del;
-import static j2html.TagCreator.div;
-import static j2html.TagCreator.document;
-import static j2html.TagCreator.footer;
-import static j2html.TagCreator.h1;
-import static j2html.TagCreator.h2;
-import static j2html.TagCreator.h3;
-import static j2html.TagCreator.head;
-import static j2html.TagCreator.header;
-import static j2html.TagCreator.hr;
-import static j2html.TagCreator.html;
-import static j2html.TagCreator.i;
-import static j2html.TagCreator.li;
-import static j2html.TagCreator.link;
-import static j2html.TagCreator.meta;
-import static j2html.TagCreator.ol;
-import static j2html.TagCreator.rawHtml;
-import static j2html.TagCreator.script;
-import static j2html.TagCreator.span;
-import static j2html.TagCreator.title;
-import static j2html.TagCreator.ul;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +18,8 @@ import io.swagger.models.properties.Property;
 import j2html.tags.ContainerTag;
 import j2html.tags.DomContent;
 import j2html.tags.EmptyTag;
+
+import static j2html.TagCreator.*;
 
 public class HtmlRender implements Render {
 
@@ -64,8 +41,8 @@ public class HtmlRender implements Render {
 
     /**
      * @param pTitle : page's title
-     * @param pListLinkCss : list of Css links
-     * @param pListLinkScritJs : list of JS Scripts links
+     * @param pCssLinks : list of Css links
+     * @param pScriptsJsLinks : list of JS Scripts links
      */
     public HtmlRender(final String pTitle, final List<String> pCssLinks, final List<String> pScriptsJsLinks) {
         super();
@@ -85,11 +62,12 @@ public class HtmlRender implements Render {
         List<ChangedEndpoint> changedEndpoints = diff.getChangedEndpoints();
         ContainerTag ol_changed = ol_changed(changedEndpoints);
 
+        ContainerTag p_versions = p_versions(diff.getOldVersion(), diff.getNewVersion());
 
-        return reanderHtml(ol_newEndpoint, ol_missingEndpoint, ol_changed);
+        return renderHtml(ol_newEndpoint, ol_missingEndpoint, ol_changed, p_versions);
     }
 
-    public String reanderHtml(final ContainerTag ol_new, final ContainerTag ol_miss, final ContainerTag ol_changed){
+    public String renderHtml(ContainerTag ol_new, ContainerTag ol_miss, ContainerTag ol_changed, ContainerTag p_versions) {
         List<EmptyTag> cssLinksTags = new ArrayList<EmptyTag>();
         if(!cssLinks.isEmpty()) {
             for (String cssLink : cssLinks) {
@@ -119,15 +97,26 @@ public class HtmlRender implements Render {
                         meta().withCharset("utf-8"),
                         title(title),
                         script(rawHtml("function showHide(id){if(document.getElementById(id).style.display==\'none\'){document.getElementById(id).style.display=\'block\';document.getElementById(\'btn_\'+id).innerHTML=\'&uArr;\';}else{document.getElementById(id).style.display=\'none\';document.getElementById(\'btn_\'+id).innerHTML=\'&dArr;\';}return true;}")).withType("text/javascript")
-                        ).with(cssLinksTags),
+                ).with(cssLinksTags),
                 body().with(
                         header().with(h1(title)),
-                        div().withClass("article").with(articles)
-                        ),
+                        div().withClass("article").with(articles).with(
+                                div_headArticle("Versions", "versions", p_versions),
+                                div_headArticle("What's New", "new", ol_new),
+                                div_headArticle("What's Deprecated", "deprecated", ol_miss),
+                                div_headArticle("What's Changed", "changed", ol_changed)
+                        )
+                ),
                 footer().with(cssScriptsJsTags)
-                );
+        );
 
         return document().render() + html.render();
+    }
+
+    private ContainerTag p_versions(String oldVersion, String newVersion) {
+        ContainerTag p = p().withId("versions");
+        p.withText("Changes from " + oldVersion + " to " + newVersion + ".");
+        return p;
     }
 
     public HtmlRender withBackwardsIncompatibilities() {
@@ -338,7 +327,5 @@ public class HtmlRender implements Render {
     private ContainerTag i_backwardsIncompatibilitiesWarning() {
         return showBackwardsIncompatibilities ? i().withClass("fas fa-exclamation-circle warnbackward").withTitle(NON_BACKWARDS_CHANGES):null;
     }
-
-
 
 }

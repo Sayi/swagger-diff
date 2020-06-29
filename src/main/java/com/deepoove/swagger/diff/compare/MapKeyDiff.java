@@ -10,6 +10,7 @@ import lombok.Getter;
 
 /**
  * compare two Maps by key
+ * 
  * @author Sayi
  * @version
  */
@@ -18,18 +19,15 @@ public class MapKeyDiff<K, V> {
 
     private Map<K, V> increased;
     private Map<K, V> missing;
-    private final List<K> sharedKey;
+    private List<K> sharedKey;
 
     private MapKeyDiff() {
-        this.sharedKey = new ArrayList<K>();
+        this.sharedKey = new ArrayList<>();
     }
 
-    public static <K, V> MapKeyDiff<K, V> diff(final Map<K, V> mapLeft,
-            final Map<K, V> mapRight) {
-        MapKeyDiff<K, V> instance = new MapKeyDiff<K, V>();
-        if (null == mapLeft && null == mapRight) {
-            return instance;
-        }
+    public static <K, V> MapKeyDiff<K, V> diff(Map<K, V> mapLeft, Map<K, V> mapRight) {
+        MapKeyDiff<K, V> instance = new MapKeyDiff<>();
+        if (null == mapLeft && null == mapRight) return instance;
         if (null == mapLeft) {
             instance.increased = mapRight;
             return instance;
@@ -38,22 +36,20 @@ public class MapKeyDiff<K, V> {
             instance.missing = mapLeft;
             return instance;
         }
-        instance.increased = new LinkedHashMap<K, V>(mapRight);
-        instance.missing = new LinkedHashMap<K, V>();
+
+        instance.increased = new LinkedHashMap<>(mapRight);
+        instance.missing = new LinkedHashMap<>();
         for (Entry<K, V> entry : mapLeft.entrySet()) {
             K leftKey = entry.getKey();
-            V leftValue = entry.getValue();
             if (mapRight.containsKey(leftKey)) {
                 instance.increased.remove(leftKey);
                 instance.sharedKey.add(leftKey);
 
             } else {
-                instance.missing.put(leftKey, leftValue);
+                instance.missing.put(leftKey, entry.getValue());
             }
-
         }
         return instance;
     }
-
 
 }

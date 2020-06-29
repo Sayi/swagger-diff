@@ -10,7 +10,7 @@
 
 	<groupId>com.deepoove</groupId>
 	<artifactId>swagger-diff</artifactId>
-	<version>1.1.0</version>
+	<version>1.2.1</version>
 	<packaging>jar</packaging>
 
 	<name>swagger-diff</name>
@@ -73,7 +73,12 @@
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
-			<version>1.2.7</version>
+			<version>1.2.31</version>
+		</dependency>
+		<dependency>
+		  <groupId>com.beust</groupId>
+		  <artifactId>jcommander</artifactId>
+		  <version>1.72</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -175,6 +180,22 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 				<version>3.2</version>
+			</plugin>
+			<plugin>
+			    <groupId>org.codehaus.mojo</groupId>
+			    <artifactId>cobertura-maven-plugin</artifactId>
+			    <version>2.7</version>
+			    <configuration>
+				<format>xml</format>
+				<maxmem>256m</maxmem>
+				<!-- aggregated reports for multi-module projects -->
+				<aggregate>true</aggregate>
+			    </configuration>
+			</plugin>
+			<plugin>
+			    <groupId>org.eluder.coveralls</groupId>
+			    <artifactId>coveralls-maven-plugin</artifactId>
+			    <version>4.3.0</version>
 			</plugin>
 		</plugins>
 	</build>

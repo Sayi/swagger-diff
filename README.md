@@ -1,49 +1,79 @@
-# swagger-diff
+## swagger-diff
 
-![Build Status](https://travis-ci.org/Sayi/swagger-diff.svg?branch=master)
+![Build Status](https://travis-ci.org/Sayi/swagger-diff.svg?branch=master) ![jdk1.8+](https://img.shields.io/badge/jdk-1.8%2B-orange.svg) [![Coverage Status](https://coveralls.io/repos/github/Sayi/swagger-diff/badge.svg)](https://coveralls.io/github/Sayi/swagger-diff) [![Maven](https://maven-badges.herokuapp.com/maven-central/com.deepoove/swagger-diff/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/com.deepoove/swagger-diff)
 
 Compare two swagger API specifications(1.x or v2.0) and render the difference to html file or markdown file.
 
-# Requirements
-`jdk1.6+`
+## :black_large_square: Command line interface (CLI) 
 
-# Feature
+```shell
+$ java -jar swagger-diff.jar --help
+Usage: java -jar swagger-diff.jar [options]
+  Options:
+  * -old
+      old api-doc location:Json file path or Http url
+  * -new
+      new api-doc location:Json file path or Http url
+    -v
+      swagger version:1.0 or 2.0
+      Default: 2.0
+    -output-mode
+      render mode: markdown or html
+      Default: markdown
+    --help
+
+    --version
+      swagger-diff tool version
+```
+Here is one command-line example(`-old` and `-new` is required, `-v` and `-output-mode` is optional):
+```shell
+java -jar swagger-diff.jar \
+-old http://petstore.swagger.io/v2/swagger.json \
+-new http://petstore.swagger.io/v2/swagger.json \
+-v 2.0 \
+-output-mode html > diff.html
+```
+Download the fatJar or view the changelog on the **[Release Page](https://github.com/Sayi/swagger-diff/releases),** and thanks to all contributors.
+
+## Feature
 * Supports swagger spec v1.x and v2.0.
 * Depth comparison of parameters, responses, notes, http method(GET,POST,PUT,DELETE...)
 * Supports swagger api Authorization
 * Render difference of property with Expression Language
 * html & markdown render
+* Command line interface
 
-# Maven
-
+## Maven
 ```xml
 <dependency>
-        <groupId>com.deepoove</groupId>
-        <artifactId>swagger-diff</artifactId>
-	<version>1.1.0</version>
+  <groupId>com.deepoove</groupId>
+  <artifactId>swagger-diff</artifactId>
+  <version>1.2.1</version>
 </dependency>
 ```
 
-# Usage
+## Gradle
+```shell
+compile group: 'com.deepoove', name: 'swagger-diff', version: '1.2.1'
+```
+
+## Usage
 SwaggerDiff can read swagger api spec from json file or http.
 ```java
-final String SWAGGER_V2_DOC1 = "petstore_v2_1.json";
-final String SWAGGER_V2_DOC2 = "http://petstore.swagger.io/v2/swagger.json";
-
-SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
+SwaggerDiff diff = SwaggerDiff.compareV2("petstore_v2_1.json", "http://petstore.swagger.io/v2/swagger.json");
 ```
-# Swagger version
+## Swagger version
 v1.x
 ```java
-SwaggerDiff.compareV1(SWAGGER_V1_DOC1, SWAGGER_V1_DOC2);
+SwaggerDiff.compareV1("petstore_v1_1.json", "petstore_v1_2.json");
 ```
 
 v2.0
 ```java
-SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
+SwaggerDiff.compareV2("petstore_v2_1.json", "petstore_v2_2.json");
 ```
 
-# Render difference
+## Render difference
 #### HTML
 ```java
 String html = new HtmlRender("Changelog",
@@ -129,15 +159,8 @@ try {
 
 ```
 
-# License
-swagger-diff is released under the Apache License 2.0.
-
-# How it works
+## How it works
 ![image](./swagger-diff.png)
-
-# Documents
-[中文文档](https://github.com/Sayi/swagger-diff/wiki/%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3)
-
 
 
 

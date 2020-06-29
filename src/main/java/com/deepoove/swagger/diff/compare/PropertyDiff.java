@@ -14,39 +14,39 @@ import lombok.Data;
 @Data
 public class PropertyDiff {
 
-    private List<ElProperty> increased;
-    private List<ElProperty> missing;
-    private List<ElProperty> typeChanges;
+	private List<ElProperty> increased;
+	private List<ElProperty> missing;
+	private List<ElProperty> changed;
 
-    Map<String, Model> oldDedinitions;
-    Map<String, Model> newDedinitions;
+	Map<String, Model> oldDedinitions;
+	Map<String, Model> newDedinitions;
 
-    private PropertyDiff() {
-        increased = new ArrayList<ElProperty>();
-        missing = new ArrayList<ElProperty>();
-        typeChanges = new ArrayList<ElProperty>();
-    }
+	private PropertyDiff() {
+		increased = new ArrayList<ElProperty>();
+		missing = new ArrayList<ElProperty>();
+		changed = new ArrayList<ElProperty>();
+	}
 
-    public static PropertyDiff buildWithDefinition(final Map<String, Model> left,
-            final Map<String, Model> right) {
-        PropertyDiff diff = new PropertyDiff();
-        diff.oldDedinitions = left;
-        diff.newDedinitions = right;
-        return diff;
-    }
+	public static PropertyDiff buildWithDefinition(Map<String, Model> left,
+			Map<String, Model> right) {
+		PropertyDiff diff = new PropertyDiff();
+		diff.oldDedinitions = left;
+		diff.newDedinitions = right;
+		return diff;
+	}
 
-    public PropertyDiff diff(final Property left, final Property right) {
-        if ((null == left || left instanceof RefProperty) && (null == right || right instanceof RefProperty)) {
-            Model leftModel = null == left ? null : oldDedinitions.get(((RefProperty) left).getSimpleRef());
-            Model rightModel = null == right ? null : newDedinitions.get(((RefProperty) right).getSimpleRef());
-            ModelDiff diff = ModelDiff
-                    .buildWithDefinition(oldDedinitions, newDedinitions)
-                    .diff(leftModel, rightModel);
-            increased.addAll(diff.getIncreased());
-            missing.addAll(diff.getMissing());
-            typeChanges.addAll(diff.getTypeChanges());
-        }
-        return this;
-    }
+	public PropertyDiff diff(Property left, Property right) {
+		if ((null == left || left instanceof RefProperty) && (null == right || right instanceof RefProperty)) {
+			Model leftModel = null == left ? null : oldDedinitions.get(((RefProperty) left).getSimpleRef());
+			Model rightModel = null == right ? null : newDedinitions.get(((RefProperty) right).getSimpleRef());
+			ModelDiff diff = ModelDiff
+					.buildWithDefinition(oldDedinitions, newDedinitions)
+					.diff(leftModel, rightModel);
+			increased.addAll(diff.getIncreased());
+			missing.addAll(diff.getMissing());
+			changed.addAll(diff.getChanged());
+		}
+		return this;
+	}
 
 }
