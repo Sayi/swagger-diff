@@ -17,6 +17,6 @@ hs_err_pid*
 /target/
 \.DS_Store
 *.html
-testDiff\.md
 *.swp
 .idea
+*.iml
