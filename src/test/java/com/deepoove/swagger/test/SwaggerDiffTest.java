@@ -11,10 +11,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 public class SwaggerDiffTest {
 
@@ -86,7 +86,7 @@ public class SwaggerDiffTest {
 		String html = new HtmlRender("Changelog",
 				"http://deepoove.com/swagger-diff/stylesheets/demo.css")
 				.render(diff);
-		
+
 		try {
 			FileWriter fw = new FileWriter(
 					"testDiff.html");
@@ -116,6 +116,41 @@ public class SwaggerDiffTest {
 
 	}
 
+    @Test
+    public void testEqualRaw() throws IOException {
+        String rawJson = load(SWAGGER_V2_DOC2);
+
+        SwaggerDiff diff = SwaggerDiff.compareV2Raw(rawJson, rawJson);
+        assertEqual(diff);
+    }
+
+
+    @Test
+    public void testNewApiRaw() throws IOException {
+        SwaggerDiff diff = SwaggerDiff.compareV2Raw(load(SWAGGER_V2_EMPTY_DOC), load(SWAGGER_V2_DOC2));
+
+        List<Endpoint> newEndpoints = diff.getNewEndpoints();
+        List<Endpoint> missingEndpoints = diff.getMissingEndpoints();
+        List<ChangedEndpoint> changedEndPoints = diff.getChangedEndpoints();
+
+        Assert.assertTrue(newEndpoints.size() > 0);
+        Assert.assertTrue(missingEndpoints.isEmpty());
+        Assert.assertTrue(changedEndPoints.isEmpty());
+
+    }
+
+    @Test
+    public void testDeprecatedApiRaw() throws IOException {
+        SwaggerDiff diff = SwaggerDiff.compareV2Raw(load(SWAGGER_V2_DOC1), load(SWAGGER_V2_EMPTY_DOC));
+        List<Endpoint> newEndpoints = diff.getNewEndpoints();
+        List<Endpoint> missingEndpoints = diff.getMissingEndpoints();
+        List<ChangedEndpoint> changedEndPoints = diff.getChangedEndpoints();
+
+        Assert.assertTrue(newEndpoints.isEmpty());
+        Assert.assertTrue(missingEndpoints.size() > 0);
+        Assert.assertTrue(changedEndPoints.isEmpty());
+    }
+
 	@Test
 	public void testEqualJson() {
 		try {
@@ -129,6 +164,16 @@ public class SwaggerDiffTest {
 
 	}
 
+    private String load(String location) throws IOException {
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        try (InputStream is = classLoader.getResourceAsStream(location)) {
+            if (is == null) return null;
+            try (InputStreamReader isr = new InputStreamReader(is);
+                 BufferedReader reader = new BufferedReader(isr)) {
+                return reader.lines().collect(Collectors.joining(System.lineSeparator()));
+            }
+        }
+    }
 
 	@Test
 	public void testJsonRender() {
