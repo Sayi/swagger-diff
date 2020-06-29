@@ -24,14 +24,19 @@ import static j2html.TagCreator.*;
 public class HtmlRender implements Render {
 
     private static final String NON_BACKWARDS_CHANGES = "Non-backwards changes";
+
     private final String title;
+
     private final List<String> cssLinks;
+
     private final List<String> scriptsJsLinks;
-    private  boolean showBackwardsIncompatibilities;
+
+    private boolean showBackwardsIncompatibilities;
 
     public HtmlRender() {
         this("Api Change Log", "http://deepoove.com/swagger-diff/stylesheets/demo.css");
     }
+
     public HtmlRender(final String title, final String linkCss) {
         this.title = title;
         cssLinks = new ArrayList<String>();
@@ -69,14 +74,14 @@ public class HtmlRender implements Render {
 
     public String renderHtml(ContainerTag ol_new, ContainerTag ol_miss, ContainerTag ol_changed, ContainerTag p_versions) {
         List<EmptyTag> cssLinksTags = new ArrayList<EmptyTag>();
-        if(!cssLinks.isEmpty()) {
+        if (!cssLinks.isEmpty()) {
             for (String cssLink : cssLinks) {
                 cssLinksTags.add(link().withRel("stylesheet").withHref(cssLink));
             }
         }
 
         List<ContainerTag> cssScriptsJsTags = new ArrayList<ContainerTag>();
-        if(!scriptsJsLinks.isEmpty()){
+        if (!scriptsJsLinks.isEmpty()) {
             for (String scriptJs : scriptsJsLinks) {
                 cssScriptsJsTags.add(script().withType("text/javascript").withSrc(scriptJs));
             }
@@ -84,11 +89,11 @@ public class HtmlRender implements Render {
 
         // Build articles
         List<DomContent> articles = new ArrayList<DomContent>();
-        if(showBackwardsIncompatibilities) {
-            articles.add(span().with(i_backwardsIncompatibilitiesWarning(),span().withText(" " + NON_BACKWARDS_CHANGES )).withStyle("float:right"));
+        if (showBackwardsIncompatibilities) {
+            articles.add(span().with(i_backwardsIncompatibilitiesWarning(), span().withText(" " + NON_BACKWARDS_CHANGES)).withStyle("float:right"));
             articles.add(br());
         }
-        articles.add( div_headArticle("What's New", "new", ol_new));
+        articles.add(div_headArticle("What's New", "new", ol_new));
         articles.add(div_headArticle("What's Missed", "missed", ol_miss));
         articles.add(div_headArticle("What's Changed", "changed", ol_changed));
 
@@ -164,32 +169,32 @@ public class HtmlRender implements Render {
                 del().withText(path)).with(i_backwardsIncompatibilitiesWarning()).with(span(null == desc ? "" : " " + desc));
     }
 
-    private ContainerTag ol_changed(final List<ChangedEndpoint> changedEndpoints){
+    private ContainerTag ol_changed(final List<ChangedEndpoint> changedEndpoints) {
         if (null == changedEndpoints) {
             return ol().withId("changed");
         }
         ContainerTag ol = ol().withId("changed");
-        for (ChangedEndpoint changedEndpoint:changedEndpoints){
+        for (ChangedEndpoint changedEndpoint : changedEndpoints) {
             String pathUrl = changedEndpoint.getPathUrl();
             Map<HttpMethod, ChangedOperation> changedOperations = changedEndpoint.getChangedOperations();
-            for (Entry<HttpMethod, ChangedOperation> entry : changedOperations.entrySet()){
+            for (Entry<HttpMethod, ChangedOperation> entry : changedOperations.entrySet()) {
                 String method = entry.getKey().toString();
                 ChangedOperation changedOperation = entry.getValue();
                 String desc = changedOperation.getSummary();
 
                 ContainerTag ul_detail = ul().withClass("detail");
-                if (changedOperation.isDiffParam()){
+                if (changedOperation.isDiffParam()) {
                     ul_detail.with(li().with(h3("Parameter")).with(ul_param(changedOperation)));
                 }
-                if (changedOperation.isDiffProp()){
+                if (changedOperation.isDiffProp()) {
                     ul_detail.with(li().with(h3("Return Type")).with(ul_response(changedOperation)));
                 }
                 ContainerTag li = li();
                 li.with(span(method).withClass(method)).withText(pathUrl);
-                if(!changedEndpoint.isBackwardsCompatible()) {
+                if (!changedEndpoint.isBackwardsCompatible()) {
                     li.with(i_backwardsIncompatibilitiesWarning());
                 }
-                li.with(span(null == desc ? "" : " " +  desc)).with(ul_detail);
+                li.with(span(null == desc ? "" : " " + desc)).with(ul_detail);
                 ol.with(li);
             }
         }
@@ -199,15 +204,15 @@ public class HtmlRender implements Render {
     private ContainerTag ul_response(final ChangedOperation changedOperation) {
         List<ElProperty> addProps = changedOperation.getAddProps();
         List<ElProperty> delProps = changedOperation.getMissingProps();
-        List<ElProperty>changProps = changedOperation.getChangedProps();
+        List<ElProperty> changProps = changedOperation.getChangedProps();
         ContainerTag ul = ul().withClass("change response");
-        for (ElProperty prop : addProps){
+        for (ElProperty prop : addProps) {
             ul.with(li_addProp(prop));
         }
-        for (ElProperty prop : changProps){
+        for (ElProperty prop : changProps) {
             ul.with(li_changeTypeProp(prop));
         }
-        for (ElProperty prop : delProps){
+        for (ElProperty prop : delProps) {
             ul.with(li_missingProp(prop));
         }
         return ul;
@@ -221,7 +226,7 @@ public class HtmlRender implements Render {
     private ContainerTag li_addProp(final ElProperty prop) {
         Property property = prop.getProperty();
         ContainerTag li = li().withText("Add ").with(textField(prop.getEl()));
-        if(prop.getProperty()!= null && prop.getProperty().getRequired()) {
+        if (prop.getProperty() != null && prop.getProperty().getRequired()) {
             li.withText(" required").with(i_backwardsIncompatibilitiesWarning());
         }
         return li.with(span(null == property.getDescription() ? "" : ("//" + property.getDescription())).withClass("comment"));
@@ -246,47 +251,47 @@ public class HtmlRender implements Render {
         List<Parameter> delParameters = changedOperation.getMissingParameters();
         List<ChangedParameter> changedParameters = changedOperation.getChangedParameters();
         ContainerTag ul = ul().withClass("change param");
-        for (Parameter param : addParameters){
+        for (Parameter param : addParameters) {
             ul.with(li_addParam(param));
         }
-        for (ChangedParameter param : changedParameters){
+        for (ChangedParameter param : changedParameters) {
             List<ElProperty> increased = param.getIncreased();
-            for (ElProperty prop : increased){
+            for (ElProperty prop : increased) {
                 ul.with(li_addProp(prop));
             }
         }
-        for (ChangedParameter param : changedParameters){
+        for (ChangedParameter param : changedParameters) {
             List<ElProperty> requiredChanges = param.getRequiredChanges();
-            for (ElProperty prop : requiredChanges){
+            for (ElProperty prop : requiredChanges) {
                 ul.with(li_changeRequiredProp(prop));
             }
         }
-        for (ChangedParameter param : changedParameters){
+        for (ChangedParameter param : changedParameters) {
             List<ElProperty> typesChanges = param.getTypesChanges();
-            for (ElProperty prop : typesChanges){
+            for (ElProperty prop : typesChanges) {
                 ul.with(li_changeTypeProp(prop));
             }
         }
-        for (ChangedParameter param : changedParameters){
+        for (ChangedParameter param : changedParameters) {
             if (param.isChangeRequired() || param.isChangeDescription() || param.isChangeType()) {
                 ul.with(li_changedParam(param));
             }
         }
-        for (ChangedParameter param : changedParameters){
+        for (ChangedParameter param : changedParameters) {
             List<ElProperty> missing = param.getMissing();
-            for (ElProperty prop : missing){
+            for (ElProperty prop : missing) {
                 ul.with(li_missingProp(prop));
             }
         }
-        for (Parameter param : delParameters){
+        for (Parameter param : delParameters) {
             ul.with(li_missingParam(param));
         }
         return ul;
     }
 
-    private ContainerTag li_addParam(final Parameter param){
+    private ContainerTag li_addParam(final Parameter param) {
         ContainerTag li = li();
-        if(param.getRequired()) {
+        if (param.getRequired()) {
             li.withText("Add required ").with(textField(param.getName())).with(i_backwardsIncompatibilitiesWarning());
         } else {
             li.withText("Add ").with(textField(param.getName()));
@@ -294,30 +299,30 @@ public class HtmlRender implements Render {
         return li.with(span(null == param.getDescription() ? "" : ("//" + param.getDescription())).withClass("comment"));
     }
 
-    private ContainerTag li_missingParam(final Parameter param){
+    private ContainerTag li_missingParam(final Parameter param) {
         return li().withClass("missing").with(span("Delete")).with(del(textField(param.getName()))).with(i_backwardsIncompatibilitiesWarning()).with(span(null == param.getDescription() ? "" : ("//" + param.getDescription())).withClass("comment"));
     }
 
-    private ContainerTag li_changedParam(final ChangedParameter changeParam){
+    private ContainerTag li_changedParam(final ChangedParameter changeParam) {
         boolean changeRequired = changeParam.isChangeRequired();
         boolean changeDescription = changeParam.isChangeDescription();
         boolean changeType = changeParam.isChangeType();
         Parameter rightParam = changeParam.getRightParameter();
         Parameter leftParam = changeParam.getLeftParameter();
         ContainerTag li = li().with(textField(rightParam.getName()));
-        if(changeRequired || changeType || changeDescription) {
+        if (changeRequired || changeType || changeDescription) {
             li.withText(" : ");
-            if (changeRequired){
-                li.with(br()).withText(" - becomes " + (rightParam.getRequired() ? "required " : "not required "));
+            if (changeRequired) {
+                li.with(br()).withText(" - becomes " + (rightParam.getRequired() ? "required" : "not required"));
             }
             if (changeType) {
-                li.with(br()).withText(" - changes type ");
+                li.with(br()).withText(" - changes type");
             }
-            if (changeDescription){
+            if (changeDescription) {
                 li.with(br()).withText(" - notes ").with(del(leftParam.getDescription()).withClass("comment")).withText(" change into ").with(span(span(null == rightParam.getDescription() ? "" : rightParam.getDescription()).withClass("comment")));
             }
         }
-        if(!changeParam.isBackwardsCompatible()) {
+        if (!changeParam.isBackwardsCompatible()) {
             li.with(i_backwardsIncompatibilitiesWarning());
         }
         return li;
@@ -325,7 +330,8 @@ public class HtmlRender implements Render {
 
     /** Add icon if modifications make backwards incompatibilies. */
     private ContainerTag i_backwardsIncompatibilitiesWarning() {
-        return showBackwardsIncompatibilities ? i().withClass("fas fa-exclamation-circle warnbackward").withTitle(NON_BACKWARDS_CHANGES):null;
+        return showBackwardsIncompatibilities ? i().withStyle("margin-left:0.5em;")
+                .withClass("fas fa-exclamation-circle warnbackward").withTitle(NON_BACKWARDS_CHANGES) : null;
     }
 
 }
