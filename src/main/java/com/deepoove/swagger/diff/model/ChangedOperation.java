@@ -17,6 +17,10 @@ public class ChangedOperation implements Changed {
 	private List<ElProperty> addProps = new ArrayList<ElProperty>();
 	private List<ElProperty> missingProps = new ArrayList<ElProperty>();
 	private List<ElProperty> changedProps = new ArrayList<ElProperty>();
+	private List<String> addConsumes = new ArrayList<>();
+	private List<String> missingConsumes = new ArrayList<>();
+	private List<String> addProduces = new ArrayList<>();
+	private List<String> missingProduces = new ArrayList<>();
 
 	public List<Parameter> getAddParameters() {
 		return addParameters;
@@ -76,7 +80,7 @@ public class ChangedOperation implements Changed {
 
 	public boolean isDiff() {
 		return !addParameters.isEmpty() || !missingParameters.isEmpty()
-				|| !changedParameter.isEmpty() || isDiffProp();
+				|| !changedParameter.isEmpty() || isDiffProp() || isDiffConsumes() || isDiffProduces();
 	}
 	public boolean isDiffProp(){
 		return !addProps.isEmpty()
@@ -86,5 +90,45 @@ public class ChangedOperation implements Changed {
 	public boolean isDiffParam(){
 		return !addParameters.isEmpty() || !missingParameters.isEmpty()
 				|| !changedParameter.isEmpty();
+	}
+
+	public boolean isDiffConsumes(){
+		return !addConsumes.isEmpty() || !missingConsumes.isEmpty();
+	}
+
+	public boolean isDiffProduces(){
+		return !addProduces.isEmpty() || !missingProduces.isEmpty();
+	}
+
+	public List<String> getAddConsumes() {
+		return this.addConsumes;
+	}
+
+    public void setAddConsumes(List<String> increased) {
+		this.addConsumes = increased == null ? new ArrayList<>() : increased;
+    }
+
+	public List<String> getMissingConsumes() {
+		return this.missingConsumes;
+	}
+
+	public void setMissingConsumes(List<String> missing) {
+		this.missingConsumes = missing == null ? new ArrayList<>() : missing;
+	}
+
+	public List<String> getAddProduces() {
+		return this.addProduces;
+	}
+
+	public void setAddProduces(List<String> increased) {
+		this.addProduces = increased == null ? new ArrayList<>() : increased;
+	}
+
+	public List<String> getMissingProduces() {
+		return this.missingProduces;
+	}
+
+	public void setMissingProduces(List<String> missing) {
+		this.missingProduces = missing == null ? new ArrayList<>() : missing;
 	}
 }

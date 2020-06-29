@@ -13,6 +13,7 @@ import com.google.common.collect.Lists;
 import io.swagger.models.Model;
 import io.swagger.models.RefModel;
 import io.swagger.models.parameters.AbstractSerializableParameter;
+
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
@@ -69,17 +70,13 @@ public class ParameterDiff {
                 Model leftSchema = leftBodyPara.getSchema();
                 BodyParameter rightBodyPara = (BodyParameter) rightPara;
                 Model rightSchema = rightBodyPara.getSchema();
-                if (leftSchema instanceof RefModel && rightSchema instanceof RefModel) {
-                    String leftRef = ((RefModel) leftSchema).getSimpleRef();
-                    String rightRef = ((RefModel) rightSchema).getSimpleRef();
-                    Model leftModel = oldDedinitions.get(leftRef);
-                    Model rightModel = newDedinitions.get(rightRef);
-                    ModelDiff diff = ModelDiff.buildWithDefinition(oldDedinitions, newDedinitions)
-                            .diff(leftModel, rightModel, leftPara.getName());
-                    changedParameter.setIncreased(diff.getIncreased());
-                    changedParameter.setMissing(diff.getMissing());
-                    changedParameter.setChanged(diff.getChanged());
-                }
+
+                ModelDiff diff = ModelDiff.buildWithDefinition(oldDedinitions, newDedinitions)
+                        .diff(leftSchema, rightSchema, leftPara.getName());
+                changedParameter.setIncreased(diff.getIncreased());
+                changedParameter.setMissing(diff.getMissing());
+                changedParameter.setChanged(diff.getChanged());
+
             }
 
             //Let's handle the case where the new API has fx changed the type of PathParameter from being of type String to type integer
