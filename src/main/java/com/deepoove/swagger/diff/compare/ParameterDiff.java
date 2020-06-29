@@ -11,9 +11,7 @@ import com.deepoove.swagger.diff.model.ElProperty;
 import com.google.common.collect.Lists;
 
 import io.swagger.models.Model;
-import io.swagger.models.RefModel;
 import io.swagger.models.parameters.AbstractSerializableParameter;
-
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
@@ -40,8 +38,7 @@ public class ParameterDiff {
         this.changed = new ArrayList<ChangedParameter>();
     }
 
-    public static ParameterDiff buildWithDefinition(Map<String, Model> left,
-            Map<String, Model> right) {
+    public static ParameterDiff buildWithDefinition(Map<String, Model> left, Map<String, Model> right) {
         ParameterDiff diff = new ParameterDiff();
         diff.oldDedinitions = left;
         diff.newDedinitions = right;
@@ -71,16 +68,18 @@ public class ParameterDiff {
                 BodyParameter rightBodyPara = (BodyParameter) rightPara;
                 Model rightSchema = rightBodyPara.getSchema();
 
-                ModelDiff diff = ModelDiff.buildWithDefinition(oldDedinitions, newDedinitions)
-                        .diff(leftSchema, rightSchema, leftPara.getName());
+                ModelDiff diff = ModelDiff.buildWithDefinition(oldDedinitions, newDedinitions).diff(leftSchema,
+                        rightSchema, leftPara.getName());
                 changedParameter.setIncreased(diff.getIncreased());
                 changedParameter.setMissing(diff.getMissing());
                 changedParameter.setChanged(diff.getChanged());
 
             }
 
-            //Let's handle the case where the new API has fx changed the type of PathParameter from being of type String to type integer
-            if (leftPara instanceof AbstractSerializableParameter && rightPara instanceof AbstractSerializableParameter) {
+            // Let's handle the case where the new API has fx changed the type
+            // of PathParameter from being of type String to type integer
+            if (leftPara instanceof AbstractSerializableParameter
+                    && rightPara instanceof AbstractSerializableParameter) {
                 if (!leftPara.equals(rightPara)) {
                     ElProperty elProperty = new ElProperty();
                     elProperty.setEl(rightPara.getName());

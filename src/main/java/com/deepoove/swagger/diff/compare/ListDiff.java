@@ -38,8 +38,7 @@ public class ListDiff<K> {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static <K> ListDiff<K> diff(List<K> left, List<K> right,
-            BiFunction<List<K>, K, K> biFunc) {
+    public static <K> ListDiff<K> diff(List<K> left, List<K> right, BiFunction<List<K>, K, K> biFunc) {
         ListDiff<K> instance = new ListDiff<>();
         if (null == left && null == right) return instance;
         if (null == left) {
@@ -57,9 +56,9 @@ public class ListDiff<K> {
             K rightEle = biFunc.apply(right, ele);
             if (null != rightEle) {
                 ListIterator<K> listIterator = instance.increased.listIterator();
-                while(listIterator.hasNext()){
+                while (listIterator.hasNext()) {
                     K k = listIterator.next();
-                    if (biFunc.apply(Lists.newArrayList(k), ele)!=null) {
+                    if (biFunc.apply(Lists.newArrayList(k), ele) != null) {
                         listIterator.remove();
                         break;
                     }

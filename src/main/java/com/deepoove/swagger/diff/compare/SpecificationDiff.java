@@ -33,8 +33,7 @@ public class SpecificationDiff {
     private SpecificationDiff() {}
 
     public static SpecificationDiff diff(Swagger oldSpec, Swagger newSpec) {
-        if (null == oldSpec || null == newSpec) { throw new IllegalArgumentException(
-                "cannot diff null spec."); }
+        if (null == oldSpec || null == newSpec) { throw new IllegalArgumentException("cannot diff null spec."); }
         SpecificationDiff instance = new SpecificationDiff();
         Map<String, Path> oldPaths = oldSpec.getPaths();
         Map<String, Path> newPaths = newSpec.getPaths();
@@ -55,8 +54,7 @@ public class SpecificationDiff {
             // Diff Operation
             Map<HttpMethod, Operation> oldOperationMap = oldPath.getOperationMap();
             Map<HttpMethod, Operation> newOperationMap = newPath.getOperationMap();
-            MapKeyDiff<HttpMethod, Operation> operationDiff = MapKeyDiff.diff(oldOperationMap,
-                    newOperationMap);
+            MapKeyDiff<HttpMethod, Operation> operationDiff = MapKeyDiff.diff(oldOperationMap, newOperationMap);
             Map<HttpMethod, Operation> increasedOperation = operationDiff.getIncreased();
             Map<HttpMethod, Operation> missingOperation = operationDiff.getMissing();
             changedEndpoint.setNewOperations(increasedOperation);
@@ -83,8 +81,8 @@ public class SpecificationDiff {
                 // Diff response
                 Property oldResponseProperty = getResponseProperty(oldOperation);
                 Property newResponseProperty = getResponseProperty(newOperation);
-                PropertyDiff propertyDiff = PropertyDiff
-                        .buildWithDefinition(oldSpec.getDefinitions(), newSpec.getDefinitions());
+                PropertyDiff propertyDiff = PropertyDiff.buildWithDefinition(oldSpec.getDefinitions(),
+                        newSpec.getDefinitions());
                 propertyDiff.diff(oldResponseProperty, newResponseProperty);
                 changedOperation.setAddProps(propertyDiff.getIncreased());
                 changedOperation.setMissingProps(propertyDiff.getMissing());
@@ -96,7 +94,8 @@ public class SpecificationDiff {
                 changedOperation.setMissingConsumes(consumeDiff.getMissing());
 
                 // Diff Produces
-                ListDiff<String> producesDiff = getMediaTypeDiff(oldOperation.getProduces(), newOperation.getProduces());
+                ListDiff<String> producesDiff = getMediaTypeDiff(oldOperation.getProduces(),
+                        newOperation.getProduces());
                 changedOperation.setAddProduces(producesDiff.getIncreased());
                 changedOperation.setMissingProduces(producesDiff.getMissing());
 
@@ -106,10 +105,10 @@ public class SpecificationDiff {
             });
             changedEndpoint.setChangedOperations(operas);
 
-            instance.newEndpoints.addAll(convert2EndpointList(changedEndpoint.getPathUrl(),
-                    changedEndpoint.getNewOperations()));
-            instance.missingEndpoints.addAll(convert2EndpointList(changedEndpoint.getPathUrl(),
-                    changedEndpoint.getMissingOperations()));
+            instance.newEndpoints
+                    .addAll(convert2EndpointList(changedEndpoint.getPathUrl(), changedEndpoint.getNewOperations()));
+            instance.missingEndpoints
+                    .addAll(convert2EndpointList(changedEndpoint.getPathUrl(), changedEndpoint.getMissingOperations()));
 
             if (changedEndpoint.isDiff()) {
                 instance.changedEndpoints.add(changedEndpoint);
@@ -146,8 +145,7 @@ public class SpecificationDiff {
         return endpoints;
     }
 
-    private static Collection<? extends Endpoint> convert2EndpointList(String pathUrl,
-            Map<HttpMethod, Operation> map) {
+    private static Collection<? extends Endpoint> convert2EndpointList(String pathUrl, Map<HttpMethod, Operation> map) {
         List<Endpoint> endpoints = new ArrayList<Endpoint>();
         if (null == map) return endpoints;
         map.forEach((httpMethod, operation) -> {
@@ -162,7 +160,7 @@ public class SpecificationDiff {
     }
 
     private static ListDiff<String> getMediaTypeDiff(List<String> oldTypes, List<String> newTypes) {
-        return  ListDiff.diff(oldTypes, newTypes, (t, sample) -> {
+        return ListDiff.diff(oldTypes, newTypes, (t, sample) -> {
             for (String mediaType : t) {
                 if (sample.equalsIgnoreCase(mediaType)) { return mediaType; }
             }

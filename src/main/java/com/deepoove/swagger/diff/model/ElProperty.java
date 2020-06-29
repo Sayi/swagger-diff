@@ -4,57 +4,58 @@ import io.swagger.models.properties.Property;
 
 /**
  * property with expression Language grammar
+ * 
  * @author Sayi
- * @version 
+ * @version
  */
 public class ElProperty {
 
-	private String el;
+    private String el;
 
-	private Property property;
+    private Property property;
 
-	// optional change metadata
-	private boolean isTypeChange;
-	private boolean newEnums;
-	private boolean removedEnums;
+    // optional change metadata
+    private boolean isTypeChange;
+    private boolean newEnums;
+    private boolean removedEnums;
 
-	public Property getProperty() {
-		return property;
-	}
+    public Property getProperty() {
+        return property;
+    }
 
-	public void setProperty(Property property) {
-		this.property = property;
-	}
+    public void setProperty(Property property) {
+        this.property = property;
+    }
 
-	public String getEl() {
-		return el;
-	}
+    public String getEl() {
+        return el;
+    }
 
-	public void setEl(String el) {
-		this.el = el;
-	}
+    public void setEl(String el) {
+        this.el = el;
+    }
 
-	public boolean isTypeChange() {
-		return isTypeChange;
-	}
+    public boolean isTypeChange() {
+        return isTypeChange;
+    }
 
-	public void setTypeChange(boolean typeChange) {
-		isTypeChange = typeChange;
-	}
+    public void setTypeChange(boolean typeChange) {
+        isTypeChange = typeChange;
+    }
 
-	public boolean isNewEnums() {
-		return newEnums;
-	}
+    public boolean isNewEnums() {
+        return newEnums;
+    }
 
-	public void setNewEnums(boolean newEnums) {
-		this.newEnums = newEnums;
-	}
+    public void setNewEnums(boolean newEnums) {
+        this.newEnums = newEnums;
+    }
 
-	public boolean isRemovedEnums() {
-		return removedEnums;
-	}
+    public boolean isRemovedEnums() {
+        return removedEnums;
+    }
 
-	public void setRemovedEnums(boolean removedEnums) {
-		this.removedEnums = removedEnums;
-	}
+    public void setRemovedEnums(boolean removedEnums) {
+        this.removedEnums = removedEnums;
+    }
 }

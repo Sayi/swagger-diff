@@ -48,7 +48,7 @@ Download the fatJar or view the changelog on the **[Release Page](https://github
 <dependency>
   <groupId>com.deepoove</groupId>
   <artifactId>swagger-diff</artifactId>
-  <version>1.2.1</version>
+  <version>1.2.2</version>
 </dependency>
 ```
 

@@ -10,12 +10,12 @@
 
 	<groupId>com.deepoove</groupId>
 	<artifactId>swagger-diff</artifactId>
-	<version>1.2.1</version>
+	<version>1.2.2</version>
 	<packaging>jar</packaging>
 
 	<name>swagger-diff</name>
 	<description>diff swagger api document</description>
-	<url>http://maven.apache.org</url>
+	<url>https://github.com/Sayi/swagger-diff</url>
 
 	<licenses>
 		<license>
