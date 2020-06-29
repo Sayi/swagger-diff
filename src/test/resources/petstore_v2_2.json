@@ -433,8 +433,10 @@
         "summary": "Place an order for a pet",
         "description": "",
         "operationId": "placeOrder",
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
-          "application/xml",
           "application/json"
         ],
         "parameters": [
@@ -820,8 +822,7 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "integer",
-          "format": "int64"
+          "type": "string"
         },
         "petId": {
           "type": "integer",
@@ -840,7 +841,7 @@
           "description": "Order Status",
           "enum": [
             "placed",
-            "approved",
+            "authorized",
             "delivered"
           ]
         },

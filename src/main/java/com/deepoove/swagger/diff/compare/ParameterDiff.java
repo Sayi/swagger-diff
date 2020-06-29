@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import com.deepoove.swagger.diff.model.ChangedParameter;
 
 import io.swagger.models.Model;
-import io.swagger.models.RefModel;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
 
@@ -65,19 +64,12 @@ public class ParameterDiff {
                 BodyParameter leftBodyPara = (BodyParameter) leftPara;
                 Model leftSchema = leftBodyPara.getSchema();
                 BodyParameter rightBodyPara = (BodyParameter) rightPara;
-                Model rightSchema = rightBodyPara.getSchema(); 
-                if (leftSchema instanceof RefModel && rightSchema instanceof RefModel) {
-                    String leftRef = ((RefModel) leftSchema).getSimpleRef();
-                    String rightRef = ((RefModel) rightSchema).getSimpleRef();
-                    Model leftModel = oldDedinitions.get(leftRef);
-                    Model rightModel = newDedinitions.get(rightRef);
-                    
-                    ModelDiff diff = ModelDiff.buildWithDefinition(oldDedinitions, newDedinitions)
-                            .diff(leftModel, rightModel, leftPara.getName());
-                    changedParameter.setIncreased(diff.getIncreased());
-                    changedParameter.setMissing(diff.getMissing());
-                    changedParameter.setChanged(diff.getChanged());
-                }
+                Model rightSchema = rightBodyPara.getSchema();
+                ModelDiff diff = ModelDiff.buildWithDefinition(oldDedinitions, newDedinitions)
+                        .diff(leftSchema, rightSchema, leftPara.getName());
+                changedParameter.setIncreased(diff.getIncreased());
+                changedParameter.setMissing(diff.getMissing());
+                changedParameter.setChanged(diff.getChanged());
             }
 
             // is requried

@@ -90,6 +90,16 @@ public class SpecificationDiff {
                 changedOperation.setMissingProps(propertyDiff.getMissing());
                 changedOperation.setChangedProps(propertyDiff.getChanged());
 
+                // Diff Consumes
+                ListDiff<String> consumeDiff = getMediaTypeDiff(oldOperation.getConsumes(), newOperation.getConsumes());
+                changedOperation.setAddConsumes(consumeDiff.getIncreased());
+                changedOperation.setMissingConsumes(consumeDiff.getMissing());
+
+                // Diff Produces
+                ListDiff<String> producesDiff = getMediaTypeDiff(oldOperation.getProduces(), newOperation.getProduces());
+                changedOperation.setAddProduces(producesDiff.getIncreased());
+                changedOperation.setMissingProduces(producesDiff.getMissing());
+
                 if (changedOperation.isDiff()) {
                     operas.put(method, changedOperation);
                 }
@@ -149,6 +159,15 @@ public class SpecificationDiff {
             endpoints.add(endpoint);
         });
         return endpoints;
+    }
+
+    private static ListDiff<String> getMediaTypeDiff(List<String> oldTypes, List<String> newTypes) {
+        return  ListDiff.diff(oldTypes, newTypes, (t, sample) -> {
+            for (String mediaType : t) {
+                if (sample.equalsIgnoreCase(mediaType)) { return mediaType; }
+            }
+            return null;
+        });
     }
 
     public List<Endpoint> getNewEndpoints() {
