@@ -184,7 +184,6 @@
         ]
       }
     },
-
     "/pet/findByStatus": {
       "get": {
         "tags": [

@@ -1,18 +1,17 @@
 package com.deepoove.swagger.diff.compare;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import lombok.Getter;
-
 /**
  * compare two Maps by key
- * 
+ *
  * @author Sayi
- * @version
  */
 @Getter
 public class MapKeyDiff<K, V> {

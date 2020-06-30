@@ -1,50 +1,50 @@
 package com.deepoove.swagger.diff.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.swagger.models.parameters.Parameter;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 public class ChangedParameter implements Changed {
-	
-	private List<ElProperty> increased = new ArrayList<ElProperty>();
-	private List<ElProperty> missing = new ArrayList<ElProperty>();
-	private List<ElProperty> changed = new ArrayList<ElProperty>();
-	private List<ElProperty> typesChanges = new ArrayList<ElProperty>();
-	private List<ElProperty> requiredChanges = new ArrayList<ElProperty>();
 
-	private Parameter leftParameter;
-	private Parameter rightParameter;
+    private List<ElProperty> increased = new ArrayList<ElProperty>();
+    private List<ElProperty> missing = new ArrayList<ElProperty>();
+    private List<ElProperty> changed = new ArrayList<ElProperty>();
+    private List<ElProperty> typesChanges = new ArrayList<ElProperty>();
+    private List<ElProperty> requiredChanges = new ArrayList<ElProperty>();
 
-	private boolean isChangeRequired;
-	private boolean isChangeDescription;
-	private boolean isChangeType;
+    private Parameter leftParameter;
+    private Parameter rightParameter;
 
-	@Override
-	public boolean isDiff() {
-		return isChangeRequired
-				|| isChangeDescription
-				|| !increased.isEmpty()
-				|| !missing.isEmpty()
-				|| isChangeType
-				|| !requiredChanges.isEmpty()
-				|| !typesChanges.isEmpty();
-	}
+    private boolean isChangeRequired;
+    private boolean isChangeDescription;
+    private boolean isChangeType;
 
-	@Override
-	public boolean isBackwardsCompatible() {
-		boolean isBackwardsCompatible = !isChangeRequired
-				&& !isChangeType
-				&& missing.isEmpty()
-				&& requiredChanges.isEmpty()
-				&& typesChanges.isEmpty();
-		for (ElProperty elProperty : increased) {
-			if(elProperty.getProperty() != null && elProperty.getProperty().getRequired()) {
-				return false;
-			}
-		}
-		return isBackwardsCompatible;
-	}
+    @Override
+    public boolean isDiff() {
+        return isChangeRequired
+                || isChangeDescription
+                || !increased.isEmpty()
+                || !missing.isEmpty()
+                || isChangeType
+                || !requiredChanges.isEmpty()
+                || !typesChanges.isEmpty();
+    }
+
+    @Override
+    public boolean isBackwardsCompatible() {
+        boolean isBackwardsCompatible = !isChangeRequired
+                && !isChangeType
+                && missing.isEmpty()
+                && requiredChanges.isEmpty()
+                && typesChanges.isEmpty();
+        for (ElProperty elProperty : increased) {
+            if (elProperty.getProperty() != null && elProperty.getProperty().getRequired()) {
+                return false;
+            }
+        }
+        return isBackwardsCompatible;
+    }
 }

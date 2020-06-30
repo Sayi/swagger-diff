@@ -875,8 +875,8 @@
       "required": [
         "name",
         "photoUrls",
-		"id",
-		"num"
+        "id",
+        "num"
       ],
       "properties": {
         "id": {

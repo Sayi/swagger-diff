@@ -32,10 +32,8 @@ public class SwaggerDiff {
     /**
      * compare two swagger 1.x doc
      *
-     * @param oldSpec
-     *            old api-doc location:Json or Http
-     * @param newSpec
-     *            new api-doc location:Json or Http
+     * @param oldSpec old api-doc location:Json or Http
+     * @param newSpec new api-doc location:Json or Http
      */
     public static SwaggerDiff compareV1(final String oldSpec, final String newSpec) {
         return compare(oldSpec, newSpec, null, null);
@@ -44,17 +42,15 @@ public class SwaggerDiff {
     /**
      * compare two swagger v2.0 doc
      *
-     * @param oldSpec
-     *            old api-doc location:Json or Http
-     * @param newSpec
-     *            new api-doc location:Json or Http
+     * @param oldSpec old api-doc location:Json or Http
+     * @param newSpec new api-doc location:Json or Http
      */
     public static SwaggerDiff compareV2(final String oldSpec, final String newSpec) {
         return compare(oldSpec, newSpec, null, SWAGGER_VERSION_V2);
     }
 
     public static SwaggerDiff compare(String oldSpec, String newSpec,
-            List<AuthorizationValue> auths, String version) {
+                                      List<AuthorizationValue> auths, String version) {
         return new SwaggerDiff(oldSpec, newSpec, auths, version).compare();
     }
 
@@ -65,7 +61,7 @@ public class SwaggerDiff {
      * @param version
      */
     private SwaggerDiff(final String oldSpec, final String newSpec, final List<AuthorizationValue> auths,
-            final String version) {
+                        final String version) {
         if (SWAGGER_VERSION_V2.equals(version)) {
             SwaggerParser swaggerParser = new SwaggerParser();
             oldSpecSwagger = swaggerParser.read(oldSpec, auths, true);
@@ -80,17 +76,17 @@ public class SwaggerDiff {
                 return;
             }
         }
-        if (null == oldSpecSwagger || null == newSpecSwagger) { throw new RuntimeException(
-                "cannot read api-doc from spec."); }
+        if (null == oldSpecSwagger || null == newSpecSwagger) {
+            throw new RuntimeException(
+                    "cannot read api-doc from spec.");
+        }
     }
 
     /**
      * Compare two swagger v2.0 docs by JsonNode
      *
-     * @param oldSpec
-     *            old Swagger specification document in v2.0 format as a JsonNode
-     * @param newSpec
-     *            new Swagger specification document in v2.0 format as a JsonNode
+     * @param oldSpec old Swagger specification document in v2.0 format as a JsonNode
+     * @param newSpec new Swagger specification document in v2.0 format as a JsonNode
      */
     public static SwaggerDiff compareV2(JsonNode oldSpec, JsonNode newSpec) {
         return new SwaggerDiff(oldSpec, newSpec).compare();
@@ -100,12 +96,14 @@ public class SwaggerDiff {
         SwaggerParser swaggerParser = new SwaggerParser();
         oldSpecSwagger = swaggerParser.read(oldSpec, true);
         newSpecSwagger = swaggerParser.read(newSpec, true);
-        if (null == oldSpecSwagger || null == newSpecSwagger) { throw new RuntimeException(
-            "cannot read api-doc from spec."); }
+        if (null == oldSpecSwagger || null == newSpecSwagger) {
+            throw new RuntimeException(
+                    "cannot read api-doc from spec.");
+        }
     }
 
     private SwaggerDiff compare() {
-    	SpecificationDiff diff = SpecificationDiff.diff(oldSpecSwagger, newSpecSwagger);
+        SpecificationDiff diff = SpecificationDiff.diff(oldSpecSwagger, newSpecSwagger);
         this.newEndpoints = diff.getNewEndpoints();
         this.missingEndpoints = diff.getMissingEndpoints();
         this.changedEndpoints = diff.getChangedEndpoints();
@@ -113,11 +111,11 @@ public class SwaggerDiff {
     }
 
     public boolean isBackwardsCompatible() {
-        if(!getMissingEndpoints().isEmpty()) {
+        if (!getMissingEndpoints().isEmpty()) {
             return false;
         } else {
             for (ChangedEndpoint changedEndpoint : getChangedEndpoints()) {
-                if(!changedEndpoint.isBackwardsCompatible()) {
+                if (!changedEndpoint.isBackwardsCompatible()) {
                     return false;
                 }
             }

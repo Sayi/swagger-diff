@@ -5,8 +5,8 @@ import lombok.Data;
 
 /**
  * property with expression Language grammar
+ *
  * @author Sayi
- * @version
  */
 @Data
 public class ElProperty {

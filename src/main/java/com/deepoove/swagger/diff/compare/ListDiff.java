@@ -8,9 +8,8 @@ import java.util.function.BiFunction;
 
 /**
  * compare two Lists
- * 
+ *
  * @author Sayi
- * @version
  */
 public class ListDiff<K> {
 
@@ -27,15 +26,13 @@ public class ListDiff<K> {
     }
 
     /**
-     * 
      * @param left
      * @param right
-     * @param biFunc
-     *            if right List contains left element
+     * @param biFunc if right List contains left element
      * @return
      */
     public static <K> ListDiff<K> diff(List<K> left, List<K> right,
-            BiFunction<List<K>, K, K> biFunc) {
+                                       BiFunction<List<K>, K, K> biFunc) {
         ListDiff<K> instance = new ListDiff<>();
         if (null == left && null == right) return instance;
         if (null == left) {

@@ -1,23 +1,14 @@
 package com.deepoove.swagger.diff.output;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.deepoove.swagger.diff.SwaggerDiff;
-import com.deepoove.swagger.diff.model.ChangedEndpoint;
-import com.deepoove.swagger.diff.model.ChangedOperation;
-import com.deepoove.swagger.diff.model.ChangedParameter;
-import com.deepoove.swagger.diff.model.ElProperty;
-import com.deepoove.swagger.diff.model.Endpoint;
-
+import com.deepoove.swagger.diff.model.*;
 import io.swagger.models.HttpMethod;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
-import j2html.tags.ContainerTag;
-import sun.jvm.hotspot.oops.Mark;
 
-import static j2html.TagCreator.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class MarkdownRender implements Render {
 
@@ -58,7 +49,7 @@ public class MarkdownRender implements Render {
     }
 
     public String renderHtml(String oldVersion, String newVersion, String ol_new, String ol_miss,
-            String ol_changed) {
+                             String ol_changed) {
         StringBuffer sb = new StringBuffer();
         sb.append(H2).append("Version " + oldVersion + " to " + newVersion).append("\n").append(HR);
         sb.append(H3).append("What's New").append("\n").append(HR)
@@ -280,7 +271,9 @@ public class MarkdownRender implements Render {
         return sb.toString();
     }
 
-    /** Add icon if modifications make backwards incompatibilies. */
+    /**
+     * Add icon if modifications make backwards incompatibilies.
+     */
     private String i_backwardsIncompatibilitiesWarning() {
         return showBackwardsIncompatibilities ? " ❗ " : null;
     }

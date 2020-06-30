@@ -10,12 +10,11 @@ import com.deepoove.swagger.diff.output.Render;
 
 /**
  * $java -jar swagger-diff.jar -old http://www.petstore.com/swagger.json \n
- *  -new http://www.petstore.com/swagger_new.json \n
- *  -v 2.0 \n
- *  -output-mode markdown \n
+ * -new http://www.petstore.com/swagger_new.json \n
+ * -v 2.0 \n
+ * -output-mode markdown \n
  *
  * @author Sayi
- * @version
  */
 public class CLI {
 
@@ -28,7 +27,7 @@ public class CLI {
     @Parameter(names = "-new", description = "new api-doc location:Json file path or Http url", required = true, order = 1)
     private String newSpec;
 
-    @Parameter(names = "-v", description = "swagger version:1.0 or 2.0", validateWith=  RegexValidator.class, order = 2)
+    @Parameter(names = "-v", description = "swagger version:1.0 or 2.0", validateWith = RegexValidator.class, order = 2)
     @Regex("(2\\.0|1\\.0)")
     private String version = SwaggerDiff.SWAGGER_VERSION_V2;
 
@@ -45,19 +44,19 @@ public class CLI {
     public static void main(String[] args) {
         CLI cli = new CLI();
         JCommander jCommander = JCommander.newBuilder()
-            .addObject(cli)
-            .build();
+                .addObject(cli)
+                .build();
         jCommander.parse(args);
         cli.run(jCommander);
     }
 
     public void run(JCommander jCommander) {
-        if (help){
+        if (help) {
             jCommander.setProgramName("java -jar swagger-diff.jar");
             jCommander.usage();
             return;
         }
-        if (v){
+        if (v) {
             JCommander.getConsole().println("1.2.1");
             return;
         }

@@ -1,24 +1,20 @@
 package com.deepoove.swagger.diff.compare;
 
+import com.deepoove.swagger.diff.model.ChangedParameter;
+import io.swagger.models.Model;
+import io.swagger.models.RefModel;
+import io.swagger.models.parameters.BodyParameter;
+import io.swagger.models.parameters.Parameter;
+import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import com.deepoove.swagger.diff.model.ChangedParameter;
-
-import io.swagger.models.Model;
-import io.swagger.models.RefModel;
-import io.swagger.models.parameters.AbstractSerializableParameter;
-import io.swagger.models.parameters.BodyParameter;
-import io.swagger.models.parameters.Parameter;
-import lombok.Data;
-
 /**
  * compare two parameter
- * 
+ *
  * @author Sayi
  */
 @Data
@@ -38,7 +34,7 @@ public class ParameterDiff {
     }
 
     public static ParameterDiff buildWithDefinition(Map<String, Model> left,
-            Map<String, Model> right) {
+                                                    Map<String, Model> right) {
         ParameterDiff diff = new ParameterDiff();
         diff.oldDedinitions = left;
         diff.newDedinitions = right;
@@ -51,14 +47,16 @@ public class ParameterDiff {
 
         ListDiff<Parameter> paramDiff = ListDiff.diff(left, right, (t, param) -> {
             for (Parameter para : t) {
-                if (param.getName().equals(para.getName())) { return para; }
+                if (param.getName().equals(para.getName())) {
+                    return para;
+                }
             }
             return null;
         });
         this.increased.addAll(paramDiff.getIncreased());
         this.missing.addAll(paramDiff.getMissing());
         Map<Parameter, Parameter> shared = paramDiff.getShared();
-        
+
         shared.forEach((leftPara, rightPara) -> {
             ChangedParameter changedParameter = new ChangedParameter();
             changedParameter.setLeftParameter(leftPara);
@@ -68,13 +66,13 @@ public class ParameterDiff {
                 BodyParameter leftBodyPara = (BodyParameter) leftPara;
                 Model leftSchema = leftBodyPara.getSchema();
                 BodyParameter rightBodyPara = (BodyParameter) rightPara;
-                Model rightSchema = rightBodyPara.getSchema(); 
+                Model rightSchema = rightBodyPara.getSchema();
                 if (leftSchema instanceof RefModel && rightSchema instanceof RefModel) {
                     String leftRef = ((RefModel) leftSchema).getSimpleRef();
                     String rightRef = ((RefModel) rightSchema).getSimpleRef();
                     Model leftModel = oldDedinitions.get(leftRef);
                     Model rightModel = newDedinitions.get(rightRef);
-                    
+
                     ModelDiff diff = ModelDiff.buildWithDefinition(oldDedinitions, newDedinitions)
                             .diff(leftModel, rightModel, leftPara.getName());
                     changedParameter.setIncreased(diff.getIncreased());

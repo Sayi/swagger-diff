@@ -1,23 +1,18 @@
 package com.deepoove.swagger.diff.output;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.deepoove.swagger.diff.SwaggerDiff;
-import com.deepoove.swagger.diff.model.ChangedEndpoint;
-import com.deepoove.swagger.diff.model.ChangedOperation;
-import com.deepoove.swagger.diff.model.ChangedParameter;
-import com.deepoove.swagger.diff.model.ElProperty;
-import com.deepoove.swagger.diff.model.Endpoint;
-
+import com.deepoove.swagger.diff.model.*;
 import io.swagger.models.HttpMethod;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
 import j2html.tags.ContainerTag;
 import j2html.tags.DomContent;
 import j2html.tags.EmptyTag;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import static j2html.TagCreator.*;
 
@@ -45,8 +40,8 @@ public class HtmlRender implements Render {
     }
 
     /**
-     * @param pTitle : page's title
-     * @param pCssLinks : list of Css links
+     * @param pTitle          : page's title
+     * @param pCssLinks       : list of Css links
      * @param pScriptsJsLinks : list of JS Scripts links
      */
     public HtmlRender(final String pTitle, final List<String> pCssLinks, final List<String> pScriptsJsLinks) {
@@ -146,7 +141,7 @@ public class HtmlRender implements Render {
     }
 
     private ContainerTag li_newEndpoint(final String method, final String path,
-            final String desc) {
+                                        final String desc) {
         return li().with(span(method).withClass(method)).withText(path)
                 .with(span(null == desc ? "" : " " + desc));
     }
@@ -164,7 +159,7 @@ public class HtmlRender implements Render {
     }
 
     private ContainerTag li_missingEndpoint(final String method, final String path,
-            final String desc) {
+                                            final String desc) {
         return li().with(span(method).withClass(method),
                 del().withText(path)).with(i_backwardsIncompatibilitiesWarning()).with(span(null == desc ? "" : " " + desc));
     }
@@ -328,7 +323,9 @@ public class HtmlRender implements Render {
         return li;
     }
 
-    /** Add icon if modifications make backwards incompatibilies. */
+    /**
+     * Add icon if modifications make backwards incompatibilies.
+     */
     private ContainerTag i_backwardsIncompatibilitiesWarning() {
         return showBackwardsIncompatibilities ? i().withStyle("margin-left:0.5em;")
                 .withClass("fas fa-exclamation-circle warnbackward").withTitle(NON_BACKWARDS_CHANGES) : null;

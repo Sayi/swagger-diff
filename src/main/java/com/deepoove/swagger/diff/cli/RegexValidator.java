@@ -1,12 +1,12 @@
 package com.deepoove.swagger.diff.cli;
 
-import java.lang.reflect.Field;
-import java.util.regex.Pattern;
-
 import com.beust.jcommander.IParameterValidator2;
 import com.beust.jcommander.ParameterDescription;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameterized;
+
+import java.lang.reflect.Field;
+import java.util.regex.Pattern;
 
 public class RegexValidator implements IParameterValidator2 {
 
@@ -29,8 +29,10 @@ public class RegexValidator implements IParameterValidator2 {
             Regex regex = paramField.getAnnotation(Regex.class);
             if (null == regex) return;
             String regexStr = regex.value();
-            if (!Pattern.matches(regexStr, value)) { throw new ParameterException(
-                    "Parameter " + name + " should match " + regexStr + " (found " + value + ")"); }
+            if (!Pattern.matches(regexStr, value)) {
+                throw new ParameterException(
+                        "Parameter " + name + " should match " + regexStr + " (found " + value + ")");
+            }
         } catch (NoSuchFieldException e) {
             return;
         } catch (IllegalArgumentException e) {

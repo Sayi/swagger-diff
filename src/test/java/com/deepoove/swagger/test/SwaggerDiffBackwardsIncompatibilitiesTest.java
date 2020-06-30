@@ -1,16 +1,15 @@
 package com.deepoove.swagger.test;
 
+import com.deepoove.swagger.diff.SwaggerDiff;
+import com.deepoove.swagger.diff.model.ChangedEndpoint;
+import com.deepoove.swagger.diff.output.HtmlRender;
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.deepoove.swagger.diff.SwaggerDiff;
-import com.deepoove.swagger.diff.model.ChangedEndpoint;
-import com.deepoove.swagger.diff.output.HtmlRender;
 
 public class SwaggerDiffBackwardsIncompatibilitiesTest {
 
