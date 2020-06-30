@@ -9,11 +9,11 @@ import java.util.List;
 @Data
 public class ChangedParameter implements Changed {
 
-    private List<ElProperty> increased = new ArrayList<ElProperty>();
-    private List<ElProperty> missing = new ArrayList<ElProperty>();
-    private List<ElProperty> changed = new ArrayList<ElProperty>();
-    private List<ElProperty> typesChanges = new ArrayList<ElProperty>();
-    private List<ElProperty> requiredChanges = new ArrayList<ElProperty>();
+    private List<ElProperty> increased = new ArrayList<>();
+    private List<ElProperty> missing = new ArrayList<>();
+    private List<ElProperty> changed = new ArrayList<>();
+    private List<ElProperty> typesChanges = new ArrayList<>();
+    private List<ElProperty> requiredChanges = new ArrayList<>();
 
     private Parameter leftParameter;
     private Parameter rightParameter;

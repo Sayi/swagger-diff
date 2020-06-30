@@ -1,10 +1,14 @@
 package com.deepoove.swagger.diff.compare;
 
 import com.deepoove.swagger.diff.model.ChangedParameter;
+import com.deepoove.swagger.diff.model.ElProperty;
+import com.google.common.collect.Lists;
 import io.swagger.models.Model;
-import io.swagger.models.RefModel;
+import io.swagger.models.parameters.AbstractSerializableParameter;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.StringProperty;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,8 +37,7 @@ public class ParameterDiff {
         this.changed = new ArrayList<ChangedParameter>();
     }
 
-    public static ParameterDiff buildWithDefinition(Map<String, Model> left,
-                                                    Map<String, Model> right) {
+    public static ParameterDiff buildWithDefinition(Map<String, Model> left, Map<String, Model> right) {
         ParameterDiff diff = new ParameterDiff();
         diff.oldDedinitions = left;
         diff.newDedinitions = right;
@@ -56,28 +59,33 @@ public class ParameterDiff {
         this.increased.addAll(paramDiff.getIncreased());
         this.missing.addAll(paramDiff.getMissing());
         Map<Parameter, Parameter> shared = paramDiff.getShared();
-
         shared.forEach((leftPara, rightPara) -> {
             ChangedParameter changedParameter = new ChangedParameter();
             changedParameter.setLeftParameter(leftPara);
             changedParameter.setRightParameter(rightPara);
-
             if (leftPara instanceof BodyParameter && rightPara instanceof BodyParameter) {
                 BodyParameter leftBodyPara = (BodyParameter) leftPara;
                 Model leftSchema = leftBodyPara.getSchema();
                 BodyParameter rightBodyPara = (BodyParameter) rightPara;
                 Model rightSchema = rightBodyPara.getSchema();
-                if (leftSchema instanceof RefModel && rightSchema instanceof RefModel) {
-                    String leftRef = ((RefModel) leftSchema).getSimpleRef();
-                    String rightRef = ((RefModel) rightSchema).getSimpleRef();
-                    Model leftModel = oldDedinitions.get(leftRef);
-                    Model rightModel = newDedinitions.get(rightRef);
 
-                    ModelDiff diff = ModelDiff.buildWithDefinition(oldDedinitions, newDedinitions)
-                            .diff(leftModel, rightModel, leftPara.getName());
-                    changedParameter.setIncreased(diff.getIncreased());
-                    changedParameter.setMissing(diff.getMissing());
-                    changedParameter.setChanged(diff.getChanged());
+                ModelDiff diff = ModelDiff.buildWithDefinition(oldDedinitions, newDedinitions).diff(leftSchema,
+                        rightSchema, leftPara.getName());
+                changedParameter.setIncreased(diff.getIncreased());
+                changedParameter.setMissing(diff.getMissing());
+                changedParameter.setChanged(diff.getChanged());
+
+            }
+
+            // Let's handle the case where the new API has fx changed the type
+            // of PathParameter from being of type String to type integer
+            if (leftPara instanceof AbstractSerializableParameter
+                    && rightPara instanceof AbstractSerializableParameter) {
+                if (!leftPara.equals(rightPara)) {
+                    ElProperty elProperty = new ElProperty();
+                    elProperty.setEl(rightPara.getName());
+                    elProperty.setProperty(mapToProperty(rightPara));
+                    changedParameter.setChanged(Lists.newArrayList(elProperty));
                 }
             }
 
@@ -102,4 +110,14 @@ public class ParameterDiff {
         return this;
     }
 
+    private Property mapToProperty(Parameter rightPara) {
+        Property prop = new StringProperty();
+        prop.setAccess(rightPara.getAccess());
+        prop.setAllowEmptyValue(rightPara.getAllowEmptyValue());
+        prop.setDescription(rightPara.getDescription());
+        prop.setName(rightPara.getName());
+        prop.setReadOnly(rightPara.isReadOnly());
+        prop.setRequired(rightPara.getRequired());
+        return prop;
+    }
 }

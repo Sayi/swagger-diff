@@ -49,9 +49,33 @@ public class SwaggerDiff {
         return compare(oldSpec, newSpec, null, SWAGGER_VERSION_V2);
     }
 
+    /**
+     * compare two swagger v2.0 Sring
+     *
+     * @param oldSpec old api-doc json as string
+     * @param newSpec new api-doc json as string
+     */
+    public static SwaggerDiff compareV2Raw(String oldSpec, String newSpec) {
+        return new SwaggerDiff(oldSpec, newSpec).compare();
+    }
+    
     public static SwaggerDiff compare(String oldSpec, String newSpec,
                                       List<AuthorizationValue> auths, String version) {
         return new SwaggerDiff(oldSpec, newSpec, auths, version).compare();
+    }
+
+    /**
+     * @param rawOldSpec
+     * @param rawNewSpec
+     */
+    private SwaggerDiff(String rawOldSpec, String rawNewSpec) {
+        SwaggerParser swaggerParser = new SwaggerParser();
+        oldSpecSwagger = swaggerParser.parse(rawOldSpec);
+        newSpecSwagger = swaggerParser.parse(rawNewSpec);
+
+        if (null == oldSpecSwagger || null == newSpecSwagger) {
+            throw new RuntimeException("cannot read api-doc from spec.");
+        }
     }
 
     /**

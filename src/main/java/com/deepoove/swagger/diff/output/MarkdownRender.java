@@ -12,24 +12,14 @@ import java.util.Map.Entry;
 
 public class MarkdownRender implements Render {
 
-    private static final String NON_BACKWARDS_CHANGES = "Non-backwards changes";
-
     private boolean showBackwardsIncompatibilities;
 
     final String H3 = "### ";
-
     final String H2 = "## ";
-
-    final String BLOCKQUOTE = "> ";
-
     final String CODE = "`";
-
     final String PRE_CODE = "    ";
-
     final String PRE_LI = "    ";
-
     final String LI = "* ";
-
     final String HR = "---\n";
 
     public MarkdownRender() {
@@ -54,21 +44,15 @@ public class MarkdownRender implements Render {
         sb.append(H2).append("Version " + oldVersion + " to " + newVersion).append("\n").append(HR);
         sb.append(H3).append("What's New").append("\n").append(HR)
                 .append(ol_new).append("\n").append(H3)
-                .append("What's Missing").append("\n").append(HR)
+                .append("What's Deprecated").append("\n").append(HR)
                 .append(ol_miss).append("\n").append(H3)
                 .append("What's Changed").append("\n").append(HR)
                 .append(ol_changed);
         return sb.toString();
     }
 
-    public MarkdownRender withBackwardsIncompatibilities() {
-        showBackwardsIncompatibilities = true;
-        return this;
-    }
-
     private String ol_newEndpoint(List<Endpoint> endpoints) {
-        if (null == endpoints)
-            return "";
+        if (null == endpoints) return "";
         StringBuffer sb = new StringBuffer();
         for (Endpoint endpoint : endpoints) {
             sb.append(li_newEndpoint(endpoint.getMethod().toString(),
@@ -84,16 +68,8 @@ public class MarkdownRender implements Render {
         return sb.toString();
     }
 
-    private String li_missingEndpoint(String method, String path, String desc) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(LI).append(CODE).append(method).append(CODE)
-                .append(" " + path).append(i_backwardsIncompatibilitiesWarning()).append(" " + desc + "\n");
-        return sb.toString();
-    }
-
     private String ol_missingEndpoint(List<Endpoint> endpoints) {
-        if (null == endpoints)
-            return "";
+        if (null == endpoints) return "";
         StringBuffer sb = new StringBuffer();
         for (Endpoint endpoint : endpoints) {
             sb.append(li_missingEndpoint(endpoint.getMethod().toString(),
@@ -102,9 +78,15 @@ public class MarkdownRender implements Render {
         return sb.toString();
     }
 
+    private String li_missingEndpoint(String method, String path, String desc) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(LI).append(CODE).append(method).append(CODE)
+                .append(" " + path).append(i_backwardsIncompatibilitiesWarning()).append(" " + desc + "\n");
+        return sb.toString();
+    }
+
     private String ol_changed(List<ChangedEndpoint> changedEndpoints) {
-        if (null == changedEndpoints)
-            return "";
+        if (null == changedEndpoints) return "";
         StringBuffer sb = new StringBuffer();
         for (ChangedEndpoint changedEndpoint : changedEndpoints) {
             String pathUrl = changedEndpoint.getPathUrl();
@@ -125,12 +107,19 @@ public class MarkdownRender implements Render {
                     ul_detail.append(PRE_LI).append("Return Type")
                             .append(ul_response(changedOperation));
                 }
-                sb.append(CODE).append(method).append(CODE)
-                        .append(" " + pathUrl);
+                if (changedOperation.isDiffProduces()) {
+                    ul_detail.append(PRE_LI).append("Produces")
+                            .append(ul_produce(changedOperation));
+                }
+                if (changedOperation.isDiffConsumes()) {
+                    ul_detail.append(PRE_LI).append("Consumes")
+                            .append(ul_consume(changedOperation));
+                }
+                sb.append(CODE).append(method).append(CODE).append(" ").append(pathUrl);
                 if (!changedEndpoint.isBackwardsCompatible()) {
                     sb.append(i_backwardsIncompatibilitiesWarning());
                 }
-                sb.append(" " + desc + "  \n")
+                sb.append(" ").append(desc).append("  \n")
                         .append(ul_detail);
             }
         }
@@ -161,8 +150,8 @@ public class MarkdownRender implements Render {
         StringBuffer sb = new StringBuffer("");
         sb.append("Delete ").append(prop.getEl())
                 .append(null == property.getDescription() ? ""
-                        : (" //" + property.getDescription()))
-                .append(i_backwardsIncompatibilitiesWarning());
+                        : (" //" + property.getDescription()));
+        sb.append(i_backwardsIncompatibilitiesWarning());
         return sb.toString();
     }
 
@@ -186,8 +175,8 @@ public class MarkdownRender implements Render {
 
         StringBuffer sb = new StringBuffer("");
         sb.append(prefix).append(prop.getEl())
-                .append(postfix)
-                .append(i_backwardsIncompatibilitiesWarning());
+                .append(postfix);
+        sb.append(i_backwardsIncompatibilitiesWarning());
         return sb.toString();
     }
 
@@ -195,7 +184,7 @@ public class MarkdownRender implements Render {
         List<Parameter> addParameters = changedOperation.getAddParameters();
         List<Parameter> delParameters = changedOperation.getMissingParameters();
         List<ChangedParameter> changedParameters = changedOperation
-                .getChangedParameters();
+                .getChangedParameter();
         StringBuffer sb = new StringBuffer("\n\n");
         for (Parameter param : addParameters) {
             sb.append(PRE_LI).append(PRE_CODE)
@@ -211,9 +200,8 @@ public class MarkdownRender implements Render {
         for (ChangedParameter param : changedParameters) {
             boolean changeRequired = param.isChangeRequired();
             boolean changeDescription = param.isChangeDescription();
-            if (changeRequired || changeDescription)
-                sb.append(PRE_LI)
-                        .append(PRE_CODE).append(li_changedParam(param) + "\n");
+            if (changeRequired || changeDescription) sb.append(PRE_LI)
+                    .append(PRE_CODE).append(li_changedParam(param) + "\n");
         }
         for (ChangedParameter param : changedParameters) {
             List<ElProperty> missing = param.getMissing();
@@ -239,6 +227,7 @@ public class MarkdownRender implements Render {
         sb.append("Add ").append(param.getName())
                 .append(null == param.getDescription() ? ""
                         : (" //" + param.getDescription()));
+        sb.append(i_backwardsIncompatibilitiesWarning());
         return sb.toString();
     }
 
@@ -246,8 +235,7 @@ public class MarkdownRender implements Render {
         StringBuffer sb = new StringBuffer("");
         sb.append("Delete ").append(param.getName())
                 .append(null == param.getDescription() ? ""
-                        : (" //" + param.getDescription()))
-                .append(i_backwardsIncompatibilitiesWarning());
+                        : (" //" + param.getDescription()));
         return sb.toString();
     }
 
@@ -268,6 +256,48 @@ public class MarkdownRender implements Render {
         if (!changeParam.isBackwardsCompatible()) {
             sb.append(i_backwardsIncompatibilitiesWarning());
         }
+        return sb.toString();
+    }
+
+    private String ul_produce(ChangedOperation changedOperation) {
+        List<String> addProduce = changedOperation.getAddProduces();
+        List<String> delProduce = changedOperation.getMissingProduces();
+        StringBuffer sb = new StringBuffer("\n\n");
+
+        String prefix = PRE_LI + PRE_CODE;
+        for (String mt : addProduce) {
+            sb.append(PRE_LI).append(PRE_CODE).append(li_addMediaType(mt) + "\n");
+        }
+        for (String mt : delProduce) {
+            sb.append(prefix).append(li_missingMediaType(mt) + "\n");
+        }
+        return sb.toString();
+    }
+
+    private String ul_consume(ChangedOperation changedOperation) {
+        List<String> addConsume = changedOperation.getAddConsumes();
+        List<String> delConsume = changedOperation.getMissingConsumes();
+        StringBuffer sb = new StringBuffer("\n\n");
+
+        String prefix = PRE_LI + PRE_CODE;
+        for (String mt : addConsume) {
+            sb.append(PRE_LI).append(PRE_CODE).append(li_addMediaType(mt) + "\n");
+        }
+        for (String mt : delConsume) {
+            sb.append(prefix).append(li_missingMediaType(mt) + "\n");
+        }
+        return sb.toString();
+    }
+
+    private String li_missingMediaType(String type) {
+        StringBuffer sb = new StringBuffer("");
+        sb.append("Delete ").append(type);
+        return sb.toString();
+    }
+
+    private String li_addMediaType(String type) {
+        StringBuffer sb = new StringBuffer("");
+        sb.append("Insert ").append(type);
         return sb.toString();
     }
 

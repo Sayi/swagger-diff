@@ -7,6 +7,7 @@ import lombok.Data;
  * property with expression Language grammar
  *
  * @author Sayi
+ * @version
  */
 @Data
 public class ElProperty {
@@ -14,5 +15,10 @@ public class ElProperty {
     private String el;
 
     private Property property;
+
+    // optional change metadata
+    private boolean isTypeChange;
+    private boolean newEnums;
+    private boolean removedEnums;
 
 }

@@ -56,8 +56,8 @@ public class CLI {
             jCommander.usage();
             return;
         }
-        if (v) {
-            JCommander.getConsole().println("1.2.1");
+        if (v){
+            JCommander.getConsole().println("1.2.2");
             return;
         }
 

@@ -191,6 +191,14 @@ public class HtmlRender implements Render {
                 }
                 li.with(span(null == desc ? "" : " " + desc)).with(ul_detail);
                 ol.with(li);
+                if (changedOperation.isDiffProduces()) {
+                    ul_detail.with(li().with(h3("Produces")).with(ul_produce(changedOperation)));
+                }
+                if (changedOperation.isDiffConsumes()) {
+                    ul_detail.with(li().with(h3("Consumes")).with(ul_consume(changedOperation)));
+                }
+                ol.with(li().with(span(method).withClass(method)).withText(pathUrl + " ").with(span(null == desc ? "" : desc))
+                        .with(ul_detail));
             }
         }
         return ol;
@@ -199,16 +207,19 @@ public class HtmlRender implements Render {
     private ContainerTag ul_response(final ChangedOperation changedOperation) {
         List<ElProperty> addProps = changedOperation.getAddProps();
         List<ElProperty> delProps = changedOperation.getMissingProps();
-        List<ElProperty> changProps = changedOperation.getChangedProps();
+        List<ElProperty> chgProps = changedOperation.getChangedProps();
         ContainerTag ul = ul().withClass("change response");
         for (ElProperty prop : addProps) {
             ul.with(li_addProp(prop));
         }
-        for (ElProperty prop : changProps) {
+        for (ElProperty prop : chgProps) {
             ul.with(li_changeTypeProp(prop));
         }
         for (ElProperty prop : delProps) {
             ul.with(li_missingProp(prop));
+        }
+        for (ElProperty prop : chgProps) {
+            ul.with(li_changedProp(prop));
         }
         return ul;
     }
@@ -241,10 +252,28 @@ public class HtmlRender implements Render {
         return li().with(textField(prop.getEl())).withText(" change into required").with(i_backwardsIncompatibilitiesWarning()).with(span(null == property.getDescription() ? "" : ("//" + property.getDescription())).withClass("comment"));
     }
 
-    private ContainerTag ul_param(final ChangedOperation changedOperation) {
+    private ContainerTag li_changedProp(ElProperty prop) {
+        List<String> changeDetails = new ArrayList<>();
+        String changeDetailsHeading = "";
+        if (prop.isTypeChange()) {
+            changeDetails.add("Data Type");
+        }
+        if (prop.isNewEnums()) {
+            changeDetails.add("Added Enum");
+        }
+        if (prop.isRemovedEnums()) {
+            changeDetails.add("Removed Enum");
+        }
+        if (!changeDetails.isEmpty()) {
+            changeDetailsHeading = " (" + String.join(", ", changeDetails) + ")";
+        }
+        return li().withText("Change " + prop.getEl()).with(span(changeDetailsHeading).withClass("comment"));
+    }
+
+    private ContainerTag ul_param(ChangedOperation changedOperation) {
         List<Parameter> addParameters = changedOperation.getAddParameters();
         List<Parameter> delParameters = changedOperation.getMissingParameters();
-        List<ChangedParameter> changedParameters = changedOperation.getChangedParameters();
+        List<ChangedParameter> changedParameters = changedOperation.getChangedParameter();
         ContainerTag ul = ul().withClass("change param");
         for (Parameter param : addParameters) {
             ul.with(li_addParam(param));
@@ -276,6 +305,12 @@ public class HtmlRender implements Render {
             List<ElProperty> missing = param.getMissing();
             for (ElProperty prop : missing) {
                 ul.with(li_missingProp(prop));
+            }
+        }
+        for (ChangedParameter param : changedParameters) {
+            List<ElProperty> changed = param.getChanged();
+            for (ElProperty prop : changed) {
+                ul.with(li_changedProp(prop));
             }
         }
         for (Parameter param : delParameters) {
@@ -331,4 +366,37 @@ public class HtmlRender implements Render {
                 .withClass("fas fa-exclamation-circle warnbackward").withTitle(NON_BACKWARDS_CHANGES) : null;
     }
 
+    private ContainerTag ul_produce(ChangedOperation changedOperation) {
+        List<String> addProduce = changedOperation.getAddProduces();
+        List<String> delProduce = changedOperation.getMissingProduces();
+        ContainerTag ul = ul().withClass("change produces");
+        for (String mt : addProduce) {
+            ul.with(li_addMediaType(mt));
+        }
+        for (String mt : delProduce) {
+            ul.with(li_missingMediaType(mt));
+        }
+        return ul;
+    }
+
+    private ContainerTag ul_consume(ChangedOperation changedOperation) {
+        List<String> addConsume = changedOperation.getAddConsumes();
+        List<String> delConsume = changedOperation.getMissingConsumes();
+        ContainerTag ul = ul().withClass("change consumes");
+        for (String mt : addConsume) {
+            ul.with(li_addMediaType(mt));
+        }
+        for (String mt : delConsume) {
+            ul.with(li_missingMediaType(mt));
+        }
+        return ul;
+    }
+
+    private ContainerTag li_missingMediaType(String type) {
+        return li().withClass("missing").withText("Delete").with(del(type)).with(span(""));
+    }
+
+    private ContainerTag li_addMediaType(String type) {
+        return li().withText("Add " + type).with(span(""));
+    }
 }

@@ -49,13 +49,13 @@ Download the fatJar or view the changelog on the **[Release Page](https://github
 <dependency>
   <groupId>com.deepoove</groupId>
   <artifactId>swagger-diff</artifactId>
-  <version>1.2.1</version>
+  <version>1.2.2</version>
 </dependency>
 ```
 
 ## Gradle
 ```shell
-compile group: 'com.deepoove', name: 'swagger-diff', version: '1.2.1'
+compile group: 'com.deepoove', name: 'swagger-diff', version: '1.2.2'
 ```
 
 ## Usage
@@ -93,11 +93,9 @@ String html = new HtmlRender("Changelog", css, scripts)
                 .render(diff);
 
 try {
-    FileWriter fw = new FileWriter(
-            "testNewApi.html");
+    FileWriter fw = new FileWriter("testNewApi.html");
     fw.write(html);
     fw.close();
-
 } catch (IOException e) {
     e.printStackTrace();
 }
@@ -108,11 +106,9 @@ try {
 ```java
 String render = new MarkdownRender().render(diff);
 try {
-    FileWriter fw = new FileWriter(
-            "testDiff.md");
+    FileWriter fw = new FileWriter("testDiff.md");
     fw.write(render);
     fw.close();
-    
 } catch (IOException e) {
     e.printStackTrace();
 }

@@ -1,9 +1,9 @@
 package com.deepoove.swagger.diff.compare;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.Lists;
+import lombok.Getter;
+
+import java.util.*;
 import java.util.function.BiFunction;
 
 /**
@@ -11,6 +11,7 @@ import java.util.function.BiFunction;
  *
  * @author Sayi
  */
+@Getter
 public class ListDiff<K> {
 
     private List<K> increased;
@@ -26,13 +27,14 @@ public class ListDiff<K> {
     }
 
     /**
+     *
      * @param left
      * @param right
      * @param biFunc if right List contains left element
      * @return
      */
-    public static <K> ListDiff<K> diff(List<K> left, List<K> right,
-                                       BiFunction<List<K>, K, K> biFunc) {
+    @SuppressWarnings("unchecked")
+    public static <K> ListDiff<K> diff(List<K> left, List<K> right, BiFunction<List<K>, K, K> biFunc) {
         ListDiff<K> instance = new ListDiff<>();
         if (null == left && null == right) return instance;
         if (null == left) {
@@ -49,25 +51,20 @@ public class ListDiff<K> {
         for (K ele : left) {
             K rightEle = biFunc.apply(right, ele);
             if (null != rightEle) {
-                instance.increased.remove(ele);
+                ListIterator<K> listIterator = instance.increased.listIterator();
+                while (listIterator.hasNext()) {
+                    K k = listIterator.next();
+                    if (biFunc.apply(Lists.newArrayList(k), ele) != null) {
+                        listIterator.remove();
+                        break;
+                    }
+                }
                 instance.shared.put(ele, rightEle);
             } else {
                 instance.missing.add(ele);
             }
         }
         return instance;
-    }
-
-    public List<K> getIncreased() {
-        return increased;
-    }
-
-    public List<K> getMissing() {
-        return missing;
-    }
-
-    public Map<K, K> getShared() {
-        return shared;
     }
 
 }
