@@ -28,19 +28,19 @@ public class ParameterDiff {
     private List<Parameter> missing;
     private List<ChangedParameter> changed;
 
-    Map<String, Model> oldDedinitions;
-    Map<String, Model> newDedinitions;
+    Map<String, Model> oldDefinitions;
+    Map<String, Model> newDefinitions;
 
     private ParameterDiff() {
-        this.increased = new ArrayList<Parameter>();
-        this.missing = new ArrayList<Parameter>();
-        this.changed = new ArrayList<ChangedParameter>();
+        this.increased = new ArrayList<>();
+        this.missing = new ArrayList<>();
+        this.changed = new ArrayList<>();
     }
 
     public static ParameterDiff buildWithDefinition(Map<String, Model> left, Map<String, Model> right) {
         ParameterDiff diff = new ParameterDiff();
-        diff.oldDedinitions = left;
-        diff.newDedinitions = right;
+        diff.oldDefinitions = left;
+        diff.newDefinitions = right;
         return diff;
     }
 
@@ -69,11 +69,12 @@ public class ParameterDiff {
                 BodyParameter rightBodyPara = (BodyParameter) rightPara;
                 Model rightSchema = rightBodyPara.getSchema();
 
-                ModelDiff diff = ModelDiff.buildWithDefinition(oldDedinitions, newDedinitions).diff(leftSchema,
+                ModelDiff diff = ModelDiff.buildWithDefinition(oldDefinitions, newDefinitions).diff(leftSchema,
                         rightSchema, leftPara.getName());
                 changedParameter.setIncreased(diff.getIncreased());
                 changedParameter.setMissing(diff.getMissing());
                 changedParameter.setChanged(diff.getChanged());
+                changedParameter.setTypesChanges(diff.getTypeChanges());
 
             }
 

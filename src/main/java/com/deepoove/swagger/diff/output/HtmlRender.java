@@ -88,9 +88,6 @@ public class HtmlRender implements Render {
             articles.add(span().with(i_backwardsIncompatibilitiesWarning(), span().withText(" " + NON_BACKWARDS_CHANGES)).withStyle("float:right"));
             articles.add(br());
         }
-        articles.add(div_headArticle("What's New", "new", ol_new));
-        articles.add(div_headArticle("What's Missed", "missed", ol_miss));
-        articles.add(div_headArticle("What's Changed", "changed", ol_changed));
 
         ContainerTag html = html().attr("lang", "en").with(
                 head().with(
@@ -103,7 +100,7 @@ public class HtmlRender implements Render {
                         div().withClass("article").with(articles).with(
                                 div_headArticle("Versions", "versions", p_versions),
                                 div_headArticle("What's New", "new", ol_new),
-                                div_headArticle("What's Deprecated", "deprecated", ol_miss),
+                                div_headArticle("What's Missing", "missing", ol_miss),
                                 div_headArticle("What's Changed", "changed", ol_changed)
                         )
                 ),
@@ -184,21 +181,21 @@ public class HtmlRender implements Render {
                 if (changedOperation.isDiffProp()) {
                     ul_detail.with(li().with(h3("Return Type")).with(ul_response(changedOperation)));
                 }
-                ContainerTag li = li();
-                li.with(span(method).withClass(method)).withText(pathUrl);
-                if (!changedEndpoint.isBackwardsCompatible()) {
-                    li.with(i_backwardsIncompatibilitiesWarning());
-                }
-                li.with(span(null == desc ? "" : " " + desc)).with(ul_detail);
-                ol.with(li);
                 if (changedOperation.isDiffProduces()) {
                     ul_detail.with(li().with(h3("Produces")).with(ul_produce(changedOperation)));
                 }
                 if (changedOperation.isDiffConsumes()) {
                     ul_detail.with(li().with(h3("Consumes")).with(ul_consume(changedOperation)));
                 }
-                ol.with(li().with(span(method).withClass(method)).withText(pathUrl + " ").with(span(null == desc ? "" : desc))
-                        .with(ul_detail));
+                ContainerTag li = li();
+                li.with(span(method).withClass(method)).withText(pathUrl + " ");
+
+                if (!changedEndpoint.isBackwardsCompatible()) {
+                    li.with(i_backwardsIncompatibilitiesWarning());
+                }
+                li.with(span(null == desc ? "" : desc));
+                li.with(ul_detail);
+                ol.with(li);
             }
         }
         return ol;
@@ -211,9 +208,6 @@ public class HtmlRender implements Render {
         ContainerTag ul = ul().withClass("change response");
         for (ElProperty prop : addProps) {
             ul.with(li_addProp(prop));
-        }
-        for (ElProperty prop : chgProps) {
-            ul.with(li_changeTypeProp(prop));
         }
         for (ElProperty prop : delProps) {
             ul.with(li_missingProp(prop));
@@ -238,18 +232,8 @@ public class HtmlRender implements Render {
         return li.with(span(null == property.getDescription() ? "" : ("//" + property.getDescription())).withClass("comment"));
     }
 
-    private ContainerTag li_changeTypeProp(final ElProperty prop) {
-        Property property = prop.getProperty();
-        return li().with(textField(prop.getEl())).withText(" changes type").with(i_backwardsIncompatibilitiesWarning()).with(span(null == property.getDescription() ? "" : ("//" + property.getDescription())).withClass("comment"));
-    }
-
     private ContainerTag textField(final String pField) {
         return span().withText(pField).withClass("field");
-    }
-
-    private ContainerTag li_changeRequiredProp(final ElProperty prop) {
-        Property property = prop.getProperty();
-        return li().with(textField(prop.getEl())).withText(" change into required").with(i_backwardsIncompatibilitiesWarning()).with(span(null == property.getDescription() ? "" : ("//" + property.getDescription())).withClass("comment"));
     }
 
     private ContainerTag li_changedProp(ElProperty prop) {
@@ -264,10 +248,14 @@ public class HtmlRender implements Render {
         if (prop.isRemovedEnums()) {
             changeDetails.add("Removed Enum");
         }
-        if (!changeDetails.isEmpty()) {
-            changeDetailsHeading = " (" + String.join(", ", changeDetails) + ")";
+        if(prop.isBecomeRequired()) {
+            changeDetails.add("Becomes required");
         }
-        return li().withText("Change " + prop.getEl()).with(span(changeDetailsHeading).withClass("comment"));
+        if (!changeDetails.isEmpty()) {
+            changeDetailsHeading = " (" + String.join(", ", changeDetails) + ")" ;
+        }
+        return li().withText("Change " + prop.getEl()).with(span(changeDetailsHeading).withClass("comment"))
+                .with(i_backwardsIncompatibilitiesWarning());
     }
 
     private ContainerTag ul_param(ChangedOperation changedOperation) {
@@ -282,23 +270,6 @@ public class HtmlRender implements Render {
             List<ElProperty> increased = param.getIncreased();
             for (ElProperty prop : increased) {
                 ul.with(li_addProp(prop));
-            }
-        }
-        for (ChangedParameter param : changedParameters) {
-            List<ElProperty> requiredChanges = param.getRequiredChanges();
-            for (ElProperty prop : requiredChanges) {
-                ul.with(li_changeRequiredProp(prop));
-            }
-        }
-        for (ChangedParameter param : changedParameters) {
-            List<ElProperty> typesChanges = param.getTypesChanges();
-            for (ElProperty prop : typesChanges) {
-                ul.with(li_changeTypeProp(prop));
-            }
-        }
-        for (ChangedParameter param : changedParameters) {
-            if (param.isChangeRequired() || param.isChangeDescription() || param.isChangeType()) {
-                ul.with(li_changedParam(param));
             }
         }
         for (ChangedParameter param : changedParameters) {
@@ -333,36 +304,11 @@ public class HtmlRender implements Render {
         return li().withClass("missing").with(span("Delete")).with(del(textField(param.getName()))).with(i_backwardsIncompatibilitiesWarning()).with(span(null == param.getDescription() ? "" : ("//" + param.getDescription())).withClass("comment"));
     }
 
-    private ContainerTag li_changedParam(final ChangedParameter changeParam) {
-        boolean changeRequired = changeParam.isChangeRequired();
-        boolean changeDescription = changeParam.isChangeDescription();
-        boolean changeType = changeParam.isChangeType();
-        Parameter rightParam = changeParam.getRightParameter();
-        Parameter leftParam = changeParam.getLeftParameter();
-        ContainerTag li = li().with(textField(rightParam.getName()));
-        if (changeRequired || changeType || changeDescription) {
-            li.withText(" : ");
-            if (changeRequired) {
-                li.with(br()).withText(" - becomes " + (rightParam.getRequired() ? "required" : "not required"));
-            }
-            if (changeType) {
-                li.with(br()).withText(" - changes type");
-            }
-            if (changeDescription) {
-                li.with(br()).withText(" - notes ").with(del(leftParam.getDescription()).withClass("comment")).withText(" change into ").with(span(span(null == rightParam.getDescription() ? "" : rightParam.getDescription()).withClass("comment")));
-            }
-        }
-        if (!changeParam.isBackwardsCompatible()) {
-            li.with(i_backwardsIncompatibilitiesWarning());
-        }
-        return li;
-    }
-
     /**
      * Add icon if modifications make backwards incompatibilies.
      */
     private ContainerTag i_backwardsIncompatibilitiesWarning() {
-        return showBackwardsIncompatibilities ? i().withStyle("margin-left:0.5em;")
+        return showBackwardsIncompatibilities ? i().withStyle("margin-left:0.5em;margin-right:0.5em;")
                 .withClass("fas fa-exclamation-circle warnbackward").withTitle(NON_BACKWARDS_CHANGES) : null;
     }
 

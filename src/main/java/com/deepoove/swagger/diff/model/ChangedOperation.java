@@ -31,7 +31,8 @@ public class ChangedOperation implements Changed {
 
     @Override
     public boolean isBackwardsCompatible() {
-        if (!missingProps.isEmpty() || !missingParameters.isEmpty() || !changedProps.isEmpty()) {
+        if (!missingProps.isEmpty() || !missingParameters.isEmpty() || !changedProps.isEmpty()
+                || isDiffConsumes() || isDiffProduces()) {
             return false;
         } else {
             for (ChangedParameter changedParameter : getChangedParameter()) {

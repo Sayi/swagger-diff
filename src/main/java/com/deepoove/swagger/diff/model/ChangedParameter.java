@@ -13,7 +13,6 @@ public class ChangedParameter implements Changed {
     private List<ElProperty> missing = new ArrayList<>();
     private List<ElProperty> changed = new ArrayList<>();
     private List<ElProperty> typesChanges = new ArrayList<>();
-    private List<ElProperty> requiredChanges = new ArrayList<>();
 
     private Parameter leftParameter;
     private Parameter rightParameter;
@@ -22,6 +21,11 @@ public class ChangedParameter implements Changed {
     private boolean isChangeDescription;
     private boolean isChangeType;
 
+//    public boolean isDiff() {
+//        return isChangeRequired || isChangeDescription || !increased.isEmpty() || !missing.isEmpty()
+//                || !changed.isEmpty();
+//    }
+
     @Override
     public boolean isDiff() {
         return isChangeRequired
@@ -29,7 +33,6 @@ public class ChangedParameter implements Changed {
                 || !increased.isEmpty()
                 || !missing.isEmpty()
                 || isChangeType
-                || !requiredChanges.isEmpty()
                 || !typesChanges.isEmpty();
     }
 
@@ -38,10 +41,9 @@ public class ChangedParameter implements Changed {
         boolean isBackwardsCompatible = !isChangeRequired
                 && !isChangeType
                 && missing.isEmpty()
-                && requiredChanges.isEmpty()
                 && typesChanges.isEmpty();
         for (ElProperty elProperty : increased) {
-            if (elProperty.getProperty() != null && elProperty.getProperty().getRequired()) {
+            if (elProperty.isBecomeRequired() || elProperty.isNewEnums() || elProperty.isRemovedEnums()) {
                 return false;
             }
         }

@@ -20,9 +20,9 @@ public class PropertyDiff {
     Map<String, Model> newDefinitions;
 
     private PropertyDiff() {
-        increased = new ArrayList<ElProperty>();
-        missing = new ArrayList<ElProperty>();
-        changed = new ArrayList<ElProperty>();
+        increased = new ArrayList<>();
+        missing = new ArrayList<>();
+        changed = new ArrayList<>();
     }
 
     public static PropertyDiff buildWithDefinition(Map<String, Model> left, Map<String, Model> right) {

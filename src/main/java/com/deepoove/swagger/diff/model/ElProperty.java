@@ -20,5 +20,6 @@ public class ElProperty {
     private boolean isTypeChange;
     private boolean newEnums;
     private boolean removedEnums;
+    private boolean isBecomeRequired;
 
 }
