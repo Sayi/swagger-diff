@@ -493,6 +493,9 @@
         "summary": "Place an order for a pet",
         "description": "",
         "operationId": "placeOrder",
+        "consumes": [
+          "application/xml"
+        ],
         "produces": [
           "application/xml",
           "application/json"

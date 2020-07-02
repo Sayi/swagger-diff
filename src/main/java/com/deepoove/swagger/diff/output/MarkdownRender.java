@@ -5,6 +5,7 @@ import com.deepoove.swagger.diff.model.*;
 import io.swagger.models.HttpMethod;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,11 @@ public class MarkdownRender implements Render {
     final String HR = "---\n";
 
     public MarkdownRender() {
+    }
+
+    public MarkdownRender withBackwardsIncompatibilities() {
+        showBackwardsIncompatibilities = true;
+        return this;
     }
 
     public String render(SwaggerDiff diff) {
@@ -44,7 +50,7 @@ public class MarkdownRender implements Render {
         sb.append(H2).append("Version " + oldVersion + " to " + newVersion).append("\n").append(HR);
         sb.append(H3).append("What's New").append("\n").append(HR)
                 .append(ol_new).append("\n").append(H3)
-                .append("What's Deprecated").append("\n").append(HR)
+                .append("What's Missing").append("\n").append(HR)
                 .append(ol_miss).append("\n").append(H3)
                 .append("What's Changed").append("\n").append(HR)
                 .append(ol_changed);
@@ -305,6 +311,6 @@ public class MarkdownRender implements Render {
      * Add icon if modifications make backwards incompatibilies.
      */
     private String i_backwardsIncompatibilitiesWarning() {
-        return showBackwardsIncompatibilities ? " ❗ " : null;
+        return showBackwardsIncompatibilities ? " ❗ " : StringUtils.EMPTY;
     }
 }

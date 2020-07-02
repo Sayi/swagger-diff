@@ -130,7 +130,9 @@ public class SwaggerDiffTest {
     @Test
     public void testDiffAndMarkdown() {
         SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
-        String render = new MarkdownRender().render(diff);
+        String render = new MarkdownRender()
+				.withBackwardsIncompatibilities()
+				.render(diff);
         try {
             FileWriter fw = new FileWriter(
                     "testDiff.md");

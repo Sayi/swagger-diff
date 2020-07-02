@@ -97,10 +97,10 @@ public class ParameterDiff {
 
             // description
             String description = rightPara.getDescription();
-            String oldPescription = leftPara.getDescription();
+            String oldDescription = leftPara.getDescription();
             if (StringUtils.isBlank(description)) description = "";
-            if (StringUtils.isBlank(oldPescription)) oldPescription = "";
-            changedParameter.setChangeDescription(!description.equals(oldPescription));
+            if (StringUtils.isBlank(oldDescription)) oldDescription = "";
+            changedParameter.setChangeDescription(!description.equals(oldDescription));
 
             if (changedParameter.isDiff()) {
                 this.changed.add(changedParameter);

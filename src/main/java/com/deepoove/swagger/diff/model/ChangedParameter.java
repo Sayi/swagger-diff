@@ -33,7 +33,8 @@ public class ChangedParameter implements Changed {
                 || !increased.isEmpty()
                 || !missing.isEmpty()
                 || isChangeType
-                || !typesChanges.isEmpty();
+                || !typesChanges.isEmpty()
+                || !changed.isEmpty();
     }
 
     @Override
