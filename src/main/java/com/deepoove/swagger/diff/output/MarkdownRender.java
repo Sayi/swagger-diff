@@ -297,13 +297,13 @@ public class MarkdownRender implements Render {
 
     private String li_missingMediaType(String type) {
         StringBuffer sb = new StringBuffer("");
-        sb.append("Delete ").append(type);
+        sb.append("Delete ").append(type).append(i_backwardsIncompatibilitiesWarning());
         return sb.toString();
     }
 
     private String li_addMediaType(String type) {
         StringBuffer sb = new StringBuffer("");
-        sb.append("Insert ").append(type).append(i_backwardsIncompatibilitiesWarning());
+        sb.append("Insert ").append(type);
         return sb.toString();
     }
 
