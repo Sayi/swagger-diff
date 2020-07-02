@@ -303,7 +303,7 @@ public class MarkdownRender implements Render {
 
     private String li_addMediaType(String type) {
         StringBuffer sb = new StringBuffer("");
-        sb.append("Insert ").append(type);
+        sb.append("Insert ").append(type).append(i_backwardsIncompatibilitiesWarning());
         return sb.toString();
     }
 

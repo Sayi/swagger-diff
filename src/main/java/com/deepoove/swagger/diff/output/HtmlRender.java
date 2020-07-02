@@ -339,7 +339,7 @@ public class HtmlRender implements Render {
     }
 
     private ContainerTag li_missingMediaType(String type) {
-        return li().withClass("missing").withText("Delete").with(del(type)).with(span(""));
+        return li().withClass("missing").withText("Delete").with(del(type)).with(span("")).with(i_backwardsIncompatibilitiesWarning());
     }
 
     private ContainerTag li_addMediaType(String type) {
