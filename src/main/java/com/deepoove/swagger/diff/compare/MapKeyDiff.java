@@ -1,5 +1,7 @@
 package com.deepoove.swagger.diff.compare;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -8,10 +10,10 @@ import java.util.Map.Entry;
 
 /**
  * compare two Maps by key
- * 
+ *
  * @author Sayi
- * @version
  */
+@Getter
 public class MapKeyDiff<K, V> {
 
     private Map<K, V> increased;
@@ -47,18 +49,6 @@ public class MapKeyDiff<K, V> {
             }
         }
         return instance;
-    }
-
-    public Map<K, V> getIncreased() {
-        return increased;
-    }
-
-    public Map<K, V> getMissing() {
-        return missing;
-    }
-
-    public List<K> getSharedKey() {
-        return sharedKey;
     }
 
 }

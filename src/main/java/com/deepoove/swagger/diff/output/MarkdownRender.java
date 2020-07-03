@@ -1,28 +1,35 @@
 package com.deepoove.swagger.diff.output;
 
+import com.deepoove.swagger.diff.SwaggerDiff;
+import com.deepoove.swagger.diff.model.*;
+import io.swagger.models.HttpMethod;
+import io.swagger.models.parameters.Parameter;
+import io.swagger.models.properties.Property;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.deepoove.swagger.diff.SwaggerDiff;
-import com.deepoove.swagger.diff.model.*;
-
-import io.swagger.models.HttpMethod;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.properties.Property;
-
 public class MarkdownRender implements Render {
+
+    private boolean showBackwardsIncompatibilities;
 
     final String H3 = "### ";
     final String H2 = "## ";
-    final String BLOCKQUOTE = "> ";
     final String CODE = "`";
     final String PRE_CODE = "    ";
     final String PRE_LI = "    ";
     final String LI = "* ";
     final String HR = "---\n";
 
-    public MarkdownRender() {}
+    public MarkdownRender() {
+    }
+
+    public MarkdownRender withBackwardsIncompatibilities() {
+        showBackwardsIncompatibilities = true;
+        return this;
+    }
 
     public String render(SwaggerDiff diff) {
         List<Endpoint> newEndpoints = diff.getNewEndpoints();
@@ -43,7 +50,7 @@ public class MarkdownRender implements Render {
         sb.append(H2).append("Version " + oldVersion + " to " + newVersion).append("\n").append(HR);
         sb.append(H3).append("What's New").append("\n").append(HR)
                 .append(ol_new).append("\n").append(H3)
-                .append("What's Deprecated").append("\n").append(HR)
+                .append("What's Missing").append("\n").append(HR)
                 .append(ol_miss).append("\n").append(H3)
                 .append("What's Changed").append("\n").append(HR)
                 .append(ol_changed);
@@ -71,9 +78,16 @@ public class MarkdownRender implements Render {
         if (null == endpoints) return "";
         StringBuffer sb = new StringBuffer();
         for (Endpoint endpoint : endpoints) {
-            sb.append(li_newEndpoint(endpoint.getMethod().toString(),
+            sb.append(li_missingEndpoint(endpoint.getMethod().toString(),
                     endpoint.getPathUrl(), endpoint.getSummary()));
         }
+        return sb.toString();
+    }
+
+    private String li_missingEndpoint(String method, String path, String desc) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(LI).append(CODE).append(method).append(CODE)
+                .append(" " + path).append(i_backwardsIncompatibilitiesWarning()).append(" " + desc + "\n");
         return sb.toString();
     }
 
@@ -107,8 +121,11 @@ public class MarkdownRender implements Render {
                     ul_detail.append(PRE_LI).append("Consumes")
                             .append(ul_consume(changedOperation));
                 }
-                sb.append(CODE).append(method).append(CODE)
-                        .append(" " + pathUrl).append(" " + desc + "  \n")
+                sb.append(CODE).append(method).append(CODE).append(" ").append(pathUrl);
+                if (!changedEndpoint.isBackwardsCompatible()) {
+                    sb.append(i_backwardsIncompatibilitiesWarning());
+                }
+                sb.append(" ").append(desc).append("  \n")
                         .append(ul_detail);
             }
         }
@@ -140,6 +157,7 @@ public class MarkdownRender implements Render {
         sb.append("Delete ").append(prop.getEl())
                 .append(null == property.getDescription() ? ""
                         : (" //" + property.getDescription()));
+        sb.append(i_backwardsIncompatibilitiesWarning());
         return sb.toString();
     }
 
@@ -149,6 +167,9 @@ public class MarkdownRender implements Render {
         sb.append("Insert ").append(prop.getEl())
                 .append(null == property.getDescription() ? ""
                         : (" //" + property.getDescription()));
+        if (prop.getProperty() != null && prop.getProperty().getRequired()) {
+            sb.append(" required").append(i_backwardsIncompatibilitiesWarning());
+        }
         return sb.toString();
     }
 
@@ -161,6 +182,7 @@ public class MarkdownRender implements Render {
         StringBuffer sb = new StringBuffer("");
         sb.append(prefix).append(prop.getEl())
                 .append(postfix);
+        sb.append(i_backwardsIncompatibilitiesWarning());
         return sb.toString();
     }
 
@@ -211,6 +233,7 @@ public class MarkdownRender implements Render {
         sb.append("Add ").append(param.getName())
                 .append(null == param.getDescription() ? ""
                         : (" //" + param.getDescription()));
+        sb.append(i_backwardsIncompatibilitiesWarning());
         return sb.toString();
     }
 
@@ -235,6 +258,9 @@ public class MarkdownRender implements Render {
         if (changeDescription) {
             sb.append(" Notes ").append(leftParam.getDescription()).append(" change into ")
                     .append(rightParam.getDescription());
+        }
+        if (!changeParam.isBackwardsCompatible()) {
+            sb.append(i_backwardsIncompatibilitiesWarning());
         }
         return sb.toString();
     }
@@ -271,7 +297,7 @@ public class MarkdownRender implements Render {
 
     private String li_missingMediaType(String type) {
         StringBuffer sb = new StringBuffer("");
-        sb.append("Delete ").append(type);
+        sb.append("Delete ").append(type).append(i_backwardsIncompatibilitiesWarning());
         return sb.toString();
     }
 
@@ -279,5 +305,12 @@ public class MarkdownRender implements Render {
         StringBuffer sb = new StringBuffer("");
         sb.append("Insert ").append(type);
         return sb.toString();
+    }
+
+    /**
+     * Add icon if modifications make backwards incompatibilies.
+     */
+    private String i_backwardsIncompatibilitiesWarning() {
+        return showBackwardsIncompatibilities ? " ❗ " : StringUtils.EMPTY;
     }
 }

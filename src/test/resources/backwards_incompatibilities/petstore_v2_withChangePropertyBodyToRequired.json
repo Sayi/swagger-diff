@@ -427,9 +427,6 @@
         "summary": "Place an order for a pet",
         "description": "",
         "operationId": "placeOrder",
-        "consumes": [
-          "application/xml"
-        ],
         "produces": [
           "application/xml",
           "application/json"
@@ -897,9 +894,6 @@
         "phone": {
           "type": "string"
         },
-        "favorite": {
-          "$ref": "#/definitions/Pet"
-        },
         "userStatus": {
           "type": "integer",
           "format": "int32",
@@ -919,9 +913,6 @@
         },
         "name": {
           "type": "string"
-        },
-        "removedField": {
-          "type": "string"
         }
       },
       "xml": {
@@ -932,7 +923,9 @@
       "type": "object",
       "required": [
         "name",
-        "photoUrls"
+        "photoUrls",
+        "category",
+        "id"
       ],
       "properties": {
         "id": {
@@ -955,12 +948,6 @@
           "items": {
             "type": "string"
           }
-        },
-        "owner": {
-          "$ref": "#/definitions/User"
-        },
-        "parent": {
-          "$ref": "#/definitions/Pet"
         },
         "tags": {
           "type": "array",

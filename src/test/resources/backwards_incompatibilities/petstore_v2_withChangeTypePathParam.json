@@ -255,8 +255,7 @@
             "in": "path",
             "description": "ID of pet that needs to be updated",
             "required": true,
-            "type": "integer",
-            "format": "int64"
+            "type": "string"
           },
           {
             "name": "name",
@@ -427,9 +426,6 @@
         "summary": "Place an order for a pet",
         "description": "",
         "operationId": "placeOrder",
-        "consumes": [
-          "application/xml"
-        ],
         "produces": [
           "application/xml",
           "application/json"
@@ -897,9 +893,6 @@
         "phone": {
           "type": "string"
         },
-        "favorite": {
-          "$ref": "#/definitions/Pet"
-        },
         "userStatus": {
           "type": "integer",
           "format": "int32",
@@ -918,9 +911,6 @@
           "format": "int64"
         },
         "name": {
-          "type": "string"
-        },
-        "removedField": {
           "type": "string"
         }
       },
@@ -955,12 +945,6 @@
           "items": {
             "type": "string"
           }
-        },
-        "owner": {
-          "$ref": "#/definitions/User"
-        },
-        "parent": {
-          "$ref": "#/definitions/Pet"
         },
         "tags": {
           "type": "array",

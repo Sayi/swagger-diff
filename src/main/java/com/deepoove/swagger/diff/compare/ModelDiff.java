@@ -1,14 +1,5 @@
 package com.deepoove.swagger.diff.compare;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import com.deepoove.swagger.diff.model.ElProperty;
 
 import io.swagger.models.ArrayModel;
@@ -18,32 +9,43 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
+import lombok.Data;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * compare two model
- * 
+ *
+import io.swagger.models.properties.StringProperty;
+
+/**
+ * compare two model
+ *
  * @author Sayi
- * @version
  */
+@Data
 public class ModelDiff {
 
     private List<ElProperty> increased;
     private List<ElProperty> missing;
     private List<ElProperty> changed;
+    private List<ElProperty> typeChanges;
 
-    Map<String, Model> oldDedinitions;
-    Map<String, Model> newDedinitions;
+    Map<String, Model> oldDefinitions;
+    Map<String, Model> newDefinitions;
 
     private ModelDiff() {
-        increased = new ArrayList<ElProperty>();
-        missing = new ArrayList<ElProperty>();
-        changed = new ArrayList<ElProperty>();
+        increased = new ArrayList<>();
+        missing = new ArrayList<>();
+        changed = new ArrayList<>();
+        typeChanges = new ArrayList<>();
     }
 
     public static ModelDiff buildWithDefinition(Map<String, Model> left, Map<String, Model> right) {
         ModelDiff diff = new ModelDiff();
-        diff.oldDedinitions = left;
-        diff.newDedinitions = right;
+        diff.oldDefinitions = left;
+        diff.newDefinitions = right;
         return diff;
     }
 
@@ -56,7 +58,7 @@ public class ModelDiff {
     }
 
     public ModelDiff diff(Property leftProperty, Property rightProperty) {
-        return this.diff(findModel(leftProperty, oldDedinitions), findModel(rightProperty, newDedinitions));
+        return this.diff(findModel(leftProperty, oldDefinitions), findModel(rightProperty, newDefinitions));
     }
 
     private ModelDiff diff(Model leftInputModel, Model rightInputModel, String parentEl, Set<Model> visited) {
@@ -66,9 +68,9 @@ public class ModelDiff {
                 || visited.contains(rightInputModel)) {
             return this;
         }
-        Model leftModel = isModelReference(leftInputModel) ? findReferenceModel(leftInputModel, oldDedinitions)
+        Model leftModel = isModelReference(leftInputModel) ? findReferenceModel(leftInputModel, oldDefinitions)
                 : leftInputModel;
-        Model rightModel = isModelReference(rightInputModel) ? findReferenceModel(rightInputModel, newDedinitions)
+        Model rightModel = isModelReference(rightInputModel) ? findReferenceModel(rightInputModel, newDefinitions)
                 : rightInputModel;
         Map<String, Property> leftProperties = null == leftModel ? null : leftModel.getProperties();
         Map<String, Property> rightProperties = null == rightModel ? null : rightModel.getProperties();
@@ -84,8 +86,8 @@ public class ModelDiff {
         sharedKey.stream().forEach((key) -> {
             Property left = leftProperties.get(key);
             Property right = rightProperties.get(key);
-            Model leftSubModel = findModel(left, oldDedinitions);
-            Model rightSubModel = findModel(left, newDedinitions);
+            Model leftSubModel = findModel(left, oldDefinitions);
+            Model rightSubModel = findModel(left, newDefinitions);
             if (leftSubModel != null || rightSubModel != null) {
                 diff(leftSubModel, rightSubModel, buildElString(parentEl, key),
                         copyAndAdd(visited, leftModel, rightModel));
@@ -123,6 +125,7 @@ public class ModelDiff {
 
     private ElProperty addChangeMetadata(ElProperty diffProperty, Property left, Property right) {
         diffProperty.setTypeChange(!left.getType().equalsIgnoreCase(right.getType()));
+        diffProperty.setBecomeRequired(left.getRequired() != right.getRequired());
         List<String> leftEnums = enumValues(left);
         List<String> rightEnums = enumValues(right);
         if (!leftEnums.isEmpty() && !rightEnums.isEmpty()) {
@@ -183,27 +186,4 @@ public class ModelDiff {
         return modelName == null ? null : modelMap.get(modelName);
     }
 
-    public List<ElProperty> getIncreased() {
-        return increased;
-    }
-
-    public void setIncreased(List<ElProperty> increased) {
-        this.increased = increased;
-    }
-
-    public List<ElProperty> getMissing() {
-        return missing;
-    }
-
-    public void setMissing(List<ElProperty> missing) {
-        this.missing = missing;
-    }
-
-    public List<ElProperty> getChanged() {
-        return changed;
-    }
-
-    public void setChanged(List<ElProperty> changed) {
-        this.changed = changed;
-    }
 }

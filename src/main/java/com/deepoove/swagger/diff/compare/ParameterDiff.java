@@ -1,47 +1,46 @@
 package com.deepoove.swagger.diff.compare;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.deepoove.swagger.diff.model.ChangedParameter;
 import com.deepoove.swagger.diff.model.ElProperty;
 import com.google.common.collect.Lists;
-
 import io.swagger.models.Model;
 import io.swagger.models.parameters.AbstractSerializableParameter;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
+import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * compare two parameter
  *
  * @author Sayi
- * @version
  */
+@Data
 public class ParameterDiff {
 
     private List<Parameter> increased;
     private List<Parameter> missing;
     private List<ChangedParameter> changed;
 
-    Map<String, Model> oldDedinitions;
-    Map<String, Model> newDedinitions;
+    Map<String, Model> oldDefinitions;
+    Map<String, Model> newDefinitions;
 
     private ParameterDiff() {
-        this.increased = new ArrayList<Parameter>();
-        this.missing = new ArrayList<Parameter>();
-        this.changed = new ArrayList<ChangedParameter>();
+        this.increased = new ArrayList<>();
+        this.missing = new ArrayList<>();
+        this.changed = new ArrayList<>();
     }
 
     public static ParameterDiff buildWithDefinition(Map<String, Model> left, Map<String, Model> right) {
         ParameterDiff diff = new ParameterDiff();
-        diff.oldDedinitions = left;
-        diff.newDedinitions = right;
+        diff.oldDefinitions = left;
+        diff.newDefinitions = right;
         return diff;
     }
 
@@ -51,7 +50,9 @@ public class ParameterDiff {
 
         ListDiff<Parameter> paramDiff = ListDiff.diff(left, right, (t, param) -> {
             for (Parameter para : t) {
-                if (param.getName().equals(para.getName())) { return para; }
+                if (param.getName().equals(para.getName())) {
+                    return para;
+                }
             }
             return null;
         });
@@ -68,11 +69,12 @@ public class ParameterDiff {
                 BodyParameter rightBodyPara = (BodyParameter) rightPara;
                 Model rightSchema = rightBodyPara.getSchema();
 
-                ModelDiff diff = ModelDiff.buildWithDefinition(oldDedinitions, newDedinitions).diff(leftSchema,
+                ModelDiff diff = ModelDiff.buildWithDefinition(oldDefinitions, newDefinitions).diff(leftSchema,
                         rightSchema, leftPara.getName());
                 changedParameter.setIncreased(diff.getIncreased());
                 changedParameter.setMissing(diff.getMissing());
                 changedParameter.setChanged(diff.getChanged());
+                changedParameter.setTypesChanges(diff.getTypeChanges());
 
             }
 
@@ -95,10 +97,10 @@ public class ParameterDiff {
 
             // description
             String description = rightPara.getDescription();
-            String oldPescription = leftPara.getDescription();
+            String oldDescription = leftPara.getDescription();
             if (StringUtils.isBlank(description)) description = "";
-            if (StringUtils.isBlank(oldPescription)) oldPescription = "";
-            changedParameter.setChangeDescription(!description.equals(oldPescription));
+            if (StringUtils.isBlank(oldDescription)) oldDescription = "";
+            changedParameter.setChangeDescription(!description.equals(oldDescription));
 
             if (changedParameter.isDiff()) {
                 this.changed.add(changedParameter);
@@ -119,29 +121,4 @@ public class ParameterDiff {
         prop.setRequired(rightPara.getRequired());
         return prop;
     }
-
-    public List<Parameter> getIncreased() {
-        return increased;
-    }
-
-    public void setIncreased(List<Parameter> increased) {
-        this.increased = increased;
-    }
-
-    public List<Parameter> getMissing() {
-        return missing;
-    }
-
-    public void setMissing(List<Parameter> missing) {
-        this.missing = missing;
-    }
-
-    public List<ChangedParameter> getChanged() {
-        return changed;
-    }
-
-    public void setChanged(List<ChangedParameter> changed) {
-        this.changed = changed;
-    }
-
 }

@@ -129,6 +129,61 @@
         ]
       }
     },
+    "/pet/findByName": {
+      "get": {
+        "tags": [
+          "pet"
+        ],
+        "summary": "Finds Pets by name",
+        "description": "Multiple name values can be provided with comma separated strings",
+        "operationId": "findPetsByName",
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Name values that need to be considered for filter",
+            "required": true,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ],
+              "default": "available"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Pet"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid name value"
+          }
+        },
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
+        ]
+      }
+    },
     "/pet/findByStatus": {
       "get": {
         "tags": [
@@ -202,6 +257,17 @@
             "in": "query",
             "description": "Tags to filter by",
             "required": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "tags2",
+            "in": "query",
+            "description": "Tags2 to filter by",
+            "required": false,
             "type": "array",
             "items": {
               "type": "string"

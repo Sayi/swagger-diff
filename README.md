@@ -3,6 +3,7 @@
 ![Build Status](https://travis-ci.org/Sayi/swagger-diff.svg?branch=master) ![jdk1.8+](https://img.shields.io/badge/jdk-1.8%2B-orange.svg) [![Coverage Status](https://coveralls.io/repos/github/Sayi/swagger-diff/badge.svg)](https://coveralls.io/github/Sayi/swagger-diff) [![Maven](https://maven-badges.herokuapp.com/maven-central/com.deepoove/swagger-diff/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/com.deepoove/swagger-diff)
 
 Compare two swagger API specifications(1.x or v2.0) and render the difference to html file or markdown file.
+You can also see the non-backwards compatible changes.
 
 ## :black_large_square: Command line interface (CLI) 
 
@@ -73,11 +74,22 @@ v2.0
 SwaggerDiff.compareV2("petstore_v2_1.json", "petstore_v2_2.json");
 ```
 
+## Check Backward comptibility
+```java
+SwaggerDiff diff = SwaggerDiff.compareV2("petstore_v2_1.json", "petstore_v2_2.json");
+boolean isBackwardCompatible =  diff.isBackwardsCompatible();
+```
+
 ## Render difference
 #### HTML
 ```java
-String html = new HtmlRender("Changelog",
-        "http://deepoove.com/swagger-diff/stylesheets/demo.css")
+List<String> css = new ArrayList<>();
+css.add("https://use.fontawesome.com/releases/v5.0.6/css/all.css");
+css.add("http://deepoove.com/swagger-diff/stylesheets/demo.css");
+List<String> scripts = new ArrayList<String>();
+
+String html = new HtmlRender("Changelog", css, scripts)
+                .withBackwardsIncompatibilities()
                 .render(diff);
 
 try {

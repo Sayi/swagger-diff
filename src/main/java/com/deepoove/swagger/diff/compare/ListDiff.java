@@ -1,20 +1,17 @@
 package com.deepoove.swagger.diff.compare;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.function.BiFunction;
-
 import com.google.common.collect.Lists;
+import lombok.Getter;
+
+import java.util.*;
+import java.util.function.BiFunction;
 
 /**
  * compare two Lists
  *
  * @author Sayi
- * @version
  */
+@Getter
 public class ListDiff<K> {
 
     private List<K> increased;
@@ -33,8 +30,7 @@ public class ListDiff<K> {
      *
      * @param left
      * @param right
-     * @param biFunc
-     *            if right List contains left element
+     * @param biFunc if right List contains left element
      * @return
      */
     @SuppressWarnings("unchecked")
@@ -69,18 +65,6 @@ public class ListDiff<K> {
             }
         }
         return instance;
-    }
-
-    public List<K> getIncreased() {
-        return increased;
-    }
-
-    public List<K> getMissing() {
-        return missing;
-    }
-
-    public Map<K, K> getShared() {
-        return shared;
     }
 
 }

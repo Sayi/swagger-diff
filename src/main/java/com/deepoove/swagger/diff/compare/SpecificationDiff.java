@@ -1,39 +1,35 @@
 package com.deepoove.swagger.diff.compare;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.deepoove.swagger.diff.model.ChangedEndpoint;
 import com.deepoove.swagger.diff.model.ChangedOperation;
 import com.deepoove.swagger.diff.model.Endpoint;
-
-import io.swagger.models.HttpMethod;
-import io.swagger.models.Operation;
-import io.swagger.models.Path;
-import io.swagger.models.Response;
-import io.swagger.models.Swagger;
+import io.swagger.models.*;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
+import lombok.Data;
+
+import java.util.*;
 
 /**
  * compare two Swagger
- * 
- * @author Sayi
  *
+ * @author Sayi
  */
+@Data
 public class SpecificationDiff {
 
     private List<Endpoint> newEndpoints;
     private List<Endpoint> missingEndpoints;
     private List<ChangedEndpoint> changedEndpoints;
 
-    private SpecificationDiff() {}
+    private SpecificationDiff() {
+    }
 
     public static SpecificationDiff diff(Swagger oldSpec, Swagger newSpec) {
-        if (null == oldSpec || null == newSpec) { throw new IllegalArgumentException("cannot diff null spec."); }
+        if (null == oldSpec || null == newSpec) {
+            throw new IllegalArgumentException(
+                    "cannot diff null spec.");
+        }
         SpecificationDiff instance = new SpecificationDiff();
         Map<String, Path> oldPaths = oldSpec.getPaths();
         Map<String, Path> newPaths = newSpec.getPaths();
@@ -162,22 +158,12 @@ public class SpecificationDiff {
     private static ListDiff<String> getMediaTypeDiff(List<String> oldTypes, List<String> newTypes) {
         return ListDiff.diff(oldTypes, newTypes, (t, sample) -> {
             for (String mediaType : t) {
-                if (sample.equalsIgnoreCase(mediaType)) { return mediaType; }
+                if (sample.equalsIgnoreCase(mediaType)) {
+                    return mediaType;
+                }
             }
             return null;
         });
-    }
-
-    public List<Endpoint> getNewEndpoints() {
-        return newEndpoints;
-    }
-
-    public List<Endpoint> getMissingEndpoints() {
-        return missingEndpoints;
-    }
-
-    public List<ChangedEndpoint> getChangedEndpoints() {
-        return changedEndpoints;
     }
 
 }
