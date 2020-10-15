@@ -31,6 +31,10 @@ public class ElProperty {
         return el;
     }
 
+    public boolean isChanged(){
+        return isTypeChange || newEnums || removedEnums;
+    }
+
     public void setEl(String el) {
         this.el = el;
     }

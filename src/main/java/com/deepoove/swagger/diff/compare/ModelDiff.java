@@ -92,7 +92,10 @@ public class ModelDiff {
             } else if (left != null && right != null && !left.equals(right)) {
                 // Add a changed ElProperty if not a Reference
                 // Useless
-                changed.add(addChangeMetadata(convert2ElProperty(key, parentEl, left), left, right));
+                ElProperty changedMeta = addChangeMetadata(convert2ElProperty(key, parentEl, left), left, right);
+                if(changedMeta.isChanged()){
+                    changed.add(changedMeta);
+                }
             }
         });
         return this;
