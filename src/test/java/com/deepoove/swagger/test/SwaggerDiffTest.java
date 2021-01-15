@@ -263,6 +263,7 @@ public class SwaggerDiffTest {
 
 			// assert response type changed
 			Assert.assertTrue(changedOutput.isDiffResponseType());
+			Assert.assertTrue(changedOutput.isDiff());
 
 		});
 	}

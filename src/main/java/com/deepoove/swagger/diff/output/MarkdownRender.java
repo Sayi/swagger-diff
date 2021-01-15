@@ -97,7 +97,7 @@ public class MarkdownRender implements Render {
                     ul_detail.append(PRE_LI).append("Parameters")
                             .append(ul_param(changedOperation));
                 }
-                if (changedOperation.isDiffProp()) {
+                if (changedOperation.isDiffProp() || changedOperation.isDiffResponseType()) {
                     ul_detail.append(PRE_LI).append("Return Type")
                             .append(ul_response(changedOperation));
                 }
@@ -127,7 +127,7 @@ public class MarkdownRender implements Render {
 
         if (changedOperation.isDiffResponseType()){
             sb.append(prefix).append("Type changed from ").append(changedOperation.getOldResponseType())
-                    .append("to").append(changedOperation.getNewResponseType()).append("\n\n");
+                    .append(" to ").append(changedOperation.getNewResponseType()).append("\n\n");
         }
 
         for (ElProperty prop : addProps) {

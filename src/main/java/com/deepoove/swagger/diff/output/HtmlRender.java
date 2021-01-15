@@ -123,7 +123,7 @@ public class HtmlRender implements Render {
                 if (changedOperation.isDiffParam()) {
                     ul_detail.with(li().with(h3("Parameter")).with(ul_param(changedOperation)));
                 }
-                if (changedOperation.isDiffProp()) {
+                if (changedOperation.isDiffProp() || changedOperation.isDiffResponseType()) {
                     ul_detail.with(li().with(h3("Return Type")).with(ul_response(changedOperation)));
                 }
                 if (changedOperation.isDiffProduces()) {
@@ -145,9 +145,7 @@ public class HtmlRender implements Render {
         List<ElProperty> chgProps = changedOperation.getChangedProps();
         ContainerTag ul = ul().withClass("change response");
         if (changedOperation.isDiffResponseType()){
-            ul.with(
-                    li().with(strong(i("Type changed from " + changedOperation.getOldResponseType() + " to " + changedOperation.getNewResponseType())))
-            );
+            ul.with(li().with(strong(i("Type changed from " + changedOperation.getOldResponseType() + " to " + changedOperation.getNewResponseType()))));
         }
 
         for (ElProperty prop : addProps) {
