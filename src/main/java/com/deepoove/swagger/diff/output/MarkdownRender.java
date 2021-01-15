@@ -11,8 +11,6 @@ import io.swagger.models.HttpMethod;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
 
-import static j2html.TagCreator.li;
-
 public class MarkdownRender implements Render {
 
     final String H3 = "### ";
