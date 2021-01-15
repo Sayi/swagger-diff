@@ -16,6 +16,7 @@ import io.swagger.models.Path;
 import io.swagger.models.Response;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.Property;
 
 /**
@@ -45,75 +46,93 @@ public class SpecificationDiff {
         instance.changedEndpoints = new ArrayList<>();
 
         List<String> sharedKey = pathDiff.getSharedKey();
-        sharedKey.stream().forEach((pathUrl) -> {
-            ChangedEndpoint changedEndpoint = new ChangedEndpoint();
-            changedEndpoint.setPathUrl(pathUrl);
-            Path oldPath = oldPaths.get(pathUrl);
-            Path newPath = newPaths.get(pathUrl);
+    sharedKey.stream()
+        .forEach(
+            (pathUrl) -> {
+              ChangedEndpoint changedEndpoint = new ChangedEndpoint();
+              changedEndpoint.setPathUrl(pathUrl);
+              Path oldPath = oldPaths.get(pathUrl);
+              Path newPath = newPaths.get(pathUrl);
 
-            // Diff Operation
-            Map<HttpMethod, Operation> oldOperationMap = oldPath.getOperationMap();
-            Map<HttpMethod, Operation> newOperationMap = newPath.getOperationMap();
-            MapKeyDiff<HttpMethod, Operation> operationDiff = MapKeyDiff.diff(oldOperationMap, newOperationMap);
-            Map<HttpMethod, Operation> increasedOperation = operationDiff.getIncreased();
-            Map<HttpMethod, Operation> missingOperation = operationDiff.getMissing();
-            changedEndpoint.setNewOperations(increasedOperation);
-            changedEndpoint.setMissingOperations(missingOperation);
+              // Diff Operation
+              Map<HttpMethod, Operation> oldOperationMap = oldPath.getOperationMap();
+              Map<HttpMethod, Operation> newOperationMap = newPath.getOperationMap();
+              MapKeyDiff<HttpMethod, Operation> operationDiff =
+                  MapKeyDiff.diff(oldOperationMap, newOperationMap);
+              Map<HttpMethod, Operation> increasedOperation = operationDiff.getIncreased();
+              Map<HttpMethod, Operation> missingOperation = operationDiff.getMissing();
+              changedEndpoint.setNewOperations(increasedOperation);
+              changedEndpoint.setMissingOperations(missingOperation);
 
-            List<HttpMethod> sharedMethods = operationDiff.getSharedKey();
-            Map<HttpMethod, ChangedOperation> operas = new HashMap<>();
-            sharedMethods.stream().forEach((method) -> {
-                ChangedOperation changedOperation = new ChangedOperation();
-                Operation oldOperation = oldOperationMap.get(method);
-                Operation newOperation = newOperationMap.get(method);
-                changedOperation.setSummary(newOperation.getSummary());
+              List<HttpMethod> sharedMethods = operationDiff.getSharedKey();
+              Map<HttpMethod, ChangedOperation> operas = new HashMap<>();
+              sharedMethods.stream()
+                  .forEach(
+                      (method) -> {
+                        ChangedOperation changedOperation = new ChangedOperation();
+                        Operation oldOperation = oldOperationMap.get(method);
+                        Operation newOperation = newOperationMap.get(method);
+                        changedOperation.setSummary(newOperation.getSummary());
 
-                // Diff Parameter
-                List<Parameter> oldParameters = oldOperation.getParameters();
-                List<Parameter> newParameters = newOperation.getParameters();
-                ParameterDiff parameterDiff = ParameterDiff
-                        .buildWithDefinition(oldSpec.getDefinitions(), newSpec.getDefinitions())
-                        .diff(oldParameters, newParameters);
-                changedOperation.setAddParameters(parameterDiff.getIncreased());
-                changedOperation.setMissingParameters(parameterDiff.getMissing());
-                changedOperation.setChangedParameter(parameterDiff.getChanged());
+                        // Diff Parameter
+                        List<Parameter> oldParameters = oldOperation.getParameters();
+                        List<Parameter> newParameters = newOperation.getParameters();
+                        ParameterDiff parameterDiff =
+                            ParameterDiff.buildWithDefinition(
+                                    oldSpec.getDefinitions(), newSpec.getDefinitions())
+                                .diff(oldParameters, newParameters);
+                        changedOperation.setAddParameters(parameterDiff.getIncreased());
+                        changedOperation.setMissingParameters(parameterDiff.getMissing());
+                        changedOperation.setChangedParameter(parameterDiff.getChanged());
 
-                // Diff response
-                Property oldResponseProperty = getResponseProperty(oldOperation);
-                Property newResponseProperty = getResponseProperty(newOperation);
-                PropertyDiff propertyDiff = PropertyDiff.buildWithDefinition(oldSpec.getDefinitions(),
-                        newSpec.getDefinitions());
-                propertyDiff.diff(oldResponseProperty, newResponseProperty);
-                changedOperation.setAddProps(propertyDiff.getIncreased());
-                changedOperation.setMissingProps(propertyDiff.getMissing());
-                changedOperation.setChangedProps(propertyDiff.getChanged());
+                        // Diff response
+                        Property oldResponseProperty = getResponseProperty(oldOperation);
+                        Property newResponseProperty = getResponseProperty(newOperation);
+                        PropertyDiff propertyDiff =
+                            PropertyDiff.buildWithDefinition(
+                                oldSpec.getDefinitions(), newSpec.getDefinitions());
+                        propertyDiff.diff(oldResponseProperty, newResponseProperty);
+                        changedOperation.setAddProps(propertyDiff.getIncreased());
+                        changedOperation.setMissingProps(propertyDiff.getMissing());
+                        changedOperation.setChangedProps(propertyDiff.getChanged());
 
-                // Diff Consumes
-                ListDiff<String> consumeDiff = getMediaTypeDiff(oldOperation.getConsumes(), newOperation.getConsumes());
-                changedOperation.setAddConsumes(consumeDiff.getIncreased());
-                changedOperation.setMissingConsumes(consumeDiff.getMissing());
+                        // Diff response type
+                        if (oldResponseProperty != null && newResponseProperty != null) {
+                          changedOperation.setOldResponseType(oldResponseProperty.getType());
+                          changedOperation.setNewResponseType(newResponseProperty.getType());
+                        }
 
-                // Diff Produces
-                ListDiff<String> producesDiff = getMediaTypeDiff(oldOperation.getProduces(),
-                        newOperation.getProduces());
-                changedOperation.setAddProduces(producesDiff.getIncreased());
-                changedOperation.setMissingProduces(producesDiff.getMissing());
+                        // Diff Consumes
+                        ListDiff<String> consumeDiff =
+                            getMediaTypeDiff(
+                                oldOperation.getConsumes(), newOperation.getConsumes());
+                        changedOperation.setAddConsumes(consumeDiff.getIncreased());
+                        changedOperation.setMissingConsumes(consumeDiff.getMissing());
 
-                if (changedOperation.isDiff()) {
-                    operas.put(method, changedOperation);
-                }
-            });
-            changedEndpoint.setChangedOperations(operas);
+                        // Diff Produces
+                        ListDiff<String> producesDiff =
+                            getMediaTypeDiff(
+                                oldOperation.getProduces(), newOperation.getProduces());
+                        changedOperation.setAddProduces(producesDiff.getIncreased());
+                        changedOperation.setMissingProduces(producesDiff.getMissing());
 
-            instance.newEndpoints
-                    .addAll(convert2EndpointList(changedEndpoint.getPathUrl(), changedEndpoint.getNewOperations()));
-            instance.missingEndpoints
-                    .addAll(convert2EndpointList(changedEndpoint.getPathUrl(), changedEndpoint.getMissingOperations()));
+                        if (changedOperation.isDiff()) {
+                          operas.put(method, changedOperation);
+                        }
+                      });
+              changedEndpoint.setChangedOperations(operas);
 
-            if (changedEndpoint.isDiff()) {
+              instance.newEndpoints.addAll(
+                  convert2EndpointList(
+                      changedEndpoint.getPathUrl(), changedEndpoint.getNewOperations()));
+              instance.missingEndpoints.addAll(
+                  convert2EndpointList(
+                      changedEndpoint.getPathUrl(), changedEndpoint.getMissingOperations()));
+
+              if (changedEndpoint.isDiff()) {
                 instance.changedEndpoints.add(changedEndpoint);
-            }
-        });
+              }
+            });
 
         return instance;
 

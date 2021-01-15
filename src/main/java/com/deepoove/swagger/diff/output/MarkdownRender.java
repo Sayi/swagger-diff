@@ -11,6 +11,8 @@ import io.swagger.models.HttpMethod;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
 
+import static j2html.TagCreator.li;
+
 public class MarkdownRender implements Render {
 
     final String H3 = "### ";
@@ -122,8 +124,14 @@ public class MarkdownRender implements Render {
         StringBuffer sb = new StringBuffer("\n\n");
 
         String prefix = PRE_LI + PRE_CODE;
+
+        if (changedOperation.isDiffResponseType()){
+            sb.append(prefix).append("Type changed from ").append(changedOperation.getOldResponseType())
+                    .append("to").append(changedOperation.getNewResponseType()).append("\n\n");
+        }
+
         for (ElProperty prop : addProps) {
-            sb.append(PRE_LI).append(PRE_CODE).append(li_addProp(prop) + "\n");
+            sb.append(prefix).append(li_addProp(prop) + "\n");
         }
         for (ElProperty prop : delProps) {
             sb.append(prefix).append(li_missingProp(prop) + "\n");

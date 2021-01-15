@@ -246,6 +246,28 @@ public class SwaggerDiffTest {
 	}
 
 	@Test
+	public void testResponseBodyObjectToArray() {
+		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
+		Map<String, ChangedEndpoint> changedEndpointMap = diff.getChangedEndpoints().stream().collect(Collectors.toMap(ChangedEndpoint::getPathUrl, e -> e));
+		Lists.newArrayList("/user/{username}").forEach(name -> {
+			Assert.assertTrue("Expecting changed endpoint " + name, changedEndpointMap.containsKey(name));
+			ChangedEndpoint endpoint = changedEndpointMap.get(name);
+			Assert.assertEquals(2, endpoint.getChangedOperations().size());
+			Assert.assertTrue("Expecting GET method change", endpoint.getChangedOperations().containsKey(HttpMethod.GET));
+
+			// assert changed property counts
+			ChangedOperation changedOutput = endpoint.getChangedOperations().get(HttpMethod.GET);
+			Assert.assertEquals(3, changedOutput.getAddProps().size());
+			Assert.assertEquals(3, changedOutput.getMissingProps().size());
+			Assert.assertEquals(1, changedOutput.getChangedProps().size());
+
+			// assert response type changed
+			Assert.assertTrue(changedOutput.isDiffResponseType());
+
+		});
+	}
+
+	@Test
 	public void testDetectProducesAndConsumes() {
 		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
 		Map<String, ChangedEndpoint> changedEndpointMap = diff.getChangedEndpoints().stream().collect(Collectors.toMap(ChangedEndpoint::getPathUrl, e -> e));

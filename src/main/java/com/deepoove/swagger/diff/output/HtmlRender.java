@@ -144,6 +144,12 @@ public class HtmlRender implements Render {
         List<ElProperty> delProps = changedOperation.getMissingProps();
         List<ElProperty> chgProps = changedOperation.getChangedProps();
         ContainerTag ul = ul().withClass("change response");
+        if (changedOperation.isDiffResponseType()){
+            ul.with(
+                    li().with(strong(i("Type changed from " + changedOperation.getOldResponseType() + " to " + changedOperation.getNewResponseType())))
+            );
+        }
+
         for (ElProperty prop : addProps) {
             ul.with(li_addProp(prop));
         }

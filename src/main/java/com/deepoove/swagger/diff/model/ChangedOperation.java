@@ -11,16 +11,19 @@ public class ChangedOperation implements Changed {
 
     private List<Parameter> addParameters = new ArrayList<Parameter>();
     private List<Parameter> missingParameters = new ArrayList<Parameter>();
-
     private List<ChangedParameter> changedParameter = new ArrayList<ChangedParameter>();
 
     private List<ElProperty> addProps = new ArrayList<ElProperty>();
     private List<ElProperty> missingProps = new ArrayList<ElProperty>();
     private List<ElProperty> changedProps = new ArrayList<ElProperty>();
+
     private List<String> addConsumes = new ArrayList<>();
     private List<String> missingConsumes = new ArrayList<>();
     private List<String> addProduces = new ArrayList<>();
     private List<String> missingProduces = new ArrayList<>();
+
+    private String oldResponseType;
+    private String newResponseType;
 
     public List<Parameter> getAddParameters() {
         return addParameters;
@@ -74,13 +77,19 @@ public class ChangedOperation implements Changed {
         return summary;
     }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
+    public void setSummary(String summary) { this.summary = summary; }
+
+    public void setOldResponseType(String oldResponseType) { this.oldResponseType = oldResponseType; }
+
+    public String getOldResponseType() { return oldResponseType; }
+
+    public void setNewResponseType(String newResponseType) { this.newResponseType = newResponseType; }
+
+    public String getNewResponseType() { return newResponseType; }
 
     public boolean isDiff() {
         return !addParameters.isEmpty() || !missingParameters.isEmpty() || !changedParameter.isEmpty() || isDiffProp()
-                || isDiffConsumes() || isDiffProduces();
+                || isDiffConsumes() || isDiffProduces() || isDiffResponseType();
     }
 
     public boolean isDiffProp() {
@@ -130,4 +139,6 @@ public class ChangedOperation implements Changed {
     public void setMissingProduces(List<String> missing) {
         this.missingProduces = missing == null ? new ArrayList<>() : missing;
     }
+
+    public Boolean isDiffResponseType() { return this.oldResponseType != this.newResponseType; }
 }

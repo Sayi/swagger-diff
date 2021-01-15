@@ -17,7 +17,8 @@ hs_err_pid*
 /target/
 .idea
 swagger-diff.iml
-testDiff.html 
+testDiff.html
+testDiff.json
 testDiff.md
 testDeprecatedApi.html
 testNewApi.html
