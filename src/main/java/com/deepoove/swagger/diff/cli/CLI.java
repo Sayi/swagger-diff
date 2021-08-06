@@ -15,7 +15,6 @@ import com.deepoove.swagger.diff.output.Render;
  *  -output-mode markdown \n
  *
  * @author Sayi
- * @version
  */
 public class CLI {
 

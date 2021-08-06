@@ -22,7 +22,6 @@ import io.swagger.models.properties.StringProperty;
  * compare two parameter
  *
  * @author Sayi
- * @version
  */
 public class ParameterDiff {
 

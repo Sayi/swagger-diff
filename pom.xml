@@ -56,7 +56,6 @@
 
 		<eclipse.compiler.javadoc>disabled</eclipse.compiler.javadoc>
 		<eclipse.compiler.nullAnalysis>disabled</eclipse.compiler.nullAnalysis>
-		<maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
 		<checkstyle.skip>true</checkstyle.skip>
 		<formatter.skip>true</formatter.skip>
