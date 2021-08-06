@@ -11,12 +11,12 @@
 
 	<groupId>com.hlag.api</groupId>
 	<artifactId>swagger-diff</artifactId>
-	<version>1.2.2-SNAPSHOT</version>
+	<version>1.2.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>swagger-diff</name>
 	<description>diff swagger api document</description>
-	<url>http://maven.apache.org</url>
+	<url>https://github.com/Sayi/swagger-diff</url>
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>

@@ -3,12 +3,15 @@ package com.deepoove.swagger.diff.compare;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.function.BiFunction;
 
+import com.google.common.collect.Lists;
+
 /**
  * compare two Lists
- * 
+ *
  * @author Sayi
  * @version
  */
@@ -27,15 +30,15 @@ public class ListDiff<K> {
     }
 
     /**
-     * 
+     *
      * @param left
      * @param right
      * @param biFunc
      *            if right List contains left element
      * @return
      */
-    public static <K> ListDiff<K> diff(List<K> left, List<K> right,
-            BiFunction<List<K>, K, K> biFunc) {
+    @SuppressWarnings("unchecked")
+    public static <K> ListDiff<K> diff(List<K> left, List<K> right, BiFunction<List<K>, K, K> biFunc) {
         ListDiff<K> instance = new ListDiff<>();
         if (null == left && null == right) return instance;
         if (null == left) {
