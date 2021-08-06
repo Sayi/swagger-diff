@@ -144,4 +144,17 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+
+	<profiles>
+		<!-- JDK 15 and 16, Maven Javadoc Plugin: Logs warnings on missing JavaDoc comments inside generated code -->
+		<profile>
+			<id>fix-jdk15-and-16</id>
+			<activation>
+				<jdk>[15,17)</jdk>
+			</activation>
+			<properties>
+				<doclint>all,-missing</doclint>
+			</properties>
+		</profile>
+	</profiles>
 </project>
