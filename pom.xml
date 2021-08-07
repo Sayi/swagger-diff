@@ -31,22 +31,6 @@
 		</developer>
 	</developers>
 
-	<scm>
-		<connection>scm:git:git@github.com:Sayi/swagger-diff.git</connection>
-		<developerConnection>scm:git:git@github.com:Sayi/swagger-diff.git</developerConnection>
-		<url>git@github.com:Sayi/swagger-diff.git</url>
-	</scm>
-	<distributionManagement>
-		<snapshotRepository>
-			<id>oss</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-		</snapshotRepository>
-		<repository>
-			<id>oss</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>
-
 	<properties>
 		<parent-pom.create-changelog-md>false</parent-pom.create-changelog-md>
 		<parent-pom.create-lombok-config>false</parent-pom.create-lombok-config>
