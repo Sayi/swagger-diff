@@ -6,51 +6,51 @@ import io.swagger.models.Path;
 
 public class Endpoint {
 
-	private String pathUrl;
-	private HttpMethod method;
-	private String summary;
+    private String pathUrl;
+    private HttpMethod method;
+    private String summary;
 
-	private Path path;
-	private Operation operation;
+    private Path path;
+    private Operation operation;
 
-	public String getPathUrl() {
-		return pathUrl;
-	}
+    public String getPathUrl() {
+        return pathUrl;
+    }
 
-	public void setPathUrl(String pathUrl) {
-		this.pathUrl = pathUrl;
-	}
+    public void setPathUrl(String pathUrl) {
+        this.pathUrl = pathUrl;
+    }
 
-	public HttpMethod getMethod() {
-		return method;
-	}
+    public HttpMethod getMethod() {
+        return method;
+    }
 
-	public void setMethod(HttpMethod method) {
-		this.method = method;
-	}
+    public void setMethod(HttpMethod method) {
+        this.method = method;
+    }
 
-	public String getSummary() {
-		return summary;
-	}
+    public String getSummary() {
+        return summary;
+    }
 
-	public void setSummary(String summary) {
-		this.summary = summary;
-	}
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
 
-	public Path getPath() {
-		return path;
-	}
+    public Path getPath() {
+        return path;
+    }
 
-	public void setPath(Path path) {
-		this.path = path;
-	}
+    public void setPath(Path path) {
+        this.path = path;
+    }
 
-	public Operation getOperation() {
-		return operation;
-	}
+    public Operation getOperation() {
+        return operation;
+    }
 
-	public void setOperation(Operation operation) {
-		this.operation = operation;
-	}
+    public void setOperation(Operation operation) {
+        this.operation = operation;
+    }
 
 }
