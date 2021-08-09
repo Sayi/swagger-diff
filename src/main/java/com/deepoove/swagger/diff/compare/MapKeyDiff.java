@@ -10,7 +10,6 @@ import java.util.Map.Entry;
  * compare two Maps by key
  * 
  * @author Sayi
- * @version
  */
 public class MapKeyDiff<K, V> {
 
