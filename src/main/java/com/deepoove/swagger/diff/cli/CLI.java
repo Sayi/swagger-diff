@@ -15,7 +15,6 @@ import com.deepoove.swagger.diff.output.Render;
  *  -output-mode markdown \n
  *
  * @author Sayi
- * @version
  */
 public class CLI {
 
@@ -58,7 +57,7 @@ public class CLI {
             return;
         }
         if (v){
-            JCommander.getConsole().println("1.2.1");
+            JCommander.getConsole().println("1.2.2");
             return;
         }
 
