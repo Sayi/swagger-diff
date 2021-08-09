@@ -427,6 +427,9 @@
         "summary": "Place an order for a pet",
         "description": "",
         "operationId": "placeOrder",
+        "consumes": [
+          "application/xml"
+        ],
         "produces": [
           "application/xml",
           "application/json"
@@ -915,6 +918,9 @@
           "format": "int64"
         },
         "name": {
+          "type": "string"
+        },
+        "removedField": {
           "type": "string"
         }
       },
