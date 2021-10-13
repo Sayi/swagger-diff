@@ -39,14 +39,36 @@ public class MarkdownRender implements Render {
 
     public String renderHtml(String oldVersion, String newVersion, String ol_new, String ol_miss,
                              String ol_changed) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(H2).append("Version " + oldVersion + " to " + newVersion).append("\n").append(HR);
-        sb.append(H3).append("What's New").append("\n").append(HR)
-                .append(ol_new).append("\n").append(H3)
-                .append("What's Deprecated").append("\n").append(HR)
-                .append(ol_miss).append("\n").append(H3)
-                .append("What's Changed").append("\n").append(HR)
-                .append(ol_changed);
+        StringBuffer sb = new StringBuffer()
+        		.append(H2).append("Version " + oldVersion + " to " + newVersion).append("\n")
+        		.append(HR);
+
+        if(!isEmpty(ol_new)) {
+        	sb
+        	.append(H3).append("What's New").append("\n")
+        	.append(HR)
+            .append(ol_new).append("\n");
+        }
+
+        if(!isEmpty(ol_miss)) {
+        	sb
+        	.append(H3).append("What's Deprecated").append("\n")
+            .append(HR)
+            .append(ol_miss).append("\n");
+        }
+
+        if(!isEmpty(ol_changed)) {
+        	sb
+        	.append(H3).append("What's Changed").append("\n")
+            .append(HR)
+            .append(ol_changed);
+        }
+
+        if(isEmpty(ol_new) && isEmpty(ol_miss) && isEmpty(ol_changed)) {
+        	sb
+        	.append("No changes detected");
+        }
+
         return sb.toString();
     }
 
@@ -280,4 +302,9 @@ public class MarkdownRender implements Render {
         sb.append("Insert ").append(type);
         return sb.toString();
     }
+
+	private boolean isEmpty(String item)
+	{
+		return null == item || item.isBlank();
+	}
 }
