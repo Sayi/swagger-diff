@@ -67,7 +67,9 @@ public class HtmlRender implements Render {
     }
 
     private ContainerTag div_headArticle(final String title, final String type, final ContainerTag ol) {
-        return div().with(h2(title).with(a(rawHtml("&uArr;")).withId("btn_" + type).withClass("showhide").withHref("#").attr("onClick", "javascript:showHide('" + type + "');")), hr(), ol);
+    	return ol.getNumChildren() > 0
+    			? div().with(h2(title).with(a(rawHtml("&uArr;")).withId("btn_" + type).withClass("showhide").withHref("#").attr("onClick", "javascript:showHide('" + type + "');")), hr(), ol)
+    			: div();
     }
 
     private ContainerTag p_versions(String oldVersion, String newVersion) {
