@@ -1,3 +1,15 @@
+/.idea/
+/.settings/
+/src/main/lombok/lombok.config
+/src/test/lombok/lombok.config
+/src/lombok.config
+/target/
+/.checkstyle
+/.classpath
+/.project
+/*.iml
+/bin/
+
 *.class
 
 .classpath
@@ -14,11 +26,8 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-/target/
-/bin/
-.idea
 swagger-diff.iml
-testDiff.html 
+testDiff.html
 testDiff.md
 testDeprecatedApi.html
 testNewApi.html
