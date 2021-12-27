@@ -18,12 +18,12 @@ jobs:
     name: Build with JDK ${{ matrix.java-version }}
     steps:
       - name: Cache Dependencies
-        uses: actions/cache@v2.1.6
+        uses: actions/cache@v2.1.7
         with:
           key: maven-dependencies
           path: ~/.m2/repository
       - name: Check out
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v2.4.0
       - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v2
         with:
