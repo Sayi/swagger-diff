@@ -1,4 +1,16 @@
-[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/Sayi/swagger-diff) 
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/Sayi/swagger-diff)
+
+[![DepShield Badge](https://depshield.sonatype.org/badges/herve-brun/swagger-diff/depshield.svg)](https://depshield.github.io)
+[![CodeQL](https://github.com/herve-brun/swagger-diff/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/herve-brun/swagger-diff/actions/workflows/codeql-analysis.yml)
+
+[![codecov](https://codecov.io/gh/herve-brun/swagger-diff/branch/master/graph/badge.svg)](https://codecov.io/gh/herve-brun/swagger-diff)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=herve-brun_swagger-diff&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=herve-brun_swagger-diff)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=herve-brun_swagger-diff&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=herve-brun_swagger-diff)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=herve-brun_swagger-diff&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=herve-brun_swagger-diff)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=herve-brun_swagger-diff&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=herve-brun_swagger-diff)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=herve-brun_swagger-diff&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=herve-brun_swagger-diff)
+
 
 ## swagger-diff
 
