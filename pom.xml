@@ -79,7 +79,7 @@
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-compat-spec-parser</artifactId>
-			<version>1.0.57</version>
+			<version>1.0.58</version>
 		</dependency>
 		<dependency>
 			<groupId>io.swagger</groupId>
