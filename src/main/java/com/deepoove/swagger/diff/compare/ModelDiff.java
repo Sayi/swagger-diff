@@ -85,7 +85,7 @@ public class ModelDiff {
             Property left = leftProperties.get(key);
             Property right = rightProperties.get(key);
             Model leftSubModel = findModel(left, oldDedinitions);
-            Model rightSubModel = findModel(left, newDedinitions);
+            Model rightSubModel = findModel(right, newDedinitions);
             if (leftSubModel != null || rightSubModel != null) {
                 diff(leftSubModel, rightSubModel, buildElString(parentEl, key),
                         copyAndAdd(visited, leftModel, rightModel));
