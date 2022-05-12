@@ -19,6 +19,7 @@ hs_err_pid*
 swagger-diff.iml
 testDiff.html 
 testDiff.md
+testDiff.json
 testDeprecatedApi.html
 testNewApi.html
 
