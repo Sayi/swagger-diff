@@ -89,7 +89,7 @@
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-parser</artifactId>
-			<version>1.0.59</version>
+			<version>1.0.60</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
