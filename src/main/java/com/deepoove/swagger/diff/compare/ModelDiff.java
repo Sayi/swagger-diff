@@ -1,23 +1,19 @@
 package com.deepoove.swagger.diff.compare;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
+import java.util.function.Function;
 
 import com.deepoove.swagger.diff.model.ElProperty;
 
+import com.google.common.base.Joiner;
 import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
 import io.swagger.models.RefModel;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.RefProperty;
-import io.swagger.models.properties.StringProperty;
+import io.swagger.models.properties.*;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * compare two model
@@ -122,9 +118,46 @@ public class ModelDiff {
     }
 
     private ElProperty addChangeMetadata(ElProperty diffProperty, Property left, Property right) {
-        diffProperty.setTypeChange(!left.getType().equalsIgnoreCase(right.getType()));
+        if(!left.getType().equalsIgnoreCase(right.getType())) {
+            diffProperty.setNewTypeChange(right.getType());
+        }
+
         List<String> leftEnums = enumValues(left);
         List<String> rightEnums = enumValues(right);
+        addEnums(diffProperty, leftEnums, rightEnums);
+
+        List<String> changes = new ArrayList<>();
+        if(!StringUtils.equals(left.getType(), right.getType())) {
+            return diffProperty;
+        } else if (left instanceof AbstractNumericProperty) {
+            AbstractNumericProperty leftP = (AbstractNumericProperty) left;
+            AbstractNumericProperty rightP = (AbstractNumericProperty) right;
+
+
+            addNumericChanges("maximum", leftP, rightP, AbstractNumericProperty::getMaximum, AbstractNumericProperty::getExclusiveMaximum, changes);
+            addNumericChanges("minimum", leftP, rightP, AbstractNumericProperty::getMinimum, AbstractNumericProperty::getExclusiveMinimum, changes);
+        } else if(left instanceof StringProperty) {
+            StringProperty leftP = (StringProperty) left;
+            StringProperty rightP = (StringProperty) right;
+
+            addChanges("maximum length", leftP, rightP, StringProperty::getMaxLength, changes);
+            addChanges("minimum length", leftP, rightP, StringProperty::getMinLength, changes);
+            addChanges("default", leftP, rightP, StringProperty::getDefault, changes);
+            addChanges("pattern", leftP, rightP, StringProperty::getPattern, changes);
+        }
+
+        addChanges("format", left, right, Property::getFormat, changes);
+        addChanges("example", left, right, Property::getExample, changes);
+        addChanges("allow empty value", left, right, Property::getAllowEmptyValue, changes);
+        addChanges("readonly", left, right, Property::getReadOnly, changes);
+        addChanges("required", left, right, Property::getRequired, changes);
+        addChanges("description", left, right, Property::getDescription, changes);
+
+        diffProperty.metadataChanged(Joiner.on(". ").join(changes));
+        return diffProperty;
+    }
+
+    public static void addEnums(ElProperty diffProperty, List<String> leftEnums, List<String> rightEnums) {
         if (!leftEnums.isEmpty() && !rightEnums.isEmpty()) {
             ListDiff<String> enumDiff = ListDiff.diff(leftEnums, rightEnums, (t, enumVal) -> {
                 for (String value : t) {
@@ -132,10 +165,36 @@ public class ModelDiff {
                 }
                 return null;
             });
-            diffProperty.setNewEnums(enumDiff.getIncreased() != null && !enumDiff.getIncreased().isEmpty());
-            diffProperty.setRemovedEnums(enumDiff.getMissing() != null && !enumDiff.getMissing().isEmpty());
+            diffProperty.setNewEnums(enumDiff.getIncreased());
+            diffProperty.setRemovedEnums(enumDiff.getMissing());
         }
-        return diffProperty;
+    }
+
+    public static <T> void addNumericChanges(String description, T left, T right, Function<T, BigDecimal> getter,
+                                   Function<T, Boolean> exclusive, List<String> changes) {
+        if(!Objects.equals(getter.apply(left), getter.apply(right))) {
+            if(getter.apply(left) == null) {
+                changes.add(String.format("Added %s %s %s", BooleanUtils.isTrue(exclusive.apply(right)) ? "exclusive" : "nonexclusive", description, getter.apply(right)));
+            } else if (getter.apply(right) == null) {
+                changes.add(String.format("Removed %s", description));
+            } else {
+                changes.add(String.format("Changed %s from '%s' -> '%s'", description, getter.apply(left), getter.apply(right)));
+            }
+        } else if(!Objects.equals(exclusive.apply(left), exclusive.apply(right))) {
+            changes.add(String.format("Changed %s to %s", description, BooleanUtils.isTrue(exclusive.apply(right)) ? "exclusive" : "nonexlusive"));
+        }
+    }
+
+    public static <PROP> void addChanges(String description, PROP left, PROP right, Function<PROP, Object> getter, List<String> changes) {
+        if(!Objects.equals(getter.apply(left), getter.apply(right))) {
+            if (getter.apply(left) == null) {
+                changes.add(String.format("Added %s %s", description, getter.apply(right)));
+            } else if (getter.apply(right) == null) {
+                changes.add(String.format("Removed %s", description));
+            } else {
+                changes.add(String.format("Changed %s from '%s' -> '%s'", description, getter.apply(left), getter.apply(right)));
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -146,8 +205,13 @@ public class ModelDiff {
     }
 
     private List<String> enumValues(Property prop) {
-        if (prop instanceof StringProperty && ((StringProperty) prop).getEnum() != null) {
-            return ((StringProperty) prop).getEnum();
+        Property finalProp = prop;
+        if(prop instanceof ArrayProperty) {
+            finalProp = ((ArrayProperty) prop).getItems();
+        }
+
+        if (finalProp instanceof StringProperty && ((StringProperty) finalProp).getEnum() != null) {
+            return ((StringProperty) finalProp).getEnum();
         } else {
             return new ArrayList<>();
         }

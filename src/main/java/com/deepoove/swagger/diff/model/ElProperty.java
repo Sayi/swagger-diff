@@ -2,6 +2,8 @@ package com.deepoove.swagger.diff.model;
 
 import io.swagger.models.properties.Property;
 
+import java.util.List;
+
 /**
  * property with expression Language grammar
  * 
@@ -15,9 +17,11 @@ public class ElProperty {
     private Property property;
 
     // optional change metadata
-    private boolean isTypeChange;
-    private boolean newEnums;
-    private boolean removedEnums;
+    private String newTypeChange;
+    private List<String> newEnums;
+    private List<String> removedEnums;
+
+    private String metadataChanged;
 
     public Property getProperty() {
         return property;
@@ -35,27 +39,35 @@ public class ElProperty {
         this.el = el;
     }
 
-    public boolean isTypeChange() {
-        return isTypeChange;
+    public String getNewTypeChange() {
+        return newTypeChange;
     }
 
-    public void setTypeChange(boolean typeChange) {
-        isTypeChange = typeChange;
+    public void setNewTypeChange(String typeChange) {
+        newTypeChange = newTypeChange;
     }
 
-    public boolean isNewEnums() {
+    public List<String> getNewEnums() {
         return newEnums;
     }
 
-    public void setNewEnums(boolean newEnums) {
+    public void setNewEnums(List<String> newEnums) {
         this.newEnums = newEnums;
     }
 
-    public boolean isRemovedEnums() {
+    public void metadataChanged(String changes) {
+        this.metadataChanged = changes;
+    }
+
+    public String metadataChanged() {
+        return this.metadataChanged;
+    }
+
+    public List<String> getRemovedEnums() {
         return removedEnums;
     }
 
-    public void setRemovedEnums(boolean removedEnums) {
+    public void setRemovedEnums(List<String> removedEnums) {
         this.removedEnums = removedEnums;
     }
 }
