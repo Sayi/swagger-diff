@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import io.swagger.models.HttpMethod;
 import io.swagger.models.parameters.BodyParameter;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -275,14 +276,14 @@ public class SwaggerDiffTest {
 		Assert.assertEquals(2, postChgProps.size());
 		ElProperty orderIdProp = postChgProps.stream().filter(cp -> {
 			return cp.getEl().equalsIgnoreCase("body.id");}).findFirst().get();
-		Assert.assertTrue(orderIdProp.isTypeChange());
-		Assert.assertFalse(orderIdProp.isNewEnums());
-		Assert.assertFalse(orderIdProp.isRemovedEnums());
+		Assert.assertTrue(StringUtils.isBlank(orderIdProp.getNewTypeChange()));
+		Assert.assertNull(orderIdProp.getNewEnums());
+		Assert.assertNull(orderIdProp.getRemovedEnums());
 		ElProperty statusProp = postChgProps.stream().filter(cp -> {
 			return cp.getEl().equalsIgnoreCase("body.status");}).findFirst().get();
-		Assert.assertFalse(statusProp.isTypeChange());
-		Assert.assertTrue(statusProp.isNewEnums());
-		Assert.assertTrue(statusProp.isRemovedEnums());
+		Assert.assertTrue(StringUtils.isBlank(orderIdProp.getNewTypeChange()));
+		Assert.assertNotNull(statusProp.getNewEnums());
+		Assert.assertNotNull(statusProp.getRemovedEnums());
 
 
 		Assert.assertTrue("Expecting changed endpoint " + getOrder, changedEndpointMap.containsKey(getOrder));
@@ -293,14 +294,14 @@ public class SwaggerDiffTest {
 
 		orderIdProp = getChgProps.stream().filter(cp -> {
 			return cp.getEl().equalsIgnoreCase("id");}).findFirst().get();
-		Assert.assertTrue(orderIdProp.isTypeChange());
-		Assert.assertFalse(orderIdProp.isNewEnums());
-		Assert.assertFalse(orderIdProp.isRemovedEnums());
+		Assert.assertTrue(StringUtils.isBlank(orderIdProp.getNewTypeChange()));
+		Assert.assertNull(orderIdProp.getNewEnums());
+		Assert.assertNull(orderIdProp.getRemovedEnums());
 		statusProp = getChgProps.stream().filter(cp -> {
 			return cp.getEl().equalsIgnoreCase("status");}).findFirst().get();
-		Assert.assertFalse(statusProp.isTypeChange());
-		Assert.assertTrue(statusProp.isNewEnums());
-		Assert.assertTrue(statusProp.isRemovedEnums());
+		Assert.assertTrue(StringUtils.isBlank(statusProp.getNewTypeChange()));
+		Assert.assertNotNull(statusProp.getNewEnums());
+		Assert.assertNotNull(statusProp.getRemovedEnums());
 	}
 
 	private void assertEqual(SwaggerDiff diff) {
