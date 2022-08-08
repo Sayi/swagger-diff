@@ -10,6 +10,7 @@ import com.deepoove.swagger.diff.model.*;
 import io.swagger.models.HttpMethod;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
+import org.apache.commons.lang3.StringUtils;
 
 public class MarkdownRender implements Render {
 
@@ -63,7 +64,7 @@ public class MarkdownRender implements Render {
     private String li_newEndpoint(String method, String path, String desc) {
         StringBuffer sb = new StringBuffer();
         sb.append(LI).append(CODE).append(method).append(CODE)
-                .append(" " + path).append(" " + desc + "\n");
+                .append(" " + path).append(" " + StringUtils.trimToEmpty(desc) + "\n");
         return sb.toString();
     }
 
@@ -108,7 +109,7 @@ public class MarkdownRender implements Render {
                             .append(ul_consume(changedOperation));
                 }
                 sb.append(CODE).append(method).append(CODE)
-                        .append(" " + pathUrl).append(" " + desc + "  \n")
+                        .append(" " + pathUrl).append(" " + StringUtils.trimToEmpty(desc) + "  \n")
                         .append(ul_detail);
             }
         }

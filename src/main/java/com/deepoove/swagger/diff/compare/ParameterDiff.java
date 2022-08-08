@@ -1,9 +1,13 @@
 package com.deepoove.swagger.diff.compare;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.function.Function;
 
+import com.google.common.base.Joiner;
+import io.swagger.models.properties.AbstractNumericProperty;
+import io.swagger.models.properties.ArrayProperty;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.deepoove.swagger.diff.model.ChangedParameter;
@@ -73,7 +77,6 @@ public class ParameterDiff {
                 changedParameter.setIncreased(diff.getIncreased());
                 changedParameter.setMissing(diff.getMissing());
                 changedParameter.setChanged(diff.getChanged());
-
             }
 
             // Let's handle the case where the new API has fx changed the type
@@ -84,6 +87,8 @@ public class ParameterDiff {
                     ElProperty elProperty = new ElProperty();
                     elProperty.setEl(rightPara.getName());
                     elProperty.setProperty(mapToProperty(rightPara));
+
+                    addChangeMetadata(elProperty, (AbstractSerializableParameter) leftPara, (AbstractSerializableParameter) rightPara);
                     changedParameter.setChanged(Lists.newArrayList(elProperty));
                 }
             }
@@ -107,6 +112,34 @@ public class ParameterDiff {
         });
 
         return this;
+    }
+
+    private ElProperty addChangeMetadata(ElProperty diffProperty, AbstractSerializableParameter left, AbstractSerializableParameter right) {
+        if(!left.getType().equalsIgnoreCase(right.getType())) {
+            diffProperty.setNewTypeChange(right.getType());
+        }
+
+        List<String> leftEnums = left.getEnum() != null ? left.getEnum() : Collections.emptyList();
+        List<String> rightEnums = right.getEnum() != null ? right.getEnum() : Collections.emptyList();
+        ModelDiff.addEnums(diffProperty, leftEnums, rightEnums);
+
+        List<String> changes = new ArrayList<>();
+        ModelDiff.addNumericChanges("maximum", left, right, AbstractSerializableParameter::getMaximum, AbstractSerializableParameter::isExclusiveMaximum, changes);
+        ModelDiff.addNumericChanges("minimum", left, right, AbstractSerializableParameter::getMinimum, AbstractSerializableParameter::isExclusiveMinimum, changes);
+
+        ModelDiff.addChanges("format", left, right, AbstractSerializableParameter::getFormat, changes);
+        ModelDiff.addChanges("pattern", left, right, AbstractSerializableParameter::getPattern, changes);
+        ModelDiff.addChanges("example", left, right, AbstractSerializableParameter::getExample, changes);
+        ModelDiff.addChanges("allow empty value", left, right, AbstractSerializableParameter::getAllowEmptyValue, changes);
+        ModelDiff.addChanges("required", left, right, AbstractSerializableParameter::getRequired, changes);
+        ModelDiff.addChanges("default", left, right, AbstractSerializableParameter::getDefaultValue, changes);
+        ModelDiff.addChanges("minLength", left, right, AbstractSerializableParameter::getMinLength, changes);
+        ModelDiff.addChanges("maxLength", left, right, AbstractSerializableParameter::getMaxLength, changes);
+        ModelDiff.addChanges("minItems", left, right, AbstractSerializableParameter::getMinItems, changes);
+        ModelDiff.addChanges("maxItems", left, right, AbstractSerializableParameter::getMaxItems, changes);
+
+        diffProperty.metadataChanged(Joiner.on(". ").join(changes));
+        return diffProperty;
     }
 
     private Property mapToProperty(Parameter rightPara) {

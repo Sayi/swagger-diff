@@ -2,15 +2,18 @@ package com.deepoove.swagger.diff.output;
 
 import com.deepoove.swagger.diff.SwaggerDiff;
 import com.deepoove.swagger.diff.model.*;
+import com.google.common.collect.Collections2;
 import io.swagger.models.HttpMethod;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
 import j2html.tags.ContainerTag;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import static j2html.TagCreator.*;
 
@@ -169,15 +172,27 @@ public class HtmlRender implements Render {
     private ContainerTag li_changedProp(ElProperty prop) {
         List<String> changeDetails = new ArrayList<>();
         String changeDetailsHeading = "";
-        if (prop.isTypeChange()) {
-            changeDetails.add("Data Type");
+        if (!StringUtils.isBlank(prop.getNewTypeChange())) {
+            changeDetails.add(String.format("Changed data type to %s", prop.getNewTypeChange()));
         }
-        if (prop.isNewEnums()) {
-            changeDetails.add("Added Enum");
+        if (prop.getNewEnums() != null && !prop.getNewEnums().isEmpty()) {
+            changeDetails.add(String.format("Added enum value %s", prop.getNewEnums()
+              .stream()
+              .map(val -> String.format("'%s'", val))
+              .collect(Collectors.joining(", "))
+            ));
         }
-        if (prop.isRemovedEnums()) {
-            changeDetails.add("Removed Enum");
+        if (prop.getRemovedEnums() != null && !prop.getRemovedEnums().isEmpty()) {
+            changeDetails.add(String.format("Removed enum value %s", prop.getRemovedEnums()
+              .stream()
+              .map(val -> String.format("'%s'", val))
+              .collect(Collectors.joining(", "))
+            ));
         }
+        if(!StringUtils.isBlank(prop.metadataChanged())) {
+            changeDetails.add(prop.metadataChanged());
+        }
+
         if (! changeDetails.isEmpty()) {
             changeDetailsHeading = " (" + String.join(", ", changeDetails) + ")";
         }
