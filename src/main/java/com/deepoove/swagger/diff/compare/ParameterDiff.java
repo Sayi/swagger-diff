@@ -14,6 +14,7 @@ import io.swagger.models.Model;
 import io.swagger.models.parameters.AbstractSerializableParameter;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.models.parameters.SerializableParameter;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
 
@@ -21,7 +22,6 @@ import io.swagger.models.properties.StringProperty;
  * compare two parameter
  *
  * @author Sayi
- * @version
  */
 public class ParameterDiff {
 
@@ -83,7 +83,7 @@ public class ParameterDiff {
                 if (!leftPara.equals(rightPara)) {
                     ElProperty elProperty = new ElProperty();
                     elProperty.setEl(rightPara.getName());
-                    elProperty.setProperty(mapToProperty(rightPara));
+                    elProperty.setProperty(mapToProperty((SerializableParameter) rightPara));
                     changedParameter.setChanged(Lists.newArrayList(elProperty));
                 }
             }
@@ -109,7 +109,7 @@ public class ParameterDiff {
         return this;
     }
 
-    private Property mapToProperty(Parameter rightPara) {
+    private Property mapToProperty(SerializableParameter rightPara) {
         Property prop = new StringProperty();
         prop.setAccess(rightPara.getAccess());
         prop.setAllowEmptyValue(rightPara.getAllowEmptyValue());

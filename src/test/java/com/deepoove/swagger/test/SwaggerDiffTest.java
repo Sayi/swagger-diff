@@ -25,7 +25,9 @@ public class SwaggerDiffTest {
 	final String SWAGGER_V2_DOC1 = "petstore_v2_1.json";
 	final String SWAGGER_V2_DOC2 = "petstore_v2_2.json";
 	final String SWAGGER_V2_EMPTY_DOC = "petstore_v2_empty.json";
-	final String SWAGGER_V2_HTTP = "http://petstore.swagger.io/v2/swagger.json";
+	final String PATH_ORIGINAL_SWAGGER = "original-swagger.yaml";
+	private String PATH_NONE_BREAKING_BASEPATH_CHANGED =
+			"change.non-breaking.basePath-changed.and.operations-changed.yaml";
 
 	@Test
 	public void testEqual() {
@@ -45,7 +47,7 @@ public class SwaggerDiffTest {
 
 		try {
 			FileWriter fw = new FileWriter(
-					"testNewApi.html");
+					"target/testNewApi.html");
 			fw.write(html);
 			fw.close();
 
@@ -70,7 +72,7 @@ public class SwaggerDiffTest {
 
 		try {
 			FileWriter fw = new FileWriter(
-					"testDeprecatedApi.html");
+					"target/testDeprecatedApi.html");
 			fw.write(html);
 			fw.close();
 
@@ -93,7 +95,7 @@ public class SwaggerDiffTest {
 
 		try {
 			FileWriter fw = new FileWriter(
-					"testDiff.html");
+					"target/testDiff.html");
 			fw.write(html);
 			fw.close();
 			
@@ -110,7 +112,7 @@ public class SwaggerDiffTest {
 		String render = new MarkdownRender().render(diff);
 		try {
 			FileWriter fw = new FileWriter(
-					"testDiff.md");
+					"target/testDiff.md");
 			fw.write(render);
 			fw.close();
 			
@@ -185,7 +187,7 @@ public class SwaggerDiffTest {
 		String render = new JsonRender().render(diff);
 		try {
 			FileWriter fw = new FileWriter(
-					"testDiff.json");
+					"target/testDiff.json");
 			fw.write(render);
 			fw.close();
 
@@ -198,7 +200,7 @@ public class SwaggerDiffTest {
 	public void testInputBodyArray() {
 		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
 		Map<String, ChangedEndpoint> changedEndpointMap = diff.getChangedEndpoints().stream().collect(Collectors.toMap(ChangedEndpoint::getPathUrl, e -> e));
-		Lists.newArrayList("/user/createWithArray", "/user/createWithList").forEach(name -> {
+		Lists.newArrayList("/v2/user/createWithArray", "/v2/user/createWithList").forEach(name -> {
 			Assert.assertTrue("Expecting changed endpoint " + name, changedEndpointMap.containsKey(name));
 			ChangedEndpoint endpoint = changedEndpointMap.get(name);
 			Assert.assertEquals(1, endpoint.getChangedOperations().size());
@@ -226,7 +228,7 @@ public class SwaggerDiffTest {
 	public void testResponseBodyArray() {
 		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
 		Map<String, ChangedEndpoint> changedEndpointMap = diff.getChangedEndpoints().stream().collect(Collectors.toMap(ChangedEndpoint::getPathUrl, e -> e));
-		Lists.newArrayList("/pet/findByStatus", "/pet/findByTags").forEach(name -> {
+		Lists.newArrayList("/v2/pet/findByStatus", "/v2/pet/findByTags").forEach(name -> {
 			Assert.assertTrue("Expecting changed endpoint " + name, changedEndpointMap.containsKey(name));
 			ChangedEndpoint endpoint = changedEndpointMap.get(name);
 			Assert.assertEquals(1, endpoint.getChangedOperations().size());
@@ -249,8 +251,8 @@ public class SwaggerDiffTest {
 	public void testDetectProducesAndConsumes() {
 		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
 		Map<String, ChangedEndpoint> changedEndpointMap = diff.getChangedEndpoints().stream().collect(Collectors.toMap(ChangedEndpoint::getPathUrl, e -> e));
-		Assert.assertTrue("Expecting changed endpoint " + "/store/order", changedEndpointMap.containsKey("/store/order"));
-		ChangedEndpoint endpoint = changedEndpointMap.get("/store/order");
+		Assert.assertTrue("Expecting changed endpoint " + "/v2/store/order", changedEndpointMap.containsKey("/v2/store/order"));
+		ChangedEndpoint endpoint = changedEndpointMap.get("/v2/store/order");
 		Assert.assertTrue("Expecting POST method change", endpoint.getChangedOperations().containsKey(HttpMethod.POST));
 		ChangedOperation changedOperation = endpoint.getChangedOperations().get(HttpMethod.POST);
 		Assert.assertEquals(1, changedOperation.getAddConsumes().size());
@@ -263,8 +265,8 @@ public class SwaggerDiffTest {
 	public void testChangedPropertyMetadata() {
 		SwaggerDiff diff = SwaggerDiff.compareV2(SWAGGER_V2_DOC1, SWAGGER_V2_DOC2);
 		Map<String, ChangedEndpoint> changedEndpointMap = diff.getChangedEndpoints().stream().collect(Collectors.toMap(ChangedEndpoint::getPathUrl, e -> e));
-		String postOrder = "/store/order";
-		String getOrder = "/store/order/{orderId}";
+		String postOrder = "/v2/store/order";
+		String getOrder = "/v2/store/order/{orderId}";
 
 		Assert.assertTrue("Expecting changed endpoint " + postOrder, changedEndpointMap.containsKey(postOrder));
 		ChangedEndpoint postOrderChg = changedEndpointMap.get(postOrder);
@@ -311,6 +313,12 @@ public class SwaggerDiffTest {
 		Assert.assertTrue(missingEndpoints.isEmpty());
 		Assert.assertTrue(changedEndPoints.isEmpty());
 
+	}
+
+	@Test
+	public void testBasePath_And_OperationUpdate_with_No_Breaking_Change(){
+		SwaggerDiff diff = SwaggerDiff.compareV2(PATH_ORIGINAL_SWAGGER, PATH_NONE_BREAKING_BASEPATH_CHANGED);
+		assertEqual(diff);
 	}
 
 }

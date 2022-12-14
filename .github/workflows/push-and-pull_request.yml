@@ -1,0 +1,102 @@
+name: Build on Push and Pull Request
+on:
+  - push
+  - pull_request
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Supported versions as of https://en.wikipedia.org/wiki/Java_version_history
+        java-version:
+          - 8
+          - 11
+          - 16
+
+    name: Build with JDK ${{ matrix.java-version }}
+    steps:
+      - name: Cache Dependencies
+        uses: actions/cache@v2.1.7
+        with:
+          key: maven-dependencies
+          path: ~/.m2/repository
+      - name: Check out
+        uses: actions/checkout@v2.4.0
+      - name: Set up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v2
+        with:
+          distribution: adopt
+          java-version: ${{ matrix.java-version }}
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
+      - name: Clean, Build, Install
+        run: |
+          set -o errexit -o pipefail
+          mvn clean install --activate-profiles dirty,dirty-package --update-snapshots --batch-mode --show-version 2>&1 | tee mvnout.txt
+          set +o errexit +o pipefail
+      - id: version
+        name: Evaluate Version
+        run: |
+          project_version=`mvn help:evaluate --quiet --define expression=project.version --define forceStdout`
+          echo "Version: ${project_version}"
+          
+          snapshot_version=`echo "${project_version}" | grep --perl-regexp --regexp="-SNAPSHOT$"`
+          if [ -n "${snapshot_version}" ]; then
+            echo "Identified as snapshot version"
+            echo "::set-output name=is-snapshot::true"
+          else
+            echo "Identified as release version"
+            echo "::set-output name=is-snapshot::false"
+          fi
+      - name: Test, Verify, Deploy
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.java-version == 8 && steps.version.outputs.is-snapshot == 'true' }}
+        run: |
+          set -o errexit -o pipefail
+          mvn deploy site --batch-mode --show-version 2>&1 | tee --append mvnout.txt
+          set +o errexit +o pipefail
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+      - name: Test, Verify
+        if: ${{ github.event_name != 'push' || github.ref != 'refs/heads/master' || matrix.java-version != 8 || steps.version.outputs.is-snapshot != 'true' }}
+        run: |
+          set -o errexit -o pipefail
+          mvn verify site --define gpg.skip=true --batch-mode --show-version 2>&1 | tee --append mvnout.txt
+          set +o errexit +o pipefail
+      - name: Check Output
+        shell: bash {0}
+        run: |
+          chmod +x ./target/mvn-suppressions-parent.sh
+          mvnout=`cat mvnout.txt | grep --perl-regexp "(?i)\\[(ERR|WARN)" | ./target/mvn-suppressions-parent.sh "$JDK_VERSION"`
+          
+          if [ -n "${mvnout}" ]; then
+            echo "[ERROR] The Maven output contains the following unknown warnings and errors:" >&2
+            echo "${mvnout}" >&2
+            false
+          else
+            echo "[INFO] No unknown warnings and errors found."
+            echo "${mvnout}" >&2
+          fi
+        env:
+          JDK_VERSION: ${{ matrix.java-version }}
+      - name: Prepare Site
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.java-version == 8 && steps.version.outputs.is-snapshot == 'true' }}
+        run: |
+          if [ -f ./target/site/index.html ]; then
+            rm ./target/site/index.html
+          fi
+          if [ -f ./CHANGELOG.md ]; then
+            cp ./CHANGELOG.md ./target/site/CHANGELOG.md
+          fi
+          if [ -f ./README.md ]; then
+            cp ./README.md ./target/site/README.md
+          fi
+      - name: Deploy Site
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.java-version == 8 && steps.version.outputs.is-snapshot == 'true' }}
+        uses: peaceiris/actions-gh-pages@v3.8.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./target/site
+          enable_jekyll: true

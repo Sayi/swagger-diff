@@ -36,6 +36,7 @@ public class SwaggerDiff {
      *            old api-doc location:Json or Http
      * @param newSpec
      *            new api-doc location:Json or Http
+     * @return swagger differences
      */
     public static SwaggerDiff compareV1(String oldSpec, String newSpec) {
         return compare(oldSpec, newSpec, null, null);
@@ -48,6 +49,7 @@ public class SwaggerDiff {
      *            old api-doc location:Json or Http
      * @param newSpec
      *            new api-doc location:Json or Http
+     * @return swagger differences
      */
     public static SwaggerDiff compareV2(String oldSpec, String newSpec) {
         return compare(oldSpec, newSpec, null, SWAGGER_VERSION_V2);
@@ -59,6 +61,7 @@ public class SwaggerDiff {
      *
      * @param oldSpec old api-doc json as string
      * @param newSpec new api-doc json as string
+     * @return swagger differences
      */
     public static SwaggerDiff compareV2Raw(String oldSpec, String newSpec) {
         return new SwaggerDiff(oldSpec, newSpec).compare();
@@ -71,6 +74,7 @@ public class SwaggerDiff {
      *            old Swagger specification document in v2.0 format as a JsonNode
      * @param newSpec
      *            new Swagger specification document in v2.0 format as a JsonNode
+     * @return swagger differences
      */
     public static SwaggerDiff compareV2(JsonNode oldSpec, JsonNode newSpec) {
         return new SwaggerDiff(oldSpec, newSpec).compare();
@@ -81,11 +85,6 @@ public class SwaggerDiff {
         return new SwaggerDiff(oldSpec, newSpec, auths, version).compare();
     }
 
-
-    /**
-     * @param rawOldSpec
-     * @param rawNewSpec
-     */
     private SwaggerDiff(String rawOldSpec, String rawNewSpec) {
         SwaggerParser swaggerParser = new SwaggerParser();
         oldSpecSwagger = swaggerParser.parse(rawOldSpec);
@@ -96,12 +95,6 @@ public class SwaggerDiff {
         }
     }
 
-    /**
-     * @param oldSpec
-     * @param newSpec
-     * @param auths
-     * @param version
-     */
     private SwaggerDiff(String oldSpec, String newSpec, List<AuthorizationValue> auths,
             String version) {
         if (SWAGGER_VERSION_V2.equals(version)) {

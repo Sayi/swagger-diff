@@ -23,7 +23,6 @@ import io.swagger.models.properties.StringProperty;
  * compare two model
  * 
  * @author Sayi
- * @version
  */
 public class ModelDiff {
 
