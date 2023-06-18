@@ -33,9 +33,9 @@ public class ParameterDiff {
     Map<String, Model> newDedinitions;
 
     private ParameterDiff() {
-        this.increased = new ArrayList<Parameter>();
-        this.missing = new ArrayList<Parameter>();
-        this.changed = new ArrayList<ChangedParameter>();
+        this.increased = new ArrayList<>();
+        this.missing = new ArrayList<>();
+        this.changed = new ArrayList<>();
     }
 
     public static ParameterDiff buildWithDefinition(Map<String, Model> left, Map<String, Model> right) {
@@ -83,7 +83,7 @@ public class ParameterDiff {
                 if (!leftPara.equals(rightPara)) {
                     ElProperty elProperty = new ElProperty();
                     elProperty.setEl(rightPara.getName());
-                    elProperty.setProperty(mapToProperty(rightPara));
+                    elProperty.setProperty(mapToProperty((AbstractSerializableParameter<?>)rightPara));
                     changedParameter.setChanged(Lists.newArrayList(elProperty));
                 }
             }
@@ -109,7 +109,7 @@ public class ParameterDiff {
         return this;
     }
 
-    private Property mapToProperty(Parameter rightPara) {
+    private Property mapToProperty(AbstractSerializableParameter<?> rightPara) {
         Property prop = new StringProperty();
         prop.setAccess(rightPara.getAccess());
         prop.setAllowEmptyValue(rightPara.getAllowEmptyValue());
