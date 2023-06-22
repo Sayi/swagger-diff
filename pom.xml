@@ -42,7 +42,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<swagger-parser.version>1.0.65</swagger-parser.version>
+		<swagger-parser.version>1.0.67</swagger-parser.version>
 	</properties>
 
 	<distributionManagement>
