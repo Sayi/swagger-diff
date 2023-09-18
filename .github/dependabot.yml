@@ -1,0 +1,13 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  assignees:
+  - herve-brun
+  ignore:
+  - dependency-name: com.alibaba:fastjson
+    versions:
+    - 1.2.75

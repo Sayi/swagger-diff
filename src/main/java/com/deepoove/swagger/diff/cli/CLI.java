@@ -58,7 +58,7 @@ public class CLI {
             return;
         }
         if (v){
-            JCommander.getConsole().println("1.2.2");
+            jCommander.getConsole().println("1.2.2");
             return;
         }
 
@@ -66,7 +66,7 @@ public class CLI {
                 ? SwaggerDiff.compareV2(oldSpec, newSpec) : SwaggerDiff.compareV1(oldSpec, newSpec);
 
         String render = getRender(outputMode).render(diff);
-        JCommander.getConsole().println(render);
+        jCommander.getConsole().println(render);
     }
 
     private Render getRender(String outputMode) {
